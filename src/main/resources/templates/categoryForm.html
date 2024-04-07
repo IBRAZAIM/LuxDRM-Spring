@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="form.css">
+        <title>Create Category</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Создание категории</h1>
+            <form th:action="@{/categories/create}" th:object="${category}" method="post" class="createForm">
+                <label for="name">Название категории:</label>
+                <input type="text" id="name" th:field="*{name}" required>
+                <p><input type="submit" value="Создать"></p>
+            </form>
+        </div>
+    </body>
+</html>

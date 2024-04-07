@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{categoryList.css}">
+    <title>Categories List</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Каталог</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Категория</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.getId()}"></td>
+                <td th:text="${product.getName()}"></td>
+                <td th:text="${product.getCategoryId()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    background-color: #f9f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #0c0c3d;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+th {
+    background-color: #0c0c3d;
+    color: tan;
+}
+
+tr:nth-child(even) {
+    background-color: tan;
+}
+
+tr:hover {
+    background-color: #e0e0e0;
+}
+
+
+
+
