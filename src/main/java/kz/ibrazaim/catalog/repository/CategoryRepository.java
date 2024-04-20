@@ -1,37 +1,17 @@
 package kz.ibrazaim.catalog.repository;
 
 import kz.ibrazaim.catalog.model.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@Component
-public class CategoryRepository implements SimpleRepository<Category>  {
-    private final Map<Long, Category> categories;
-    private static long serial = 1;
-    public CategoryRepository(){
-        this.categories = new HashMap<>();
-    }
-    @Override
-    public void create(Category category) {
-        category.setId(getUniqueId());
-        categories.put(category.getId(), category);
-    }
-
-    @Override
-    public Category findById(long id) {
-        return categories.get(id);
-    }
-
-    @Override
-    public List<Category> findAll() {
-        return new ArrayList<>(categories.values());
-    }
-    public long getUniqueId(){
-        return serial ++;
-    }
+@Repository
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+    Category findByName(String name);
 }
 
 

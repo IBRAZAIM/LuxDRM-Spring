@@ -40,10 +40,6 @@ th {
     color: tan;
 }
 
-tr:nth-child(even) {
-    background-color: tan;
-}
-
 tr:hover {
     background-color: #e0e0e0;
 }

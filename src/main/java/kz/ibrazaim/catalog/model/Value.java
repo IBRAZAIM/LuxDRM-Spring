@@ -10,14 +10,19 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "products")
-public class Product {
+@Table(name = "values")
+public class Value {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
     String name;
-    int price;
+
     @ManyToOne
-    @JoinColumn(name="category_id")
-    Category category;
+    @JoinColumn(name = "product_id")
+    Product product;
+
+    @OneToOne
+    @JoinColumn(name = "options_id")
+    Option option;
 }

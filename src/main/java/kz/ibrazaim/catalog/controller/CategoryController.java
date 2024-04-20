@@ -1,36 +1,49 @@
 package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Category;
-import kz.ibrazaim.catalog.repository.CategoryRepository;
+import kz.ibrazaim.catalog.service.CategoryService;
+import kz.ibrazaim.catalog.service.OptionService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/categories")
 public class CategoryController {
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
+    private final OptionService optionService;
 
     @GetMapping
-    public String findAll(Model model){
-        model.addAttribute("categories", categoryRepository.findAll());
+    public String findAll(Model model) {
+        model.addAttribute("categories", categoryService.findAll());
         return "categories-list";
     }
 
     @GetMapping("/create")
-    public String createGet(Model model){
+    public String showForm(Model model) {
         model.addAttribute("category", new Category());
         return "categoryForm";
     }
 
     @PostMapping("/create")
-    public String createCategory(@ModelAttribute("category") Category category) {
-        categoryRepository.create(category);
-        return "redirect:/categories/create";
+    public String createPost(
+            @ModelAttribute Category category,
+            @RequestParam List<String> optionNames,
+            Model model) {
+        categoryService.create(category);
+        if (optionNames != null) {
+            model.addAttribute("optionNames",optionNames);
+            optionService.create(optionNames, category);
+        }
+        return "redirect:/categories";
     }
+
+
 }
+

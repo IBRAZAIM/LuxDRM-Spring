@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="choose">
+        <h1>Выберите категорию</h1>
+        <form action="/products/create" method="get">
+            <select name="categoryId">
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}">
+                    [[${category.getName()}]]
+                </option>
+            </select>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,40 +1,52 @@
 package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Product;
-import kz.ibrazaim.catalog.repository.CategoryRepository;
-import kz.ibrazaim.catalog.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import kz.ibrazaim.catalog.service.CategoryService;
+import kz.ibrazaim.catalog.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
-
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final ProductService productService;
+    private final CategoryService categoryService;
     @GetMapping
     public String findAll(Model model){
-        model.addAttribute("products", productRepository.findAll());
+        model.addAttribute("products", productService.findAll());
         return "product-list";
     }
     @GetMapping("/create")
-    public String showProductForm(Model model) {
+    public String showProductForm(Model model, @RequestParam long categoryId) {
         model.addAttribute("product", new Product());
-        model.addAttribute("products", productRepository.findAll());
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("category", categoryService.findById(categoryId));
         return "productForm";
     }
-
     @PostMapping("/create")
-    public String addProduct(@ModelAttribute("product") Product product) {
-        productRepository.create(product);
-        return "redirect:/products/create";
+    public String showProductForm(
+            @ModelAttribute("product") Product product,
+            @RequestParam(required = false) List<String> values,
+            @RequestParam(required = false) List<Long> optionsIds,
+            @RequestParam(defaultValue = "-1") Long categoryId,
+            Model model)
+    {
+        if (categoryId == -1){
+            return "redirect:/products/create/chooseCategory";
+        }
+        productService.create(product);
+        model.addAttribute("options", optionsIds);
+        productService.create(product, values, optionsIds, categoryId);
+
+        return "redirect:/products";
+    }
+    @GetMapping("create/chooseCategory")
+    public String chooseCategory(Model model){
+        model.addAttribute("categories", categoryService.findAll());
+        return "chooseCategory";
     }
 }

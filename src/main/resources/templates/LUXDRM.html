@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LuxDRM</title>
+    <link rel="stylesheet" th:href="@{/LUXDRM.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<header class="header">
+    <a href="#" class="logo">LuxDRM</a>
+    <nav class="navbar">
+        <a href="main">Главная</a>
+        <a href="#">О нас</a>
+        <a href="products">Каталог</a>
+        <a href="#">Поддержка</a>
+    </nav>
+    <form class="search-container">
+        <input type="text" placeholder="Поиск..." class="search-input">
+        <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+    </form>
+    <a href="#" class="user-icon"><i class="fas fa-circle fa-user"></i></a>
+</header>
+<main>
+    <section class="products">
+        <h2>Новинки</h2>
+        <!-- Здесь будет содержимое о новых товарах -->
+    </section>
+
+    <section class="promotions">
+        <h2>Акции</h2>
+        <!-- Здесь будет информация о текущих акциях -->
+    </section>
+
+    <section class="news">
+        <h2>Новости</h2>
+        <!-- Здесь будет список последних новостей -->
+    </section>
+</main>
+
+</body>
+</html>

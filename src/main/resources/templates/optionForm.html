@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/form.css}">
+    <title>Title</title>
+</head>
+<body>
+<div class="container">
+    <h1>Создание значения</h1>
+    <form th:action="@{/option/create}" th:object="${option}" method="post" class="createForm">
+        <p>Название: <input type="text" th:field="*{name}"></p>
+        <p>Идентификатор товара:
+
+        <p><input type="submit" value="Создать"></p>
+    </form>
+</div>
+</body>
+</html>

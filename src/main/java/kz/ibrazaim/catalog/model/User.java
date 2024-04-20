@@ -4,20 +4,25 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "products")
-public class Product {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+    String login;
+    String password;
     String name;
-    int price;
-    @ManyToOne
-    @JoinColumn(name="category_id")
-    Category category;
+    String surname;
+    @JoinColumn(name = "registration_date")
+    LocalDateTime registrDate;
+
+
 }

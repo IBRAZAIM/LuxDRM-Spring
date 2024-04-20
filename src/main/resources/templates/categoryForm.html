@@ -2,17 +2,45 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="form.css">
+        <link rel="stylesheet" th:href="@{/form.css}">
         <title>Create Category</title>
     </head>
     <body>
         <div class="container">
             <h1>Создание категории</h1>
-            <form th:action="@{/categories/create}" th:object="${category}" method="post" class="createForm">
+            <form action="/categories/create" th:object="${category}" method="post" class="createForm" onsubmit="return validateForm()">
                 <label for="name">Название категории:</label>
                 <input type="text" id="name" th:field="*{name}" required>
+                <label for="name">Добавление Характеристик</label>
+                <div id="characterContainer">
+                    <script th:inline="javascript">
+                        function addCharacter() {
+                            var characterInput = document.createElement("input");
+                            characterInput.type = "text";
+                            characterInput.name = "character";
+                            characterInput.required = true;
+                            characterInput.setAttribute("name", "optionNames");
+                            document.getElementById("characterContainer").appendChild(characterInput);
+                        }
+                    </script>
+                </div>
+
+                <button type="button" onclick="addCharacter()">Добавить</button>
+<!--                <input type="hidden" name="optionNames">-->
+
+
                 <p><input type="submit" value="Создать"></p>
             </form>
         </div>
+        <script th:inline="javascript">
+            function validateForm() {
+                var categoryName = document.getElementById("name").value;
+                if (categoryName.trim() === '') {
+                    alert("Пожалуйста, введите название категории.");
+                    return false;
+                }
+                return true;
+            }
+        </script>
     </body>
 </html>

@@ -1,23 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="form.css">
-    <title>Создание товара</title>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Создание товара</h1>
-      <form th:action="@{/products/create}" th:object="${product}" method="post" class="createForm">
-        <p>Название: <input type="text" th:field="*{name}"></p>
-        <p>Цена: <input type="text" th:field="*{price}"></p>
-        <p>Категория:
-          <select id="category" th:field="*{categoryId}">
-            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-          </select>
-        <p><input type="submit" value="Создать"></p>
-      </form>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/form.css}">
+  <title>Создание товара</title>
+</head>
+<body>
+<div class="container">
+  <h1>Создание товара</h1>
+  <h2>Категория:</h2>
+  <h2 th:text="${category.getName()}"></h2>
+  <form action="/products/create" method="post" th:object="${product}">
+    <input type="hidden" name="categoryId" th:value="${category.getId()}">
+
+    <label for="name">
+      Название товара
+      <input id="name" name="name">
+    </label>
+    <br>
+    <label for="price">
+      Стоимость товара
+      <input id="price" name="price">
+    </label>
+    <br>
+    <div th:each="option : ${category.getOptionList()}" >
+      <input type="hidden" name="optionsIds" th:value="${option.id}">
+      <p th:text="${option.name}"></p>
+      <input name="values">
     </div>
-  </body>
+    <button type="submit">Создать</button>
+  </form>
+</div>
+</body>
 </html>
+
+
 

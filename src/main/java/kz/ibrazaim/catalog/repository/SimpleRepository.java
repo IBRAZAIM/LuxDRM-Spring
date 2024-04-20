@@ -1,11 +1,11 @@
 package kz.ibrazaim.catalog.repository;
 
-import kz.ibrazaim.catalog.model.Category;
-
 import java.util.List;
 
-public interface SimpleRepository<T> {
-    void create(T noun);
+public interface SimpleRepository<T>{
     T findById(long id);
+
     List<T> findAll();
+
+    void create(T t);
 }
