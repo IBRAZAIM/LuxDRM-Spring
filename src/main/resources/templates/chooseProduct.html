@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/updateForm.css}">
+    <title>Categories List</title>
+</head>
+<body>
+<div class="container">
+    <h1>Каталог</h1>
+    <form th:action="@{/products/update}" method="get">
+        <select name="id">
+            <option th:each="product : ${products}" th:value="${product.getId()}" th:text="${product.getName()}"></option>
+        </select>
+        <input type="submit" value="Выбрать товар">
+    </form>
+</div>
+</body>
+</html>

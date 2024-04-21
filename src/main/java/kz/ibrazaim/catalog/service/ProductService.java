@@ -28,6 +28,8 @@ public class ProductService implements AbstractService<Product>{
     public void create(Product product){
         productRepository.save(product);
     }
+
+
     public void create(Product product,List<String> values, List<Long> optionsIds, Long categoryId){
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         product.setCategory(category);
@@ -36,16 +38,16 @@ public class ProductService implements AbstractService<Product>{
 
     }
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
-        List<Option> options = optionRepository.findAllById(optionsIds);
+        if (values != null && optionsIds != null) {
+            List<Option> options = optionRepository.findAllById(optionsIds);
 
-        for (int i = 1; i < options.size(); i++) {
-            Value value = new Value();
-
-            value.setName(values.get(i));
-            value.setProduct(product);
-            value.setOption(options.get(i));
-
-            valueRepository.save(value);
+            for (int i = 0; i < options.size(); i++) {
+                Value value = new Value();
+                value.setName(values.get(i));
+                value.setProduct(product);
+                value.setOption(options.get(i));
+                valueRepository.save(value);
+            }
         }
     }
 
@@ -54,21 +56,22 @@ public class ProductService implements AbstractService<Product>{
         return productRepository.findAll();
     }
 
-
-
-
-
     @Override
     public Product findById(long id) {
-        return null;
+        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
     @Override
-    public void update(long id, Product updatedEntity) {
+    public void update(long id, Product updatedProduct) {
+        Product existingProduct = findById(id);
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setPrice(updatedProduct.getPrice());
+
+        productRepository.save(existingProduct);
     }
 
     @Override
     public void deleteById(long id) {
-
+        productRepository.deleteById(id);
     }
 }

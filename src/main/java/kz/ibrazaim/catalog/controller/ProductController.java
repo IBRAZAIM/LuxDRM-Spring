@@ -49,4 +49,23 @@ public class ProductController {
         model.addAttribute("categories", categoryService.findAll());
         return "chooseCategory";
     }
+
+    @GetMapping("/update")
+    public String showUpdateForm(@RequestParam long id, Model model) {
+        Product product = productService.findById(id);
+        model.addAttribute("product", product);
+        return "update-product";
+    }
+
+    @PostMapping("/update")
+    public String updateProduct(@RequestParam long id, @ModelAttribute("product") Product updatedProduct) {
+        productService.update(id, updatedProduct);
+        return "redirect:/products";
+    }
+
+    @GetMapping("update/chooseProduct")
+    public String chooseProduct(Model model){
+        model.addAttribute("products", productService.findAll());
+        return "chooseProduct";
+    }
 }
