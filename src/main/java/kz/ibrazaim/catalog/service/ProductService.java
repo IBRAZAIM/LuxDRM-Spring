@@ -38,16 +38,14 @@ public class ProductService implements AbstractService<Product>{
 
     }
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
-        if (values != null && optionsIds != null) {
-            List<Option> options = optionRepository.findAllById(optionsIds);
+        List<Option> options = optionRepository.findAllById(optionsIds);
 
-            for (int i = 0; i < options.size(); i++) {
-                Value value = new Value();
-                value.setName(values.get(i));
-                value.setProduct(product);
-                value.setOption(options.get(i));
-                valueRepository.save(value);
-            }
+        for (int i = 0; i < options.size(); i++) {
+            Value value = new Value();
+            value.setName(values.get(i));
+            value.setProduct(product);
+            value.setOption(options.get(i));
+            valueRepository.save(value);
         }
     }
 

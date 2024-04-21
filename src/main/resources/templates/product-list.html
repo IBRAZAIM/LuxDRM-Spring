@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/categoryList.css}">
-    <title>Categories List</title>
+    <title>Каталог</title>
 </head>
 <body>
     <div class="container">
@@ -13,6 +13,7 @@
             <tr>
                 <th>ID</th>
                 <th>Название</th>
+                <th>Цена</th>
                 <th>Категория</th>
             </tr>
             </thead>
@@ -22,6 +23,7 @@
                 <td th:text="${product.getName()}"></td>
                 <td th:text="${product.getPrice()}"></td>
                 <td th:text="${product.category.getName()}"></td>
+                <td><a th:href="@{'/products/update/' + ${product.getId()}}" class="user-icon">Редактировать</a></td>
             </tr>
             </tbody>
         </table>

@@ -50,22 +50,23 @@ public class ProductController {
         return "chooseCategory";
     }
 
-    @GetMapping("/update")
-    public String showUpdateForm(@RequestParam long id, Model model) {
+    @GetMapping("/update/{id}")
+    public String showUpdateProductForm(@PathVariable("id") long id, Model model) {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
-        return "update-product";
+        return "update-product"; // Название Thymeleaf шаблона для формы обновления продукта
     }
 
-    @PostMapping("/update")
-    public String updateProduct(@RequestParam long id, @ModelAttribute("product") Product updatedProduct) {
+    @PostMapping("/update/{id}")
+    public String updateProduct(@PathVariable long id, @ModelAttribute Product updatedProduct) {
         productService.update(id, updatedProduct);
-        return "redirect:/products";
+        return "redirect:/products"; // Перенаправление после обновления продукта
     }
 
-    @GetMapping("update/chooseProduct")
-    public String chooseProduct(Model model){
-        model.addAttribute("products", productService.findAll());
-        return "chooseProduct";
-    }
+
+//    @GetMapping("update/chooseProduct")
+//    public String chooseProduct(Model model){
+//        model.addAttribute("products", productService.findAll());
+//        return "chooseProduct";
+//    }
 }

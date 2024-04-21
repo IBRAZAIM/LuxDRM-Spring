@@ -12,7 +12,15 @@ body {
     width: 700px;
 
 }
-
+.search-button{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 25px;
+    color: #0c0c3d;
+    opacity: 0.85;
+    transition: transform 0.3s ease; /* анимация при наведении на кнопку*/
+}
 .container {
     width: 900px;
     margin: 20px auto;
