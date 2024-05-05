@@ -70,6 +70,7 @@ public class ProductService implements AbstractService<Product>{
 
     @Override
     public void deleteById(long id) {
+        valueRepository.deleteAllByProductId(id);
         productRepository.deleteById(id);
     }
 }

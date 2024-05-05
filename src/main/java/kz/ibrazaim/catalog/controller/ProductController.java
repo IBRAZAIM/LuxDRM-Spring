@@ -54,19 +54,28 @@ public class ProductController {
     public String showUpdateProductForm(@PathVariable("id") long id, Model model) {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
-        return "update-product"; // Название Thymeleaf шаблона для формы обновления продукта
+        return "update-product";
     }
 
     @PostMapping("/update/{id}")
     public String updateProduct(@PathVariable long id, @ModelAttribute Product updatedProduct) {
         productService.update(id, updatedProduct);
-        return "redirect:/products"; // Перенаправление после обновления продукта
+        return "redirect:/products";
     }
 
+    @GetMapping("/delete/{id}")
+    public String showDeleteConfirmation(@PathVariable long id, Model model) {
+        Product product = productService.findById(id);
+        if (product == null) {
+            return "redirect:/products";
+        }
+        model.addAttribute("product", product);
+        return "product-delete";
+    }
 
-//    @GetMapping("update/chooseProduct")
-//    public String chooseProduct(Model model){
-//        model.addAttribute("products", productService.findAll());
-//        return "chooseProduct";
-//    }
+    @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable long id) {
+        productService.deleteById(id);
+        return "redirect:/products";
+    }
 }

@@ -1,0 +1,45 @@
+body{
+    font-family: "Montserrat", sans-serif;
+}
+.form{
+    width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+h1{
+    text-align: center;
+}
+.delete-button{
+    background-color: #0c0c3d;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    width: 600px;
+    margin-left: 15%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.delete-button:hover {
+    background-color: #0a0a2d;
+}
+.cancel{
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    cursor: pointer;
+    text-align: center;
+    width: 600px;
+    margin-left: 15%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    opacity: 0.8;
+    text-decoration: none;
+}
+.cancel:hover{
+    background-color: #ff0000;
+    color: #ccc;
+}
