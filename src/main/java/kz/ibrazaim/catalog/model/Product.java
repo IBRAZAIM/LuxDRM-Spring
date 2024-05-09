@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,4 +22,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name="category_id")
     Category category;
+    @OneToMany(mappedBy = "product")
+    List<Value> valueList;
+
 }

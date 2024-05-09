@@ -3,7 +3,9 @@ package kz.ibrazaim.catalog.controller;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.service.CategoryService;
 import kz.ibrazaim.catalog.service.ProductService;
+import kz.ibrazaim.catalog.service.ValueService;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final ValueService valueService;
     @GetMapping
     public String findAll(Model model){
         model.addAttribute("products", productService.findAll());
@@ -58,17 +61,16 @@ public class ProductController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable long id, @ModelAttribute Product updatedProduct) {
+    public String updateProduct(Model model, @PathVariable long id, @ModelAttribute Product updatedProduct, @RequestParam List<String> valueList) {
+        model.addAttribute("values", valueList);
         productService.update(id, updatedProduct);
+        valueService.update(valueList, updatedProduct);
         return "redirect:/products";
     }
 
     @GetMapping("/delete/{id}")
     public String showDeleteConfirmation(@PathVariable long id, Model model) {
         Product product = productService.findById(id);
-        if (product == null) {
-            return "redirect:/products";
-        }
         model.addAttribute("product", product);
         return "product-delete";
     }

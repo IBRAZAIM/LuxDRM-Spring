@@ -10,11 +10,7 @@ import kz.ibrazaim.catalog.repository.ProductRepository;
 import kz.ibrazaim.catalog.repository.ValueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +23,11 @@ public class ProductService implements AbstractService<Product>{
     @Override
     public void create(Product product){
         productRepository.save(product);
+    }
+
+    @Override
+    public void update(long id, Category updatedEntity) {
+
     }
 
 
@@ -59,12 +60,10 @@ public class ProductService implements AbstractService<Product>{
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    @Override
     public void update(long id, Product updatedProduct) {
         Product existingProduct = findById(id);
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setPrice(updatedProduct.getPrice());
-
         productRepository.save(existingProduct);
     }
 

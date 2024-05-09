@@ -1,5 +1,7 @@
 package kz.ibrazaim.catalog.service;
 
+import kz.ibrazaim.catalog.model.Category;
+
 import java.util.List;
 
 public interface AbstractService<T> {
@@ -9,7 +11,8 @@ public interface AbstractService<T> {
 
     void create(T entity);
 
-    void update(long id, T updatedEntity);
+
+    void update(long id, Category updatedEntity);
 
     void deleteById(long id);
 }

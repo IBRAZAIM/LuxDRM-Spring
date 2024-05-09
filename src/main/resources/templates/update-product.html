@@ -15,6 +15,10 @@
     <label>Price:</label>
     <input type="text" th:field="*{price}">
     <br>
+    <label>Options:</label>
+    <tr th:each="value : ${product.getValueList()}" class="options">
+        <input type="text" th:value="${value.name}">
+    </tr>
     <input type="submit" value="Update">
 </form>
 </body>
