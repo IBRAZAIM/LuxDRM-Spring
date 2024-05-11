@@ -16,9 +16,18 @@
     <input type="text" th:field="*{price}">
     <br>
     <label>Options:</label>
-    <tr th:each="value : ${product.getValueList()}" class="options">
-        <input type="text" th:value="${value.name}">
-    </tr>
+    <table>
+        <tr th:each="option : ${options}" class="options">
+            <input type="hidden" name="optionIds" th:value="${option.id}">
+            <td><label th:text="${option.name}"></label></td>
+            <td>
+                <input type="text" name="values" th:if="${option.value != null}" th:value="${option.value.getName()}">
+                <input type="text" name="values" th:if="${option.value == null}" value="">
+            </td>
+
+
+        </tr>
+    </table>
     <input type="submit" value="Update">
 </form>
 </body>

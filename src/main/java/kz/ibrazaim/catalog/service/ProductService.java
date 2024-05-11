@@ -10,7 +10,11 @@ import kz.ibrazaim.catalog.repository.ProductRepository;
 import kz.ibrazaim.catalog.repository.ValueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,16 +64,52 @@ public class ProductService implements AbstractService<Product>{
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    public void update(long id, Product updatedProduct) {
-        Product existingProduct = findById(id);
-        existingProduct.setName(updatedProduct.getName());
-        existingProduct.setPrice(updatedProduct.getPrice());
-        productRepository.save(existingProduct);
-    }
 
     @Override
     public void deleteById(long id) {
         valueRepository.deleteAllByProductId(id);
         productRepository.deleteById(id);
+    }
+
+    public void update(long id, String name, int price, List<Long> optionIds, List<String> values) {
+        Product existingProduct = findById(id);
+        existingProduct.setName(name);
+        existingProduct.setPrice(price);
+        List<Value> valueList = existingProduct.getValueList();
+        List<Option> options = optionRepository.findAllById(optionIds);
+
+        for (Option option : options) {
+            valueRepository.findByProductAndOption(pr);
+        }
+
+        if (values.size() > valueList.size()) {
+            throw new RuntimeException("Размер списка новых значений больше размера текущего списка значений");
+        }
+        for (int i = 0; i < options.size(); i++) {
+            if (i < values.size()) {
+                String valueName = values.get(i);
+                Value existingValue = valueList.get(i);
+                existingValue.setName(valueName);
+            } else {
+                break;
+            }
+        }
+        productRepository.save(existingProduct);
+    }
+
+    public Map<Option, Optional<Value>> getOptions(Product product){
+        Map<Option, Optional<Value>> result = new LinkedHashMap<>();
+        long categoryId = product.getCategory().getId();
+        List<Option> options = optionRepository.findAllByCategoryId(categoryId);
+        for (Option option : options) {
+            Optional<Value> optionalValue = valueRepository.findByProductAndOption(product, option);
+            result.put(option, optionalValue);
+        }
+        return result;
+    }
+
+
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElse(null);
     }
 }

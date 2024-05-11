@@ -6,31 +6,31 @@
     <title>Каталог</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Каталог</h1>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Название</th>
-                <th>Цена</th>
-                <th>Категория</th>
-                <th></th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="product : ${products}">
-                <td th:text="${product.getId()}"></td>
-                <td th:text="${product.getName()}"></td>
-                <td th:text="${product.getPrice()}"></td>
-                <td th:text="${product.category.getName()}"></td>
-                <td><a th:href="@{'/products/update/' + ${product.getId()}}"><i class="fa-regular fa-pen-to-square"></i></a></td>
-                <td><a th:href="@{'/products/delete/' + ${product.getId()}}"><i class="fa-regular fa-trash-can"></i></a></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+<div class="container">
+    <h1>Каталог</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Категория</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.getId()}"></td>
+            <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}"></a></td>
+            <td th:text="${product.getPrice()}"></td>
+            <td th:text="${product.category.getName()}"></td>
+            <td><a th:href="@{'/products/update/' + ${product.getId()}}"><i class="fa-regular fa-pen-to-square"></i></a></td>
+            <td><a th:href="@{'/products/delete/' + ${product.getId()}}"><i class="fa-regular fa-trash-can"></i></a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 </html>

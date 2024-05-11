@@ -19,4 +19,7 @@ public class Option {
     @ManyToOne
     @JoinColumn(name="category_id")
     Category category;
+
+    @OneToOne(mappedBy = "option")
+    Value value;
 }

@@ -3,9 +3,7 @@ package kz.ibrazaim.catalog.controller;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.service.CategoryService;
 import kz.ibrazaim.catalog.service.ProductService;
-import kz.ibrazaim.catalog.service.ValueService;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,6 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
-    private final ValueService valueService;
     @GetMapping
     public String findAll(Model model){
         model.addAttribute("products", productService.findAll());
@@ -56,15 +53,15 @@ public class ProductController {
     @GetMapping("/update/{id}")
     public String showUpdateProductForm(@PathVariable("id") long id, Model model) {
         Product product = productService.findById(id);
+        model.addAttribute("op")
+        model.addAttribute("options", product.getCategory().getOptionList());
         model.addAttribute("product", product);
         return "update-product";
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(Model model, @PathVariable long id, @ModelAttribute Product updatedProduct, @RequestParam List<String> valueList) {
-        model.addAttribute("values", valueList);
-        productService.update(id, updatedProduct);
-        valueService.update(valueList, updatedProduct);
+    public String updateProduct(@PathVariable long id, String name, int price, @RequestParam List<Long> optionIds, @RequestParam List<String> values) {
+        productService.update(id, name, price, optionIds, values);
         return "redirect:/products";
     }
 
@@ -80,4 +77,11 @@ public class ProductController {
         productService.deleteById(id);
         return "redirect:/products";
     }
+    @GetMapping("/{id}")
+    public String productCard(@PathVariable Long id, Model model) {
+        Product product = productService.getProductById(id);
+        model.addAttribute("product", product);
+        return "product-page";
+    }
+
 }
