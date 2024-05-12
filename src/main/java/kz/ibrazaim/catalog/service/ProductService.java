@@ -1,5 +1,6 @@
 package kz.ibrazaim.catalog.service;
 
+import kz.ibrazaim.catalog.exception.EntityNotFoundException;
 import kz.ibrazaim.catalog.model.Category;
 import kz.ibrazaim.catalog.model.Option;
 import kz.ibrazaim.catalog.model.Product;
@@ -61,7 +62,8 @@ public class ProductService implements AbstractService<Product>{
 
     @Override
     public Product findById(long id) {
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        return productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id +"не найден"));
     }
 
 
