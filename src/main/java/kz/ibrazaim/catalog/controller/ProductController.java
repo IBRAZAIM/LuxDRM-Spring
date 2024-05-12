@@ -53,9 +53,8 @@ public class ProductController {
     @GetMapping("/update/{id}")
     public String showUpdateProductForm(@PathVariable("id") long id, Model model) {
         Product product = productService.findById(id);
-        model.addAttribute("op")
-        model.addAttribute("options", product.getCategory().getOptionList());
         model.addAttribute("product", product);
+        model.addAttribute("options", productService.getOptions(product));
         return "update-product";
     }
 
@@ -81,6 +80,7 @@ public class ProductController {
     public String productCard(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
+        model.addAttribute("options", productService.getOptions(product));
         return "product-page";
     }
 

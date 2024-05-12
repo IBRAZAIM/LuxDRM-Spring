@@ -75,26 +75,22 @@ public class ProductService implements AbstractService<Product>{
         Product existingProduct = findById(id);
         existingProduct.setName(name);
         existingProduct.setPrice(price);
-        List<Value> valueList = existingProduct.getValueList();
-        List<Option> options = optionRepository.findAllById(optionIds);
 
-        for (Option option : options) {
-            valueRepository.findByProductAndOption(pr);
-        }
-
-        if (values.size() > valueList.size()) {
-            throw new RuntimeException("Размер списка новых значений больше размера текущего списка значений");
-        }
-        for (int i = 0; i < options.size(); i++) {
-            if (i < values.size()) {
-                String valueName = values.get(i);
-                Value existingValue = valueList.get(i);
-                existingValue.setName(valueName);
-            } else {
-                break;
-            }
-        }
         productRepository.save(existingProduct);
+
+        for (int i = 0; i < optionIds.size(); i++) {
+            long optionId = optionIds.get(i);
+            Option option = optionRepository.findById(optionId).orElseThrow();
+            Value value = valueRepository.findByProductAndOption(existingProduct, option)
+                    .orElseGet(()->{
+                        Value newValue = new Value();
+                        newValue.setProduct(existingProduct);
+                        newValue.setOption(option);
+                        return newValue;
+                    });
+            value.setName(values.get(i));
+            valueRepository.save(value);
+        }
     }
 
     public Map<Option, Optional<Value>> getOptions(Product product){

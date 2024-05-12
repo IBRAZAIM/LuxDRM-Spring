@@ -17,13 +17,10 @@
     <br>
     <label>Options:</label>
     <table>
-        <tr th:each="option : ${options}" class="options">
-            <input type="hidden" name="optionIds" th:value="${option.id}">
-            <td><label th:text="${option.name}"></label></td>
-            <td>
-                <input type="text" name="values" th:if="${option.value != null}" th:value="${option.value.getName()}">
-                <input type="text" name="values" th:if="${option.value == null}" value="">
-            </td>
+        <tr th:each="entry : ${options}" class="options">
+            <input type="hidden" name="optionIds" th:value="${entry.getKey().id}">
+            <td><label th:text="${entry.getKey().getName()}"></label></td>
+            <td><input th:value="${entry.getValue().isPresent() ? entry.getValue().get().name : ''}" name="values"></td>
 
 
         </tr>
