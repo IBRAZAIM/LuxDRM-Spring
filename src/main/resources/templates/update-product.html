@@ -6,25 +6,27 @@
     <title>Update Product</title>
 </head>
 <body>
-<h2>Update Product</h2>
-<form th:action="@{|${product.getId()}|}" th:object="${product}" method="post" class="form">
-    <input type="hidden" th:field="*{id}">
-    <label>Name:</label>
-    <input type="text" th:field="*{name}">
-    <br>
-    <label>Price:</label>
-    <input type="text" th:field="*{price}">
-    <br>
-    <label>Options:</label>
-    <table>
-        <tr th:each="entry : ${options}" class="options">
-            <input type="hidden" name="optionIds" th:value="${entry.getKey().id}">
-            <td><label th:text="${entry.getKey().getName()}"></label></td>
-            <td><input type="text" th:value="${entry.getValue().isPresent() ? entry.getValue().get().name : ''}" name="values"></td>
-        </tr>
+    <div class="container">
+        <h2>Update Product</h2>
+        <form th:action="@{|${product.getId()}|}" th:object="${product}" method="post" class="form">
+            <input type="hidden" th:field="*{id}">
+            <label>Name:</label>
+            <input type="text" th:field="*{name}">
+            <br>
+            <label>Price:</label>
+            <input type="text" th:field="*{price}">
+            <br>
+            <label>Options:</label>
+            <table>
+                <tr th:each="entry : ${options}" class="options">
+                    <input type="hidden" name="optionIds" th:value="${entry.getKey().id}">
+                    <td><label th:text="${entry.getKey().getName()}"></label></td>
+                    <td><input type="text" th:value="${entry.getValue().isPresent() ? entry.getValue().get().name : ''}" name="values"></td>
+                </tr>
 
-    </table>
-    <input type="submit" value="Update">
-</form>
+            </table>
+            <input type="submit" value="Update">
+        </form>
+    </div>
 </body>
 </html>

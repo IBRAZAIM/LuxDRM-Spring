@@ -5,11 +5,14 @@
 }
 
 body {
+    font-family: "Montserrat", sans-serif;
     background-color: #f9f8f8;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    width: 700px;
+    color: #0c0c3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
 
 }
 .search-button{
@@ -22,24 +25,22 @@ body {
     transition: transform 0.3s ease; /* анимация при наведении на кнопку*/
 }
 .container {
-    width: 900px;
+    max-width: 800px;
     margin: 20px auto;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 h2 {
     color: #0c0c3d;
     text-align: center;
 }
-.form{
-    text-align: center;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+
 label {
-    color: tan;
+    color: #0c0c3d;
 }
 
 input[type="text"],

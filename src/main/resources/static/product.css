@@ -1,19 +1,101 @@
+/* Сброс стилей и базовые настройки */
 * {
     box-sizing: border-box;
-    font-family: "Montserrat", sans-serif;
-}
-
-body {
-    background-color: #f9f8f8;
-    color: #333;
     margin: 0;
     padding: 0;
 }
-.options{
-    justify-content: right;
-}
-.product-name{
 
+body {
+    font-family: "Montserrat", sans-serif;
+    background-color: #f9f8f8;
+    color: #0c0c3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
 }
+
+.container {
+    background: #fff;
+    border-radius: 10px;
+    max-width: 800px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    transition: transform 0.3s ease-in-out;
+}
+
+header, footer {
+    margin: 20px 0;
+    padding: 10px;
+    transition: background-color 0.3s ease-in-out;
+}
+footer{
+    border-top: 1px solid #0c0c3d;
+}
+header {
+    border-bottom: 2px solid #eee;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.product-name {
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.price {
+    font-size: 1.5em;
+    color: #27ae60;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.options-list {
+    list-style: none;
+    padding: 0;
+}
+
+.option-item {
+    background: #f0f0f0;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    transition: background 0.3s ease-in-out;
+}
+
+.option-item:hover {
+    background: #e0e0e0;
+}
+
+.social-media {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-icon {
+    color: #0c0c3d;
+    font-size: 1.5em;
+    transition: color 0.3s ease-in-out;
+}
+
+.social-icon:hover {
+    color: #27ae60;
+}
+
+
+
+
+
 
 

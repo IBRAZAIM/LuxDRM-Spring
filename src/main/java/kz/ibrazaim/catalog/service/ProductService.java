@@ -1,6 +1,7 @@
 package kz.ibrazaim.catalog.service;
 
 import kz.ibrazaim.catalog.exception.EntityNotFoundException;
+import kz.ibrazaim.catalog.exception.IncorrectInputException;
 import kz.ibrazaim.catalog.model.Category;
 import kz.ibrazaim.catalog.model.Option;
 import kz.ibrazaim.catalog.model.Product;

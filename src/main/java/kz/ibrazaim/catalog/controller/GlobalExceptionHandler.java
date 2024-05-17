@@ -17,4 +17,6 @@ public class GlobalExceptionHandler {
         model.addAttribute("message", ex.getMessage());
         return "exception";
     }
+
+
 }
