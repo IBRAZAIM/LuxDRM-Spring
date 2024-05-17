@@ -12,10 +12,7 @@ import kz.ibrazaim.catalog.repository.ValueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -95,14 +92,18 @@ public class ProductService implements AbstractService<Product>{
         }
     }
 
-    public Map<Option, Optional<Value>> getOptions(Product product){
+    public Map<Option, Optional<Value>> getOptions(Product product) {
         Map<Option, Optional<Value>> result = new LinkedHashMap<>();
         long categoryId = product.getCategory().getId();
         List<Option> options = optionRepository.findAllByCategoryId(categoryId);
+
+        options.sort(Comparator.comparing(Option::getId));
+
         for (Option option : options) {
             Optional<Value> optionalValue = valueRepository.findByProductAndOption(product, option);
             result.put(option, optionalValue);
         }
+
         return result;
     }
 

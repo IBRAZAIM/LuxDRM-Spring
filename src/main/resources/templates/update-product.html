@@ -20,10 +20,9 @@
         <tr th:each="entry : ${options}" class="options">
             <input type="hidden" name="optionIds" th:value="${entry.getKey().id}">
             <td><label th:text="${entry.getKey().getName()}"></label></td>
-            <td><input th:value="${entry.getValue().isPresent() ? entry.getValue().get().name : ''}" name="values"></td>
-
-
+            <td><input type="text" th:value="${entry.getValue().isPresent() ? entry.getValue().get().name : ''}" name="values"></td>
         </tr>
+
     </table>
     <input type="submit" value="Update">
 </form>
