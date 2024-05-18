@@ -12,17 +12,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    String login;
-    String password;
-    String name;
-    String surname;
-    @JoinColumn(name = "registration_date")
-    LocalDateTime registrationDate;
-
-
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
+    String status;
+    @JoinColumn(name = "delivery_address")
+    String address;
+    @JoinColumn(name = "date_of_order")
+    LocalDateTime orderDate;
 }

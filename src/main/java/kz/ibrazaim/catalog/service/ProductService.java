@@ -1,7 +1,6 @@
 package kz.ibrazaim.catalog.service;
 
 import kz.ibrazaim.catalog.exception.EntityNotFoundException;
-import kz.ibrazaim.catalog.exception.IncorrectInputException;
 import kz.ibrazaim.catalog.model.Category;
 import kz.ibrazaim.catalog.model.Option;
 import kz.ibrazaim.catalog.model.Product;
@@ -11,6 +10,7 @@ import kz.ibrazaim.catalog.repository.OptionRepository;
 import kz.ibrazaim.catalog.repository.ProductRepository;
 import kz.ibrazaim.catalog.repository.ValueRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -102,12 +102,14 @@ public class ProductService implements AbstractService<Product>{
 
         for (Option option : options) {
             Optional<Value> optionalValue = valueRepository.findByProductAndOption(product, option);
+            if (optionalValue.isPresent() && result.containsValue(optionalValue)) {
+                throw new HibernateException("Найдено более одной строки с данным идентификатором.");
+            }
             result.put(option, optionalValue);
         }
 
         return result;
     }
-
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(null);
