@@ -19,10 +19,10 @@ public class Value {
     String name;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     Product product;
 
-    @OneToOne
-    @JoinColumn(name = "options_id")
+    @ManyToOne
+    @JoinColumn(name = "options_id", nullable = false)
     Option option;
 }

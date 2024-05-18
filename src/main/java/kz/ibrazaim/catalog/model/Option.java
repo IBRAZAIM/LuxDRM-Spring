@@ -20,6 +20,5 @@ public class Option {
     @JoinColumn(name="category_id")
     Category category;
 
-    @OneToOne(mappedBy = "option")
-    Value value;
+
 }
