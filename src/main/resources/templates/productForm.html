@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" th:href="@{/updateForm.css}">
+  <link rel="stylesheet" th:href="@{/createForm.css}">
   <title>Создание товара</title>
 </head>
 <body>
@@ -23,7 +23,7 @@
       <input id="price" name="price">
     </label>
     <br>
-    <div th:each="option : ${category.getOptionList()}" >
+    <div th:each="option : ${category.getOptionList()}" class="option-item">
       <input type="hidden" name="optionsIds" th:value="${option.id}">
       <p th:text="${option.name}"></p>
       <input name="values">

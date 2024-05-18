@@ -2,12 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/categoryList.css}">
+    <link rel="stylesheet" th:href="@{/productList.css}">
     <title>Каталог</title>
 </head>
 <body>
 <div class="container">
     <h1>Каталог</h1>
+    <form method="get" action="#" th:action="@{/products/filter}">
+        <label for="minPrice">Минимальная цена:</label>
+        <input type="number" id="minPrice" name="minPrice" step="0.01">
+        <label for="maxPrice">Максимальная цена:</label>
+        <input type="number" id="maxPrice" name="maxPrice" step="0.01">
+        <button type="submit">Фильтр</button>
+    </form>
     <table>
         <thead>
         <tr>
@@ -22,15 +29,17 @@
         <tbody>
         <tr th:each="product : ${products}">
             <td th:text="${product.getId()}"></td>
-            <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}"></a></td>
+            <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}" class="product-name"></a></td>
             <td th:text="${product.getPrice()}"></td>
             <td th:text="${product.category.getName()}"></td>
-            <td><a th:href="@{'/products/update/' + ${product.getId()}}"><i class="fa-regular fa-pen-to-square"></i></a></td>
-            <td><a th:href="@{'/products/delete/' + ${product.getId()}}"><i class="fa-regular fa-trash-can"></i></a></td>
+            <td><a th:href="@{'/products/update/' + ${product.getId()}}" class="icon-edit"><i class="fa-regular fa-pen-to-square"></i></a></td>
+            <td><a th:href="@{'/products/delete/' + ${product.getId()}}" class="icon-delete"><i class="fa-regular fa-trash-can"></i></a></td>
         </tr>
         </tbody>
     </table>
+    <a th:href="@{'/products/create/chooseCategory'}"><button type="submit" class="add-product-btn">Добавить товар</button></a>
 </div>
 </body>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 </html>
+

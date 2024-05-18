@@ -7,25 +7,24 @@
 </head>
 <body>
     <div class="container">
-        <h2>Update Product</h2>
+        <h2>Обновление товара</h2>
         <form th:action="@{|${product.getId()}|}" th:object="${product}" method="post" class="form">
             <input type="hidden" th:field="*{id}">
-            <label>Name:</label>
+            <label>Название:</label>
             <input type="text" th:field="*{name}">
             <br>
-            <label>Price:</label>
+            <label>Цена:</label>
             <input type="text" th:field="*{price}">
             <br>
-            <label>Options:</label>
+            <label>Характеристики:</label>
             <table>
                 <tr th:each="entry : ${options}" class="options">
                     <input type="hidden" name="optionIds" th:value="${entry.getKey().id}">
                     <td><label th:text="${entry.getKey().getName()}"></label></td>
                     <td><input type="text" th:value="${entry.getValue().isPresent() ? entry.getValue().get().name : ''}" name="values"></td>
                 </tr>
-
             </table>
-            <input type="submit" value="Update">
+            <input type="submit" value="Обновить">
         </form>
     </div>
 </body>

@@ -13,17 +13,18 @@ body {
     align-items: center;
     height: 100vh;
     padding: 20px;
-
 }
-.search-button{
+
+.search-button {
     background-color: transparent;
     border: none;
     cursor: pointer;
     font-size: 25px;
     color: #0c0c3d;
     opacity: 0.85;
-    transition: transform 0.3s ease; /* анимация при наведении на кнопку*/
+    transition: transform 0.3s ease; /* анимация при наведении на кнопку */
 }
+
 .container {
     max-width: 800px;
     margin: 20px auto;
@@ -43,8 +44,7 @@ label {
     color: #0c0c3d;
 }
 
-input[type="text"],
-input[type="submit"] {
+input[type="text"] {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -53,11 +53,32 @@ input[type="submit"] {
 }
 
 input[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
     background-color: #0c0c3d;
-    color: #fff;
+    color: tan;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
+    margin-top: 20px;
 }
 
 input[type="submit"]:hover {
-    background-color: #0a0a2d;
+    background-color: #333;
 }
+
+table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+td {
+    padding: 8px;
+}
+
+.options {
+    margin-bottom: 10px;
+}
+

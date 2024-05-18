@@ -1,0 +1,103 @@
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    background-color: #f9f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #0c0c3d;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+label {
+    margin-right: 10px;
+}
+
+input[type="number"] {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100px;
+}
+.product-name{
+    text-decoration: none;
+    color: #333;
+}
+
+button {
+    padding: 5px 10px;
+    background-color: #0c0c3d;
+    color: tan;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+th {
+    background-color: #0c0c3d;
+    color: tan;
+}
+
+tr:hover {
+    background-color: #e0e0e0;
+}
+.icon-edit {
+    text-decoration: none;
+    color: blue; /* Цвет для иконки изменения */
+}
+
+.icon-delete {
+    text-decoration: none;
+    color: red; /* Цвет для иконки удаления */
+}
+
+.add-product-btn {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Зеленый цвет */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Плавное изменение цвета при наведении */
+}
+
+.add-product-btn:hover {
+    background-color: #45a049; /* Темнозеленый цвет при наведении */
+}

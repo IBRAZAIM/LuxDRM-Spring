@@ -84,4 +84,14 @@ public class ProductController {
         return "product-page";
     }
 
+
+    @GetMapping("/filter")
+    public String filterProducts(@RequestParam(value = "minPrice", required = false) Double minPrice,
+                                 @RequestParam(value = "maxPrice", required = false) Double maxPrice,
+                                 Model model) {
+        List<Product> products = productService.findByPriceRange(minPrice, maxPrice);
+        model.addAttribute("products", products);
+        return "product-list";
+    }
+
 }
