@@ -101,3 +101,10 @@ tr:hover {
 .add-product-btn:hover {
     background-color: #45a049; /* Темнозеленый цвет при наведении */
 }
+
+.category{
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100px;
+}

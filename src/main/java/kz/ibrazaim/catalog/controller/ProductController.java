@@ -1,5 +1,6 @@
 package kz.ibrazaim.catalog.controller;
 
+import kz.ibrazaim.catalog.model.Category;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.service.CategoryService;
 import kz.ibrazaim.catalog.service.ProductService;
@@ -16,26 +17,38 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+
     @GetMapping
-    public String findAll(Model model){
-        model.addAttribute("products", productService.findAll());
-        return "product-list";
+    public String findAll(
+            @RequestParam(defaultValue = "0") Integer minPrice,
+            @RequestParam(defaultValue = "" + Integer.MAX_VALUE) Integer maxPrice,
+            @RequestParam(defaultValue = "",required = false) Long categoryId,
+            Model model) {
+        if (categoryId == null && minPrice == null && maxPrice == null) {
+             productService.findAll();
+        }
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("products",  productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice));
+        model.addAttribute("selectedCategoryId", categoryId);
+
+        return "productList";
     }
+
     @GetMapping("/create")
     public String showProductForm(Model model, @RequestParam long categoryId) {
         model.addAttribute("product", new Product());
         model.addAttribute("category", categoryService.findById(categoryId));
         return "productForm";
     }
+
     @PostMapping("/create")
     public String showProductForm(
             @ModelAttribute("product") Product product,
             @RequestParam(required = false) List<String> values,
             @RequestParam(required = false) List<Long> optionsIds,
             @RequestParam(defaultValue = "-1") Long categoryId,
-            Model model)
-    {
-        if (categoryId == -1){
+            Model model) {
+        if (categoryId == -1) {
             return "redirect:/products/create/chooseCategory";
         }
         productService.create(product);
@@ -44,8 +57,9 @@ public class ProductController {
 
         return "redirect:/products";
     }
+
     @GetMapping("create/chooseCategory")
-    public String chooseCategory(Model model){
+    public String chooseCategory(Model model) {
         model.addAttribute("categories", categoryService.findAll());
         return "chooseCategory";
     }
@@ -76,6 +90,7 @@ public class ProductController {
         productService.deleteById(id);
         return "redirect:/products";
     }
+
     @GetMapping("/{id}")
     public String productCard(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id);
@@ -83,15 +98,4 @@ public class ProductController {
         model.addAttribute("options", productService.getOptions(product));
         return "product-page";
     }
-
-
-    @GetMapping("/filter")
-    public String filterProducts(@RequestParam(value = "minPrice", required = false) Double minPrice,
-                                 @RequestParam(value = "maxPrice", required = false) Double maxPrice,
-                                 Model model) {
-        List<Product> products = productService.findByPriceRange(minPrice, maxPrice);
-        model.addAttribute("products", products);
-        return "product-list";
-    }
-
 }

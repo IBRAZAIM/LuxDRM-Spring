@@ -17,30 +17,25 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService implements AbstractService<Product>{
+public class ProductService implements AbstractService<Product> {
     private final ProductRepository productRepository;
     private final ValueRepository valueRepository;
     private final OptionRepository optionRepository;
     private final CategoryRepository categoryRepository;
 
     @Override
-    public void create(Product product){
+    public void create(Product product) {
         productRepository.save(product);
     }
 
-    @Override
-    public void update(long id, Category updatedEntity) {
-
-    }
-
-
-    public void create(Product product,List<String> values, List<Long> optionsIds, Long categoryId){
+    public void create(Product product, List<String> values, List<Long> optionsIds, Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         product.setCategory(category);
         productRepository.save(product);
         createValues(product, values, optionsIds);
 
     }
+
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
         List<Option> options = optionRepository.findAllById(optionsIds);
 
@@ -54,16 +49,14 @@ public class ProductService implements AbstractService<Product>{
     }
 
     @Override
-    public List<Product> findAll(){
+    public List<Product> findAll() {
         return productRepository.findAll();
     }
 
     @Override
     public Product findById(long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id +"не найден"));
+        return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id + "не найден"));
     }
-
 
     @Override
     public void deleteById(long id) {
@@ -81,13 +74,12 @@ public class ProductService implements AbstractService<Product>{
         for (int i = 0; i < optionIds.size(); i++) {
             long optionId = optionIds.get(i);
             Option option = optionRepository.findById(optionId).orElseThrow();
-            Value value = valueRepository.findByProductAndOption(existingProduct, option)
-                    .orElseGet(()->{
-                        Value newValue = new Value();
-                        newValue.setProduct(existingProduct);
-                        newValue.setOption(option);
-                        return newValue;
-                    });
+            Value value = valueRepository.findByProductAndOption(existingProduct, option).orElseGet(() -> {
+                Value newValue = new Value();
+                newValue.setProduct(existingProduct);
+                newValue.setOption(option);
+                return newValue;
+            });
             value.setName(values.get(i));
             valueRepository.save(value);
         }
@@ -115,15 +107,7 @@ public class ProductService implements AbstractService<Product>{
         return productRepository.findById(id).orElse(null);
     }
 
-    public List<Product> findByPriceRange(Double minPrice, Double maxPrice) {
-        if (minPrice == null && maxPrice == null) {
-            return productRepository.findAll();
-        } else if (minPrice == null) {
-            return productRepository.findByPriceLessThanEqual(maxPrice);
-        } else if (maxPrice == null) {
-            return productRepository.findByPriceGreaterThanEqual(minPrice);
-        } else {
-            return productRepository.findByPriceBetween(minPrice, maxPrice);
-        }
+    public List<Product> findByPriceRangeAndCategory(Long categoryId, Integer minPrice, Integer maxPrice) {
+        return productRepository.findByCategoryIdAndPriceBetween(categoryId, minPrice, maxPrice);
     }
 }
