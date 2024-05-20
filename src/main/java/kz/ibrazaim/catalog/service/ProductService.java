@@ -108,6 +108,11 @@ public class ProductService implements AbstractService<Product> {
     }
 
     public List<Product> findByPriceRangeAndCategory(Long categoryId, Integer minPrice, Integer maxPrice) {
-        return productRepository.findByCategoryIdAndPriceBetween(categoryId, minPrice, maxPrice);
+        if (categoryId == null) {
+            return productRepository.findByPriceBetween(minPrice, maxPrice);
+        } else {
+            return productRepository.findByCategoryIdAndPriceBetween(categoryId, minPrice, maxPrice);
+        }
     }
+
 }

@@ -22,17 +22,19 @@ public class ProductController {
     public String findAll(
             @RequestParam(defaultValue = "0") Integer minPrice,
             @RequestParam(defaultValue = "" + Integer.MAX_VALUE) Integer maxPrice,
-            @RequestParam(defaultValue = "",required = false) Long categoryId,
+            @RequestParam(required = false) Long categoryId,
             Model model) {
-        if (categoryId == null && minPrice == null && maxPrice == null) {
-             productService.findAll();
+        if (minPrice == 0 && maxPrice == Integer.MAX_VALUE && categoryId == null) {
+            model.addAttribute("products", productService.findAll());
+        } else {
+            model.addAttribute("products", productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice));
         }
         model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("products",  productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice));
         model.addAttribute("selectedCategoryId", categoryId);
 
-        return "productList";
+        return "product-list";
     }
+
 
     @GetMapping("/create")
     public String showProductForm(Model model, @RequestParam long categoryId) {
