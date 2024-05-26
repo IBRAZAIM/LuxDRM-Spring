@@ -3,6 +3,7 @@ package kz.ibrazaim.catalog.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -20,8 +21,10 @@ public class User {
     String login;
     String password;
     String name;
+    Role role;
     String surname;
     @JoinColumn(name = "registration_date")
+    @CreationTimestamp
     LocalDateTime registrationDate;
 
 
