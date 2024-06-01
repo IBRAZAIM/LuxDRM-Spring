@@ -26,6 +26,4 @@ public class User {
     @JoinColumn(name = "registration_date")
     @CreationTimestamp
     LocalDateTime registrationDate;
-
-
 }

@@ -22,7 +22,7 @@ public class SecurityConfig{
             auth.requestMatchers("/products/delete/**").hasRole("admin");
             auth.anyRequest().permitAll();
         });
-        http.formLogin(Customizer.withDefaults());
+        http.formLogin(formLogin -> formLogin.loginPage("/login"));
         return http.build();
     }
     @Bean

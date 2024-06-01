@@ -14,45 +14,15 @@ CREATE TABLE products
 (
     id    SERIAL PRIMARY KEY ,
     name  VARCHAR(255),
-    price   INT
+    price   INT,
+    category_id INT REFERENCES categories(id)
 );
-INSERT INTO products(name, price)
-VALUES ('Хлеб', 150);
-INSERT INTO products(name, price)
-VALUES ('Халва', 330);
-
-select * FROM products;
 
 CREATE TABLE categories
 (
     id   SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL
 );
-ALTER TABLE products ADD COLUMN category_id INT REFERENCES categories(id);
-
-ALTER TABLE products DROP COLUMN category_id;
-INSERT INTO categories (name) VALUES ('Фрукты');
-INSERT INTO categories (name) VALUES ('Овощи');
-INSERT INTO categories (name) VALUES ('Молочные продукты');
-INSERT INTO categories (name) VALUES ('Сладости');
-
-UPDATE products SET category_id = 3 WHERE name = 'Молоко';
-
-
-
-
--- Добавление опций для категорий
-INSERT INTO options (name, category_id) VALUES ('Производитель', 1);
-INSERT INTO options (name, category_id) VALUES ('Срок годности', 1);
-INSERT INTO options (name, category_id) VALUES ('Производитель', 2);
-INSERT INTO options (name, category_id) VALUES ('Срок годности', 2);
-
-
--- Добавление значений для характеристик
-INSERT INTO values(name, product_id, options_id) VALUES ('', 1, 1);
-INSERT INTO values (name, product_id, options_id) VALUES ('Караганда', 1, 2);
-INSERT INTO values (name, product_id, options_id) VALUES ('Алмата', 3, 2);
-
 
 CREATE TABLE orders
 (
@@ -66,9 +36,9 @@ CREATE TABLE orders
 CREATE TABLE users
 (
     id                BIGSERIAL PRIMARY KEY,
-    role              INT,
+    role              VARCHAR(255),
     login             VARCHAR(255) NOT NULL UNIQUE ,
-    password          VARCHAR(255) NOT NULL,
+    password          VARCHAR(255) NOT NULL UNIQUE,
     name              VARCHAR(255),
     surname           VARCHAR(255),
     registration_date TIMESTAMP
