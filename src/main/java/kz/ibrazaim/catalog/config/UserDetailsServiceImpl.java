@@ -15,10 +15,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userRepository
-                .findByLogin(userName)
-                .orElseThrow(()-> new EntityNotFoundException("Пользователь с login=" + userName + "не найден!"));
-        return new UserDetailsImpl(user);
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с login=" + login + " не найден!"));
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getLogin())
+                .password(user.getPassword())
+                .roles(user.getRole().name())
+                .build();
     }
+
 }

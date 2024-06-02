@@ -2,31 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/autthorizationForm.css}">
+    <link rel="stylesheet" th:href="@{/registrationForm.css}">
     <title>Register</title>
 </head>
 <body>
-<h2>Register User</h2>
-<form th:action="@{/register}" th:object="${user}" method="post">
-    <div>
-        <label for="login">Login:</label>
-        <input type="text" id="login" th:field="*{login}" />
-    </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" th:field="*{password}" />
-    </div>
-    <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" th:field="*{name}" />
-    </div>
-    <div>
-        <label for="surname">Surname:</label>
-        <input type="text" id="surname" th:field="*{surname}" />
-    </div>
-    <div>
-        <button type="submit">Register</button>
-    </div>
-</form>
+<div class="register-container">
+    <h2>Register User</h2>
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        <div>
+            <label for="login">Login:</label>
+            <input type="text" id="login" th:field="*{login}" />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" th:field="*{password}" />
+        </div>
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}" />
+        </div>
+        <div>
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" th:field="*{surname}" />
+        </div>
+        <div>
+            <button type="submit">Register</button>
+        </div>
+    </form>
+</div>
 </body>
 </html>
