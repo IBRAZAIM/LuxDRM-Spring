@@ -36,7 +36,7 @@ CREATE TABLE orders
 CREATE TABLE users
 (
     id                BIGSERIAL PRIMARY KEY,
-    role              VARCHAR(255),
+    role              INT,
     login             VARCHAR(255) NOT NULL UNIQUE ,
     password          VARCHAR(255) NOT NULL UNIQUE,
     name              VARCHAR(255),

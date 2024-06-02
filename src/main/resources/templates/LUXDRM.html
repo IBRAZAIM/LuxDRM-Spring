@@ -10,16 +10,24 @@
 <header class="header">
     <a href="#" class="logo">LuxDRM</a>
     <nav class="navbar">
-        <a href="main">Главная</a>
+        <a th:href="@{/main}">Главная</a>
         <a href="#">О нас</a>
-        <a href="products">Каталог</a>
+        <a th:href="@{/products}">Каталог</a>
         <a href="#">Поддержка</a>
     </nav>
     <form class="search-container">
         <input type="text" placeholder="Поиск..." class="search-input">
         <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
     </form>
-    <a href="#" class="user-icon"><i class="fas fa-circle fa-user"></i></a>
+    <div class="user-icon-container">
+        <a th:if="${!#authentication?.authenticated}" href="#" class="user-icon">
+            <i class="fas fa-user-circle"></i>
+        </a>
+        <div th:if="${#authentication?.authenticated}">
+            <a th:href="@{/login}" class="authorization-button">Войти</a>
+            <a th:href="@{/register}" class="authorization-button">Регистрация</a>
+        </div>
+    </div>
 </header>
 <main>
     <section class="products">

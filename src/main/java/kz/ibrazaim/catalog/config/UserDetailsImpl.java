@@ -14,17 +14,17 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(()-> "ROLE_" + user.getRole().getServiceName());
+        return List.of(() -> "ROLE_" + user.getRole().getServiceName());
     }
 
     @Override
     public String getPassword() {
-        return  user.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return user.getLogin();
     }
 
     @Override

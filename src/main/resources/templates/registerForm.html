@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/registrationForm.css}">
-    <title>Register</title>
+    <title>LUXDRM-егистрация</title>
 </head>
 <body>
 <div class="register-container">
-    <h2>Register User</h2>
+    <h2>Регистрация</h2>
     <form th:action="@{/register}" th:object="${user}" method="post">
         <div>
-            <label for="login">Login:</label>
+            <label for="login">Логин:</label>
             <input type="text" id="login" th:field="*{login}" />
         </div>
         <div>
-            <label for="password">Password:</label>
+            <label for="password">Пароль:</label>
             <input type="password" id="password" th:field="*{password}" />
         </div>
         <div>
-            <label for="name">Name:</label>
+            <label for="name">Имя:</label>
             <input type="text" id="name" th:field="*{name}" />
         </div>
         <div>
-            <label for="surname">Surname:</label>
+            <label for="surname">Фамилия:</label>
             <input type="text" id="surname" th:field="*{surname}" />
         </div>
         <div>

@@ -72,14 +72,14 @@ body {
     color: #333;
 }
 .login-container input {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 .login-container button {
-    width: 100%;
+    width: 100.5%;
     padding: 10px;
     background-color: #0c0c3d;
     color: #fff;

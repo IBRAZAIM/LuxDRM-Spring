@@ -27,7 +27,7 @@ public class UserService{
     public boolean authenticate(String login, String password) {
         logger.debug("Аутентификация пользователя с помощью логина: {}", login);
         User user = userRepository.findByLogin(login)
-                .orElseThrow();//() -> new UsernameNotFoundException("Пользователь с логином=" + login + " не найден!"));
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с логином=" + login + " не найден!"));
         boolean matches = encoder.matches(password, user.getPassword());
         logger.debug("Совпадения паролей: {}", matches);
         return matches;

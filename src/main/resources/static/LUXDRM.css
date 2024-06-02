@@ -135,3 +135,28 @@
 .news a:hover {
     color: #0056b3;
 }
+.authorization-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #0c0c3d;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.authorization-button:hover {
+    background-color: tan;
+    transform: scale(1.05);
+}
+
+.authorization-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
