@@ -63,3 +63,10 @@ CREATE TABLE order_products
     product_id BIGINT REFERENCES products (id) NOT NULL,
     quantity   INT                             NOT NULL
 );
+
+CREATE TABLE cart (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) NOT NULL,
+    product_id INT REFERENCES products(id) NOT NULL,
+    quantity INT NOT NULL
+);

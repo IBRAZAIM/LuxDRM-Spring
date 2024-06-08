@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +27,7 @@ public class User {
     @JoinColumn(name = "registration_date")
     @CreationTimestamp
     LocalDateTime registrationDate;
+
+    @OneToMany(mappedBy = "user")
+    List<CartItem> cartItem;
 }

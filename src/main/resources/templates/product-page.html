@@ -26,6 +26,9 @@
             </li>
         </ul>
     </main>
+    <form th:action="@{|/cart/${product.getId()}|}" method="post">
+        <button type="submit"> Добавить в корзину</button>
+    </form>
     <footer>
         <h3>Follow us:</h3>
         <div class="social-media">

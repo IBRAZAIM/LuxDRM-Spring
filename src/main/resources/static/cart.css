@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+h1 {
+    text-align: center;
+    color: #0c0c3d;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+table, th, td {
+    border: 1px solid #ddd;
+}
+th, td {
+    padding: 15px;
+    text-align: center;
+}
+th {
+    background-color: #0c0c3d;
+    color: tan;
+}
+.total {
+    font-size: 1.5em;
+    text-align: right;
+}
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.btn {
+    background-color: #0c0c3d;
+    color: tan;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1em;
+}
+.btn:hover {
+    background-color: #0a0a33;
+}
+.icon-edit {
+    text-decoration: none;
+    color: blue;
+}
+
+.icon-delete {
+    text-decoration: none;
+    color: red;
+    margin-left: 15px;
+    padding-left: 15px;
+}

@@ -3,9 +3,11 @@ package kz.ibrazaim.catalog.controller;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.Banner;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelExtensionsKt;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +52,18 @@ public class UserController {
         }
         return "loginForm";
     }
+    @GetMapping("/cart")
+    public String getCartPage(Model model){
+        model.addAttribute("cartItems", userService.findALlCartItems());
+        return "cart";
+    }
+
+    @PostMapping("/cart/{productId}")
+    public String addItemToCart(@PathVariable long productId){
+        userService.addItemToCart(productId);
+        return "redirect:/cart";
+    }
+
 }
 
 
