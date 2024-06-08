@@ -15,18 +15,18 @@
         <a th:href="@{/products}">Каталог</a>
         <a href="#">Поддержка</a>
     </nav>
-    <form class="search-container">
-        <input type="text" placeholder="Поиск..." class="search-input">
-        <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
-    </form>
-    <div class="user-icon-container">
-        <a th:if="${!#authentication?.authenticated}" href="#" class="user-icon">
+    <div th:if="${#authorization.expression('isAuthenticated()')}" class="search-container">
+        <form>
+            <input type="text" placeholder="Поиск..." class="search-input">
+            <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+        </form>
+        <a href="#" class="user-icon">
             <i class="fas fa-user-circle"></i>
         </a>
-        <div th:if="${#authentication?.authenticated}">
-            <a th:href="@{/login}" class="authorization-button">Войти</a>
-            <a th:href="@{/register}" class="authorization-button">Регистрация</a>
-        </div>
+    </div>
+    <div th:unless="${#authorization.expression('isAuthenticated()')}" class="user-icon-container">
+        <a th:href="@{/login}" class="authorization-button">Войти</a>
+        <a th:href="@{/register}" class="authorization-button">Регистрация</a>
     </div>
 </header>
 <main>
@@ -48,3 +48,6 @@
 
 </body>
 </html>
+
+
+

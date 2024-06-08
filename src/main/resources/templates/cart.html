@@ -9,30 +9,35 @@
 <body>
 <div class="container">
     <h1>Корзина</h1>
-    <table>
+    <table class="cart-table">
         <thead>
         <tr>
             <th>Товар</th>
             <th>Количество</th>
             <th>Цена</th>
             <th>Итого</th>
-            <th>Действия</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="cartItem : ${cartItems}">
             <td th:text="${cartItem.product.name}">Название</td>
             <td>
-                <input type="number" th:value="${cartItem.quantity}" min="1" style="width: 60px;">
+                <input type="number" min="1" max="100" step="1" th:value="${cartItem.quantity}" onchange="updatePrice(this, ${cartItem.product.price}, '${cartItem.id}')">
             </td>
-            <td th:text="${cartItem.product.price}">Price</td>
-            <td th:text="${cartItem.quantity * cartItem.product.price}">Итого к оплате</td>
-            <td><a class="icon-edit"><i class="fa-regular fa-pen-to-square"></i></a><a  class="icon-delete"><i class="fa-regular fa-trash-can"></i></a></td>
+            <td><span th:text="${cartItem.product.price}" class="product-price"></span> KZT</td>
+            <td><span th:text="${cartItem.quantity * cartItem.product.price}" class="total-price"></span> KZT</td>
+            <td>
+                <form th:action="@{/cart/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${cartItem.id}">
+                    <button type="submit" class="icon-delete"><i class="fa-regular fa-trash-can"></i></button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
     <div class="total">
-        Итого:
+        Итого: <span id="grand-total">0.00</span> KZT
     </div>
     <div class="actions">
         <a th:href="@{'/checkout'}" class="btn">Оформить заказ</a>
@@ -40,6 +45,43 @@
     </div>
 </div>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var quantityInputs = document.querySelectorAll('input[type="number"]');
+        quantityInputs.forEach(function (input) {
+            input.addEventListener("change", function () {
+                updatePrice(input);
+            });
+        });
+
+        calculateTotal();
+
+        function updatePrice(input) {
+            var quantity = parseInt(input.value);
+            var priceElement = input.parentElement.nextElementSibling.querySelector('.product-price');
+            var totalPriceElement = input.parentElement.nextElementSibling.nextElementSibling.querySelector('.total-price');
+            var price = parseFloat(priceElement.textContent);
+            var totalPrice = quantity * price;
+            totalPriceElement.textContent = totalPrice.toFixed(2);
+
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            var grandTotal = 0;
+            var totalElements = document.querySelectorAll('.total-price');
+            totalElements.forEach(function (element) {
+                grandTotal += parseFloat(element.textContent);
+            });
+            document.getElementById('grand-total').textContent = grandTotal.toFixed(2);
+        }
+    });
+
+</script>
 </body>
 </html>
+
+
+
+
 

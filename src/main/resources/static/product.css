@@ -93,6 +93,29 @@ h3 {
     color: #27ae60;
 }
 
+button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #0c0c3d;
+    background-color: transparent;
+    color: #0c0c3d;
+    font-size: 1em;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+button[type="submit"]:hover {
+    background-color: #0c0c3d;
+    color: #fff;
+}
+
+button[type="submit"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
+}
 
 
 
