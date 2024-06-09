@@ -110,18 +110,20 @@ public class ProductService implements AbstractService<Product> {
         }
     }
 
-    public void addComment(User user, Product product, String comment) {
+    public void addComment(User user, Product product, String comment){
+        System.out.println(user.getName());
         Review review = new Review();
         review.setUser(user);
         review.setProduct(product);
         review.setText(comment);
-        review.setStatus("Рассматривается");
+        review.setStatus(true);
         review.setEstimation(5);
         review.setDate(LocalDateTime.now());
         reviewRepository.save(review);
     }
 
     public List<Review> getCommentsForProduct(Product product) {
+        System.out.println(reviewRepository.findByProduct(product));
         return reviewRepository.findByProduct(product);
     }
 }
