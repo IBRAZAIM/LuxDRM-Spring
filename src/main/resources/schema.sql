@@ -51,7 +51,7 @@ CREATE TABLE reviews
     user_id            BIGINT REFERENCES users (id)    NOT NULL,
     product_id         BIGINT REFERENCES products (id) NOT NULL,
     publication_status BOOLEAN                  NOT NULL,
-    estimation         SMALLINT                        NOT NULL,
+    estimation         SMALLINT,
     estimation_text    TEXT,
     estimation_data    TIMESTAMP
 );
@@ -70,3 +70,6 @@ CREATE TABLE cart (
     product_id INT REFERENCES products(id) NOT NULL,
     quantity INT NOT NULL
 );
+
+ALTER TABLE products ADD COLUMN url_image VARCHAR(255);
+ALTER TABLE products DROP COLUMN url_image;

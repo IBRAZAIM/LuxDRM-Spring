@@ -22,6 +22,10 @@
       Стоимость товара
       <input id="price" name="price">
     </label>
+    <label for="imageUrl">
+      URL изображения товара
+      <input id="imageUrl" name="imageUrl">
+    </label>
     <br>
     <div th:each="option : ${category.getOptionList()}" class="option-item">
       <input type="hidden" name="optionsIds" th:value="${option.id}">
@@ -33,6 +37,5 @@
 </div>
 </body>
 </html>
-
 
 

@@ -26,7 +26,7 @@ public class Review {
     @JoinColumn(name = "publication_status")
     String status;
     @JoinColumn(name = "estimation")
-    byte estimation;
+    int estimation;
     @JoinColumn(name = "estimation_text")
     String text;
     @JoinColumn(name = "estimation_data")

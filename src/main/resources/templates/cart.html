@@ -23,7 +23,7 @@
         <tr th:each="cartItem : ${cartItems}">
             <td th:text="${cartItem.product.name}">Название</td>
             <td>
-                <input type="number" min="1" max="100" step="1" th:value="${cartItem.quantity}" onchange="updatePrice(this, ${cartItem.product.price}, '${cartItem.id}')">
+                <input type="number" min="1" max="100" step="1" th:value="${cartItem.quantity}" onchange="updatePrice(this, '${cartItem.product.price}', '${cartItem.id}')">
             </td>
             <td><span th:text="${cartItem.product.price}" class="product-price"></span> KZT</td>
             <td><span th:text="${cartItem.quantity * cartItem.product.price}" class="total-price"></span> KZT</td>

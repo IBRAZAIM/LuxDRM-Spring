@@ -1,18 +1,13 @@
 package kz.ibrazaim.catalog.service;
 
 import kz.ibrazaim.catalog.exception.EntityNotFoundException;
-import kz.ibrazaim.catalog.model.Category;
-import kz.ibrazaim.catalog.model.Option;
-import kz.ibrazaim.catalog.model.Product;
-import kz.ibrazaim.catalog.model.Value;
-import kz.ibrazaim.catalog.repository.CategoryRepository;
-import kz.ibrazaim.catalog.repository.OptionRepository;
-import kz.ibrazaim.catalog.repository.ProductRepository;
-import kz.ibrazaim.catalog.repository.ValueRepository;
+import kz.ibrazaim.catalog.model.*;
+import kz.ibrazaim.catalog.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -22,6 +17,7 @@ public class ProductService implements AbstractService<Product> {
     private final ValueRepository valueRepository;
     private final OptionRepository optionRepository;
     private final CategoryRepository categoryRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     public void create(Product product) {
@@ -33,7 +29,6 @@ public class ProductService implements AbstractService<Product> {
         product.setCategory(category);
         productRepository.save(product);
         createValues(product, values, optionsIds);
-
     }
 
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
@@ -115,4 +110,18 @@ public class ProductService implements AbstractService<Product> {
         }
     }
 
+    public void addComment(User user, Product product, String comment) {
+        Review review = new Review();
+        review.setUser(user);
+        review.setProduct(product);
+        review.setText(comment);
+        review.setStatus("Рассматривается");
+        review.setEstimation(5);
+        review.setDate(LocalDateTime.now());
+        reviewRepository.save(review);
+    }
+
+    public List<Review> getCommentsForProduct(Product product) {
+        return reviewRepository.findByProduct(product);
+    }
 }

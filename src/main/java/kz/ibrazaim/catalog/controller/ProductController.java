@@ -2,6 +2,8 @@ package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Category;
 import kz.ibrazaim.catalog.model.Product;
+import kz.ibrazaim.catalog.model.User;
+import kz.ibrazaim.catalog.repository.UserRepository;
 import kz.ibrazaim.catalog.service.CategoryService;
 import kz.ibrazaim.catalog.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -17,6 +22,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final UserRepository userRepository;
 
     @GetMapping
     public String findAll(
@@ -98,6 +104,21 @@ public class ProductController {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
+        model.addAttribute("comments", productService.getCommentsForProduct(product));
         return "product-page";
     }
+
+    @PostMapping("/addComment")
+    public String addComment(@RequestParam("productId") Long productId,
+                             @RequestParam("userId") Long userId,
+                             @RequestParam("comment") String commentText,
+                             Model model) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        Product product = productService.getProductById(productId);
+        productService.addComment(user, product, commentText);
+        model.addAttribute("product", product);
+        return "redirect:/product/" + productId;
+    }
+
+
 }
