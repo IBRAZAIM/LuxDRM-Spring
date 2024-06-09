@@ -64,4 +64,8 @@ public class UserService{
         Authentication authentication = securityContext.getAuthentication();
         return  userRepository.findByLogin(authentication.getName()).orElseThrow();
     }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
+    }
 }

@@ -108,25 +108,22 @@ public class ProductController {
         return "product-page";
     }
 
-    @PostMapping("/addReview")
-    public String addReview(
-            @RequestParam("productId") Long productId,
-            @RequestParam("userId") Long userId,
-            @RequestParam("comment") String commentText,
-            Model model
-    ) {
+    @PostMapping("/addComment")
+    public String addComment(@RequestParam("productId") Long productId,
+                             @RequestParam("userId") Long userId,
+                             @RequestParam("comment") String commentText,
+                             Model model) {
         if (userId == null) {
             return "redirect:/login";
         }
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID!"));
         Product product = productService.getProductById(productId);
         productService.addComment(user, product, commentText);
-
         model.addAttribute("product", product);
         model.addAttribute("user", user);
-
         return "redirect:/products/" + productId;
     }
+
 
 
 }
