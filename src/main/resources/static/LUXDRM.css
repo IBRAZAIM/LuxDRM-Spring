@@ -4,6 +4,7 @@
 }
 
 .header {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -94,6 +95,32 @@
     transform: scale(1.05); /* увеличиваем размер при наведении */
 }
 
+.authorization-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #0c0c3d;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.authorization-button:hover {
+    background-color: #040423;
+    transform: scale(1.01);
+}
+
+.authorization-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
 .products,
 .promotions,
 .news {
@@ -134,29 +161,4 @@
 .promotions a:hover,
 .news a:hover {
     color: #0056b3;
-}
-.authorization-button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 0 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    background-color: #0c0c3d;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.authorization-button:hover {
-    background-color: #040423;
-    transform: scale(1.01);
-}
-
-.authorization-button:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }

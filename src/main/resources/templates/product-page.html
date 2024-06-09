@@ -4,42 +4,152 @@
     <meta charset="UTF-8">
     <title>Product Page</title>
     <link rel="stylesheet" th:href="@{/product.css}">
+    <link rel="stylesheet" th:href="@{/LUXDRM.css}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: "Montserrat", sans-serif;
+            background-color: #f9f8f8;
+            color: #0c0c3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 1200px;
+            width: 100%;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .description {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .product-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .product-name {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .price {
+            font-size: 1.5em;
+            color: #27ae60;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option-item {
+            background: #f0f0f0;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .option-item:hover {
+            background: #e0e0e0;
+        }
+
+        .social-media {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-icon {
+            color: #0c0c3d;
+            font-size: 1.5em;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .social-icon:hover {
+            color: #27ae60;
+        }
+
+        .add-to-cart {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #0c0c3d;
+            background-color: transparent;
+            color: #0c0c3d;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        .add-to-cart:hover {
+            background-color: #0c0c3d;
+            color: #fff;
+        }
+
+        .add-to-cart:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
+        }
+    </style>
 </head>
 <body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
 <div class="container">
-    <header>
-        <h1 th:text="${product.name}" class="product-name">Product Name</h1>
-    </header>
-    <main>
-        <p th:text="'Price: ' + ${product.price}" class="price">Price</p>
-        <h3>Options:</h3>
-        <ul class="options-list">
-            <li th:each="entry : ${options}" th:if="${entry.getValue().isPresent()}"
-                th:text="${entry.getKey().getName() + ': ' + entry.getValue().get().name}"
-                class="option-item">
-            </li>
-            <li th:each="entry : ${options}" th:unless="${entry.getValue().isPresent()}"
-                th:text="${entry.getKey().getName() + ': Не указано'}"
-                class="option-item">
-            </li>
-        </ul>
-    </main>
-    <form th:action="@{|/cart/${product.getId()}|}" method="post">
-        <button type="submit"> Добавить в корзину</button>
-    </form>
-    <footer>
-        <h3>Follow us:</h3>
-        <div class="social-media">
-            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-        </div>
-    </footer>
+    <div class="description">
+        <header>
+            <h1 th:text="${product.name}" class="product-name">Product Name</h1>
+        </header>
+        <main>
+            <p th:text="'Price: ' + ${product.price}" class="price">Price</p>
+            <h3>Options:</h3>
+            <ul class="options-list">
+                <li th:each="entry : ${options}" th:if="${entry.getValue().isPresent()}"
+                    th:text="${entry.getKey().getName() + ': ' + entry.getValue().get().name}"
+                    class="option-item">
+                </li>
+                <li th:each="entry : ${options}" th:unless="${entry.getValue().isPresent()}"
+                    th:text="${entry.getKey().getName() + ': Не указано'}"
+                    class="option-item">
+                </li>
+            </ul>
+        </main>
+        <form th:action="@{|/cart/${product.getId()}|}" method="post">
+            <button type="submit" class="add-to-cart"> Добавить в корзину</button>
+        </form>
+    </div>
+    <div class="image-container">
+        <img src="">
+    </div>
 </div>
 </body>
 </html>
+
+
+
 
 

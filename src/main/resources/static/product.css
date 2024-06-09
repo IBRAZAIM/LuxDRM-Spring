@@ -1,11 +1,4 @@
-/* Сброс стилей и базовые настройки */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
+body{
     font-family: "Montserrat", sans-serif;
     background-color: #f9f8f8;
     color: #0c0c3d;
@@ -14,30 +7,22 @@ body {
     align-items: center;
     height: 100vh;
     padding: 20px;
+    border-radius: 10px;
 }
 
 .container {
-    background: #fff;
-    border-radius: 10px;
     max-width: 800px;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     transition: transform 0.3s ease-in-out;
 }
 
-header, footer {
+footer {
     margin: 20px 0;
     padding: 10px;
     transition: background-color 0.3s ease-in-out;
-}
-footer{
     border-top: 1px solid #0c0c3d;
-}
-header {
-    border-bottom: 2px solid #eee;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
 }
 
 .product-name {
@@ -93,7 +78,7 @@ h3 {
     color: #27ae60;
 }
 
-button[type="submit"] {
+.add-to-cart {
     display: block;
     width: 100%;
     padding: 10px;
@@ -107,15 +92,16 @@ button[type="submit"] {
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-button[type="submit"]:hover {
+.add-to-cart:hover {
     background-color: #0c0c3d;
     color: #fff;
 }
 
-button[type="submit"]:focus {
+.add-to-cart:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
 }
+
 
 
 
