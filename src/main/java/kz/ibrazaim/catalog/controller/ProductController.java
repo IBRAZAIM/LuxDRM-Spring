@@ -1,20 +1,19 @@
 package kz.ibrazaim.catalog.controller;
 
-import kz.ibrazaim.catalog.model.Category;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.User;
-import kz.ibrazaim.catalog.repository.UserRepository;
 import kz.ibrazaim.catalog.service.CategoryService;
 import kz.ibrazaim.catalog.service.ProductService;
+import kz.ibrazaim.catalog.service.ReviewService;
+import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,7 +21,10 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
-    private final UserRepository userRepository;
+    private final ReviewService reviewService;
+    private final UserService userService;
+
+
 
     @GetMapping
     public String findAll(
@@ -104,23 +106,26 @@ public class ProductController {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
-        model.addAttribute("comments", productService.getCommentsForProduct(product));
+        model.addAttribute("comments", reviewService.getCommentsForProduct(product));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByLogin(authentication.getName());
+        model.addAttribute("user", user);
         return "product-page";
     }
 
     @PostMapping("/addComment")
-    public String addComment(@RequestParam("productId") Long productId,
-                             @RequestParam("userId") Long userId,
-                             @RequestParam("comment") String commentText,
-                             Model model) {
-        if (userId == null) {
-            return "redirect:/login";
+    public String addReview(
+            @RequestParam("productId") Long productId,
+            @RequestParam("userId") Long userId,
+            @RequestParam("comment") String commentText,
+            @RequestParam("estimation") int estimation
+    ) {
+        User user = null;
+        if (userId != null) {
+            user = userService.findById(userId);
         }
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID!"));
         Product product = productService.getProductById(productId);
-        productService.addComment(user, product, commentText);
-        model.addAttribute("product", product);
-        model.addAttribute("user", user);
+        reviewService.create(product, user, estimation, commentText);
         return "redirect:/products/" + productId;
     }
 

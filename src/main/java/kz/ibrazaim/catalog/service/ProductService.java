@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.LongAdder;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class ProductService implements AbstractService<Product> {
     private final OptionRepository optionRepository;
     private final CategoryRepository categoryRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void create(Product product) {
@@ -110,20 +112,7 @@ public class ProductService implements AbstractService<Product> {
         }
     }
 
-    public void addComment(User user, Product product, String comment){
-        System.out.println(user.getName());
-        Review review = new Review();
-        review.setUser(user);
-        review.setProduct(product);
-        review.setText(comment);
-        review.setStatus(true);
-        review.setEstimation(5);
-        review.setDate(LocalDateTime.now());
-        reviewRepository.save(review);
-    }
-
-    public List<Review> getCommentsForProduct(Product product) {
-        System.out.println(reviewRepository.findByProduct(product));
-        return reviewRepository.findByProduct(product);
+    public Product findProductById(Long productId) {
+        return productRepository.findById(productId).orElseThrow();
     }
 }

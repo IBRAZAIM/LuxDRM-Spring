@@ -3,52 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/productList.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
     <title>Каталог</title>
 </head>
 <body>
-<div class="container">
-    <h1>Каталог</h1>
-    <form method="get" action="#" th:action="@{/products}">
-        <label for="minPrice">Минимальная цена:</label>
-        <input type="number" id="minPrice" name="minPrice" step="0.01" th:value="${param.minPrice}">
-        <label for="maxPrice">Максимальная цена:</label>
-        <input type="number" id="maxPrice" name="maxPrice" step="0.01" th:value="${param.maxPrice}">
-        <label type="text" class="category-label">Категория</label>
-        <select name="categoryId" class="category">
-            <option value="">Все</option>
-            <option th:each="category : ${categories}"
-                    th:value="${category.id}"
-                    th:text="${category.getName()}"
-                    th:selected="${category.id == selectedCategoryId}">
-            </option>
-        </select>
-        <button type="submit">Фильтр</button>
-    </form>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Название</th>
-            <th>Цена</th>
-            <th>Категория</th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product : ${products}">
-            <td th:text="${product.getId()}"></td>
-            <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}" class="product-name"></a></td>
-            <td th:text="${product.getPrice()}"></td>
-            <td th:text="${product.category.getName()}"></td>
-            <td><a th:href="@{'/products/update/' + ${product.getId()}}" class="icon-edit"><i class="fa-regular fa-pen-to-square"></i></a></td>
-            <td><a th:href="@{'/products/delete/' + ${product.getId()}}" class="icon-delete"><i class="fa-regular fa-trash-can"></i></a></td>
-        </tr>
-        </tbody>
-    </table>
-    <a th:href="@{'/products/create/chooseCategory'}"><button type="submit" class="add-product-btn">Добавить товар</button></a>
-</div>
-</body>
+<div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
+<main class="catalog-body">
+    <div class="product-container">
+        <h1>Каталог</h1>
+        <form method="get" action="#" th:action="@{/products}">
+            <label for="minPrice">Минимальная цена:</label>
+            <input type="number" id="minPrice" name="minPrice" step="100" th:value="${param.minPrice}">
+            <label for="maxPrice">Максимальная цена:</label>
+            <input type="number" id="maxPrice" name="maxPrice" step="100" th:value="${param.maxPrice}">
+            <label type="text" class="category-label">Категория</label>
+            <select name="categoryId" class="category">
+                <option value="">Все</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.getName()}"
+                        th:selected="${category.id == selectedCategoryId}">
+                </option>
+            </select>
+            <button type="submit">Фильтр</button>
+        </form>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Категория</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.getId()}"></td>
+                <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}" class="product-name"></a></td>
+                <td th:text="${product.getPrice()}"></td>
+                <td th:text="${product.category.getName()}"></td>
+                <td><a th:href="@{'/products/update/' + ${product.getId()}}" class="icon-edit"><i class="fa-regular fa-pen-to-square"></i></a></td>
+                <td><a th:href="@{'/products/delete/' + ${product.getId()}}" class="icon-delete"><i class="fa-regular fa-trash-can"></i></a></td>
+            </tr>
+            </tbody>
+        </table>
+        <a th:href="@{'/products/create/chooseCategory'}"><button type="submit" class="add-product-btn">Добавить товар</button></a>
+    </div>
+</main>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+</body>
 </html>
 

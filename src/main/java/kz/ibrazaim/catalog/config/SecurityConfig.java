@@ -17,8 +17,9 @@ public class SecurityConfig {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/products/create").authenticated();
+                    auth.requestMatchers("/products/create/chooseCategory").authenticated();
                     auth.requestMatchers("/products/update/**", "/products/delete/**").hasRole("ADMIN");
+                    auth.requestMatchers("/products/addComment").authenticated();
                     auth.anyRequest().permitAll();
                 })
                 .formLogin(formLogin -> formLogin

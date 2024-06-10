@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Страница продукта</title>
     <link rel="stylesheet" th:href="@{/product.css}">
-    <link rel="stylesheet" th:href="@{/LUXDRM.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -41,16 +41,36 @@
             <button type="submit" class="add-to-cart">Добавить в корзину</button>
         </form>
         <button type="submit" class="buy-button">Купить сейчас</button>
-        <div class="comment-form">
-            <h3>Оставить комментарий</h3>
-            <form th:action="@{/addComment}" method="post">
-                <input type="hidden" name="productId" th:value="${product.id}" />
-                <input type="hidden" name="userId" th:value="${user != null ? user.id : ''}" />
-                <textarea name="comment" placeholder="Оставьте комментарий..." rows="4" cols="50" required></textarea><br>
+
+        <!-- Проверка, авторизован ли пользователь -->
+        <th:block th:if="${user != null}" th:class="comment-form">
+            <h3>Добавить отзыв</h3>
+            <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <input type="hidden" name="userId" th:value="${user.id}">
+
+                <div>
+                    <label for="comment">Текст отзыва:</label>
+                    <textarea name="comment" id="comment" placeholder="Текст комментария" required></textarea>
+                </div>
+                <div>
+                    <label for="estimation">Оценка:</label>
+                    <select name="estimation" id="estimation" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
                 <button type="submit">Отправить</button>
             </form>
-        </div>
+        </th:block>
+        <th:block th:else>
+            <p>Пожалуйста Войдите для добавления отзыва.</p>
+        </th:block>
     </aside>
 </section>
 </body>
 </html>
+

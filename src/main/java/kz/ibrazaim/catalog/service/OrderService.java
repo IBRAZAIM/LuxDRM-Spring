@@ -7,7 +7,6 @@ import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.repository.OrderProductRepository;
 import kz.ibrazaim.catalog.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

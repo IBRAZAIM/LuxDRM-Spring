@@ -9,13 +9,18 @@ body {
     margin: 0;
     padding: 0;
 }
+.catalog-body {
+    margin-top: 120px;
+}
 
-.container {
+.product-container {
     width: 900px;
     margin: 20px auto;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    position: relative;
 }
 
 h1 {
@@ -41,7 +46,8 @@ input[type="number"] {
     border-radius: 4px;
     width: 100px;
 }
-.product-name{
+
+.product-name {
     text-decoration: none;
     color: #333;
 }
@@ -78,6 +84,7 @@ th {
 tr:hover {
     background-color: #e0e0e0;
 }
+
 .icon-edit {
     text-decoration: none;
     color: blue; /* Цвет для иконки изменения */
@@ -102,9 +109,10 @@ tr:hover {
     background-color: #45a049; /* Темнозеленый цвет при наведении */
 }
 
-.category{
+.category {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 100px;
 }
+

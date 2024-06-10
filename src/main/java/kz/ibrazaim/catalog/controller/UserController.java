@@ -1,5 +1,6 @@
 package kz.ibrazaim.catalog.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,24 +35,36 @@ public class UserController {
             return "registerForm";
         }
         return "redirect:/login";
+        //TODO сделать так чтобы при регистрации не нужно было авторизовываться
     }
 
     @GetMapping("/login")
-    public String showLoginForm(Model model) {
+    public String showLoginForm(HttpServletRequest request, Model model) {
+        String referrer = request.getHeader("Referer");
+        if (referrer != null && !referrer.isEmpty()) {
+            request.getSession().setAttribute("previousPage", referrer);
+        }
         model.addAttribute("loginError", false);
         return "loginForm";
     }
 
+
     @PostMapping("/login")
-    public String loginUser(@RequestParam String login, @RequestParam String password, Model model) {
+    public String loginUser(HttpServletRequest request, @RequestParam String login, @RequestParam String password, Model model) {
         boolean isAuthenticated = userService.authenticate(login, password);
         if (isAuthenticated) {
-            return "redirect:/main";
+            String previousPage = (String) request.getSession().getAttribute("previousPage");
+            if (previousPage != null && !previousPage.isEmpty()) {
+                request.getSession().removeAttribute("previousPage");
+                return "redirect:" + previousPage;
+            }
+            return "redirect:/";
         } else {
             model.addAttribute("loginError", true);
+            return "loginForm";
         }
-        return "loginForm";
     }
+
     @GetMapping("/cart")
     public String getCartPage(Model model){
         model.addAttribute("cartItems", userService.findALlCartItems());

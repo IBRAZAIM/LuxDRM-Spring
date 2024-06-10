@@ -1,5 +1,6 @@
 package kz.ibrazaim.catalog.service;
 
+import kz.ibrazaim.catalog.exception.UserNotFoundException;
 import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.Role;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +37,17 @@ public class UserService{
     }
 
     public boolean authenticate(String login, String password) {
-        logger.debug("Аутентификация пользователя с помощью логина: {}", login);
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с логином=" + login + " не найден!"));
-        boolean matches = encoder.matches(password, user.getPassword());
-        logger.debug("Совпадения паролей: {}", matches);
-        return matches;
+        logger.debug("Аутентификация пользователя с логином: {}", login);
+        try {
+            User user = userRepository.findByLogin(login)
+                    .orElseThrow(() -> new UsernameNotFoundException("Пользователь с логином=" + login + " не найден!"));
+            boolean matches = encoder.matches(password, user.getPassword());
+            logger.debug("Совпадения паролей: {}", matches);
+            return matches;
+        } catch (UsernameNotFoundException ex) {
+            logger.error("Ошибка аутентификации: {}", ex.getMessage());
+            return false;
+        }
     }
 
     public List<CartItem> findALlCartItems() {
@@ -67,5 +74,14 @@ public class UserService{
 
     public User findById(Long userId) {
         return userRepository.findById(userId).orElseThrow();
+    }
+
+    public User findUserByLogin(String login) {
+        Optional<User> userOptional = userRepository.findByLogin(login);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            throw new UserNotFoundException("Пользователь с логином" + ": "  + login + " " + "не найден!");
+        }
     }
 }
