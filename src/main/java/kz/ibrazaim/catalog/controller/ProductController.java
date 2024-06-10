@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -102,32 +103,45 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String productCard(@PathVariable Long id, Model model) {
+    public String productCard(@PathVariable Long id, Model model, Principal principal) {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("comments", reviewService.getCommentsForProduct(product));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByLogin(authentication.getName());
-        model.addAttribute("user", user);
+
+        // Проверка на авторизацию пользователя
+        if (principal != null) {
+            User user = userService.findUserByLogin(principal.getName());
+            model.addAttribute("user", user);
+        } else {
+            // Создание пустого пользователя для неавторизованных пользователей
+            model.addAttribute("user", new User());
+        }
+
         return "product-page";
     }
+
 
     @PostMapping("/addComment")
     public String addReview(
             @RequestParam("productId") Long productId,
-            @RequestParam("userId") Long userId,
             @RequestParam("comment") String commentText,
-            @RequestParam("estimation") int estimation
+            @RequestParam("estimation") int estimation,
+            Principal principal
     ) {
-        User user = null;
-        if (userId != null) {
-            user = userService.findById(userId);
+        // Проверка на авторизацию пользователя
+        if (principal == null) {
+            return "redirect:/login";
         }
+
+        User user = userService.findUserByLogin(principal.getName());
         Product product = productService.getProductById(productId);
         reviewService.create(product, user, estimation, commentText);
+
         return "redirect:/products/" + productId;
     }
+
+
 
 
 

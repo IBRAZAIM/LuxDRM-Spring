@@ -43,7 +43,7 @@
         <button type="submit" class="buy-button">Купить сейчас</button>
 
         <!-- Проверка, авторизован ли пользователь -->
-        <th:block th:if="${user != null}" th:class="comment-form">
+        <th:block th:if="${#authorization.expression('isAuthenticated()')}" th:class="comment-form">
             <h3>Добавить отзыв</h3>
             <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="productId" th:value="${product.id}">
@@ -66,7 +66,7 @@
                 <button type="submit">Отправить</button>
             </form>
         </th:block>
-        <th:block th:else>
+        <th:block th:unless="${#authorization.expression('isAuthenticated()')}">
             <p>Пожалуйста Войдите для добавления отзыва.</p>
         </th:block>
     </aside>
