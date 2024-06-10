@@ -117,7 +117,6 @@ public class ProductController {
             // Создание пустого пользователя для неавторизованных пользователей
             model.addAttribute("user", new User());
         }
-
         return "product-page";
     }
 
