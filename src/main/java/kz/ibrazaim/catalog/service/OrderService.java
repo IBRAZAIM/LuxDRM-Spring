@@ -21,7 +21,7 @@ public class OrderService {
     private final OrderProductRepository orderProductRepository;
 
     @Transactional
-    public Order createOrder(User user, String address, int quantity, List<Product> products) {
+    public Order createOrder(User user, String address, List<Product> products, List<Integer> quantities) {
         Order order = new Order();
         order.setUser(user);
         order.setStatus("Оформлено");
@@ -29,15 +29,23 @@ public class OrderService {
         order.setOrderDate(LocalDateTime.now());
         orderRepository.save(order);
 
-        for (Product product : products) {
+        for (int i = 0; i < products.size(); i++) {
             OrderProduct orderProduct = new OrderProduct();
             orderProduct.setOrder(order);
-            orderProduct.setProduct(product);
-            orderProduct.setQuantity(quantity);
+            orderProduct.setProduct(products.get(i));
+            orderProduct.setQuantity(quantities.get(i));
             orderProductRepository.save(orderProduct);
         }
 
         return order;
     }
+
+
+    @Transactional
+    public void createOrder(Order order, OrderProduct orderProduct) {
+        orderRepository.save(order);
+        orderProductRepository.save(orderProduct);
+    }
 }
+
 

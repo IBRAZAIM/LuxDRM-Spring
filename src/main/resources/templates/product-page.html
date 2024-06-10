@@ -41,8 +41,6 @@
             <button type="submit" class="add-to-cart">Добавить в корзину</button>
         </form>
         <button type="submit" class="buy-button">Купить сейчас</button>
-
-        <!-- Проверка, авторизован ли пользователь -->
         <div th:class="comment-form">
             <h3>Добавить отзыв</h3>
             <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">
@@ -56,11 +54,11 @@
                 <div>
                     <label for="estimation">Оценка:</label>
                     <select name="estimation" id="estimation" required>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
                         <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
                     </select>
                 </div>
                 <button type="submit">Отправить</button>

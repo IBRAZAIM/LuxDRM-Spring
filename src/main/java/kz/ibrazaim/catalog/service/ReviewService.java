@@ -15,8 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final UserService userService;
-    private final ProductService productService;
 
     @Transactional
     public void create(Product product, User user, int estimation, String text) {

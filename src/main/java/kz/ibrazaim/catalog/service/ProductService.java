@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.LongAdder;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +16,7 @@ public class ProductService implements AbstractService<Product> {
     private final ValueRepository valueRepository;
     private final OptionRepository optionRepository;
     private final CategoryRepository categoryRepository;
-    private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Override
     public void create(Product product) {
@@ -114,5 +111,13 @@ public class ProductService implements AbstractService<Product> {
 
     public Product findProductById(Long productId) {
         return productRepository.findById(productId).orElseThrow();
+    }
+
+    public List<Product> findAllById(List<Long> productIds) {
+        return productRepository.findAllById(productIds);
+    }
+
+    public List<CartItem> getAllProductsInCart() {
+        return cartItemRepository.findAll();
     }
 }

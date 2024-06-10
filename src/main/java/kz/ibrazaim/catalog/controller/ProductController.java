@@ -117,6 +117,7 @@ public class ProductController {
             // Создание пустого пользователя для неавторизованных пользователей
             model.addAttribute("user", new User());
         }
+
         return "product-page";
     }
 
@@ -128,7 +129,6 @@ public class ProductController {
             @RequestParam("estimation") int estimation,
             Principal principal
     ) {
-        // Проверка на авторизацию пользователя
         if (principal == null) {
             return "redirect:/login";
         }
@@ -139,9 +139,5 @@ public class ProductController {
 
         return "redirect:/products/" + productId;
     }
-
-
-
-
 
 }

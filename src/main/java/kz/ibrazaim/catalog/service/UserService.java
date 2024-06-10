@@ -84,4 +84,22 @@ public class UserService{
             throw new UserNotFoundException("Пользователь с логином" + ": "  + login + " " + "не найден!");
         }
     }
+
+    public void updateCartItem(long productId) {
+        CartItem cartItem = cartItemRepository.findByProductId(productId);
+        if (cartItem != null) {
+            cartItem.setQuantity(cartItem.getQuantity() + 1);
+            cartItemRepository.save(cartItem);
+        }
+    }
+
+    public boolean isProductInCart(long productId) {
+        CartItem cartItem = cartItemRepository.findByProductId(productId);
+        return cartItem != null;
+    }
+
+    public List<CartItem> findAllCartItems() {
+        return cartItemRepository.findAll();
+    }
+
 }

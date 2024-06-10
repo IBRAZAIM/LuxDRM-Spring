@@ -8,6 +8,7 @@
 <div class="login-container">
     <h2>Авторизация</h2>
     <form th:action="@{/login}" method="post">
+        <input type="hidden" name="redirect" th:value="${redirect}" />
         <div>
             <label for="login">Логин:</label>
             <input type="text" id="login" name="username" required />
@@ -23,5 +24,6 @@
 </div>
 </body>
 </html>
+
 
 

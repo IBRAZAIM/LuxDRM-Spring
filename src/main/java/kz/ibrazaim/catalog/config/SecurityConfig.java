@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 @Configuration
 public class SecurityConfig {
 
@@ -20,6 +21,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/products/create/chooseCategory").authenticated();
                     auth.requestMatchers("/products/update/**", "/products/delete/**").hasRole("ADMIN");
                     auth.requestMatchers("/products/addComment").authenticated();
+                    auth.requestMatchers("/checkout").authenticated();
                     auth.anyRequest().permitAll();
                 })
                 .formLogin(formLogin -> formLogin
@@ -34,7 +36,10 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
+
+
 
 
 

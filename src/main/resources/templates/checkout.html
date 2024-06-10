@@ -18,7 +18,7 @@
             <li th:each="item : ${orderItems}">
                 <span th:text="${item.product.name}"></span>
                 <span th:text="${item.quantity} + ' шт.'"></span>
-                <span th:text="${item.product.price} + ' ₸'"></span>
+                <span th:text="${item.product.price * item.quantity} + ' ₸'"></span>
             </li>
         </ul>
         <div class="total-price">
@@ -28,15 +28,15 @@
     </div>
     <div class="customer-info">
         <h2>Информация о покупателе</h2>
-        <form th:action="@{/order/complete}" method="post">
-            <input type="hidden" name="orderId" th:value="${orderId}" />
+        <form th:action="@{/order/checkout}" method="post">
+            <input type="hidden" name="orderId" th:value="${order.id}" />
             <div class="form-group">
                 <label for="name">Имя</label>
-                <input type="text" id="name" name="name" th:value="${user.getName()}" required>
+                <input type="text" id="name" name="name" th:value="${user.name}" required>
             </div>
             <div class="form-group">
-                <label for="name">Фамилия</label>
-                <input type="text" id="surname" name="surname" th:value="${user.getSurname()}" required>
+                <label for="surname">Фамилия</label>
+                <input type="text" id="surname" name="surname" th:value="${user.surname}" required>
             </div>
             <div class="form-group">
                 <label for="address">Адрес доставки</label>
