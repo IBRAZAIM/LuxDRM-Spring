@@ -109,15 +109,4 @@ public class ProductService implements AbstractService<Product> {
         }
     }
 
-    public Product findProductById(Long productId) {
-        return productRepository.findById(productId).orElseThrow();
-    }
-
-    public List<Product> findAllById(List<Long> productIds) {
-        return productRepository.findAllById(productIds);
-    }
-
-    public List<CartItem> getAllProductsInCart() {
-        return cartItemRepository.findAll();
-    }
 }

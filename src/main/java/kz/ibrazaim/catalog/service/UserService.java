@@ -94,8 +94,8 @@ public class UserService{
     }
 
     public boolean isProductInCart(long productId) {
-        CartItem cartItem = cartItemRepository.findByProductId(productId);
-        return cartItem != null;
+        return cartItemRepository.findByProductId(productId) != null;
+
     }
 
     public List<CartItem> findAllCartItems() {

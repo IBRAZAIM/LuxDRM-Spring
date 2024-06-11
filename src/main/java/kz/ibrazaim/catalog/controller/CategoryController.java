@@ -44,15 +44,6 @@ public class CategoryController {
         return "redirect:/categories";
     }
 
-//    @GetMapping("")
-//    public String addReview(Model model){
-//        model.addAttribute();
-//    }
-//
-//    @PostMapping
-//    public String addReview(){
-//
-//    }
 
 }
 

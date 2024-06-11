@@ -21,6 +21,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/products/create/chooseCategory").authenticated();
                     auth.requestMatchers("/products/update/**", "/products/delete/**").hasRole("ADMIN");
                     auth.requestMatchers("/products/addComment").authenticated();
+                    auth.requestMatchers("/cart").authenticated();
                     auth.requestMatchers("/checkout").authenticated();
                     auth.anyRequest().permitAll();
                 })
