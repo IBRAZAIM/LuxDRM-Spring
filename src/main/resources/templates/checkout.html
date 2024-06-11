@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Оформление заказа</title>
     <link rel="stylesheet" th:href="@{/checkout.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -28,23 +29,25 @@
     </div>
     <div class="customer-info">
         <h2>Информация о покупателе</h2>
-        <form th:action="@{/order/checkout}" method="post">
-            <input type="hidden" name="orderId" th:value="${order.id}" />
+        <form th:action="@{/checkout}" method="post">
+            <input type="hidden" name="orderId" th:value="${order != null ? order.id : ''}" /> <!-- Обработка возможного значения null для order -->
             <div class="form-group">
                 <label for="name">Имя</label>
-                <input type="text" id="name" name="name" th:value="${user.name}" required>
+                <input type="text" id="name" name="name" th:value="${user != null ? user.name : ''}" required>
             </div>
             <div class="form-group">
                 <label for="surname">Фамилия</label>
-                <input type="text" id="surname" name="surname" th:value="${user.surname}" required>
+                <input type="text" id="surname" name="surname" th:value="${user != null ? user.surname : ''}" required>
             </div>
             <div class="form-group">
                 <label for="address">Адрес доставки</label>
                 <input type="text" id="address" name="address" required>
             </div>
-            <button type="submit" class="submit-order">Завершить заказ</button>
+            <button type="submit" class="submit-order">Заказать</button>
         </form>
     </div>
 </section>
 </body>
 </html>
+
+

@@ -101,5 +101,4 @@ public class UserService{
     public List<CartItem> findAllCartItems() {
         return cartItemRepository.findAll();
     }
-
 }

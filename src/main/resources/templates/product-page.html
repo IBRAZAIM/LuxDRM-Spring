@@ -40,7 +40,6 @@
         <form th:action="@{|/cart/${product.getId()}|}" method="post">
             <button type="submit" class="add-to-cart">Добавить в корзину</button>
         </form>
-        <button type="submit" class="buy-button">Купить сейчас</button>
         <div th:class="comment-form">
             <h3>Добавить отзыв</h3>
             <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">

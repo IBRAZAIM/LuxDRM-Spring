@@ -22,4 +22,12 @@ public class CartService {
         cartItemRepository.deleteById(itemId);
     }
 
+    public int returnTotalPrice(List<CartItem> cartItems) {
+        int totalPrice = 0;
+        for (CartItem item : cartItems) {
+            totalPrice += item.getProduct().getPrice();
+        }
+        return totalPrice;
+    }
+
 }

@@ -38,7 +38,7 @@ body {
 
 .image-container {
     flex: 1;
-    padding: 20px;
+    margin-top: 30px;
 }
 
 .image-container img {
@@ -112,21 +112,7 @@ h3 {
     color: #fff;
 }
 
-.buy-button {
-    padding: 10px 20px;
-    background-color: #0c0c3d;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.buy-button:hover {
-    background-color: #1d1d5b;
-}
-
-.add-to-cart:focus, .buy-now:focus {
+.add-to-cart:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
 }

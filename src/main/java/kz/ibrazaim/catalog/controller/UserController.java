@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping
@@ -19,7 +21,10 @@ public class UserController {
     }
 
     @PostMapping("/cart/{productId}")
-    public String addItemToCart(@PathVariable long productId){
+    public String addItemToCart(Principal principal, @PathVariable long productId){
+        if (principal == null) {
+            return "redirect:/login";
+        }
         if (userService.isProductInCart(productId)) {
             userService.updateCartItem(productId);
         } else {

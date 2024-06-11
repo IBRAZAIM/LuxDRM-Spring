@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/cart.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
     <title>Корзина</title>
 </head>
 <body>
-<div class="container">
+<div th:insert="~{navbar :: navigation-panel}"></div>
+<div class="cart-container">
     <h1>Корзина</h1>
     <table class="cart-table">
         <thead>
@@ -60,9 +62,9 @@
             var quantity = parseInt(input.value);
             var priceElement = input.parentElement.nextElementSibling.querySelector('.product-price');
             var totalPriceElement = input.parentElement.nextElementSibling.nextElementSibling.querySelector('.total-price');
-            var price = parseFloat(priceElement.textContent);
+            var price = parseInt(priceElement.textContent);
             var totalPrice = quantity * price;
-            totalPriceElement.textContent = totalPrice.toFixed(2);
+            totalPriceElement.textContent = totalPrice.toFixed(0);
 
             calculateTotal();
         }
@@ -71,15 +73,16 @@
             var grandTotal = 0;
             var totalElements = document.querySelectorAll('.total-price');
             totalElements.forEach(function (element) {
-                grandTotal += parseFloat(element.textContent);
+                grandTotal += parseInt(element.textContent);
             });
-            document.getElementById('grand-total').textContent = grandTotal.toFixed(2);
+            document.getElementById('grand-total').textContent = grandTotal.toFixed(0); // Изменили с .toFixed(2) на .toFixed(0) для целых чисел
         }
     });
 
 </script>
 </body>
 </html>
+
 
 
 
