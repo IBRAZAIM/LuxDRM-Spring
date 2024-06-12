@@ -1,9 +1,6 @@
 package kz.ibrazaim.catalog.controller;
 
-import kz.ibrazaim.catalog.model.CartItem;
-import kz.ibrazaim.catalog.model.Order;
-import kz.ibrazaim.catalog.model.OrderProduct;
-import kz.ibrazaim.catalog.model.User;
+import kz.ibrazaim.catalog.model.*;
 import kz.ibrazaim.catalog.service.CartService;
 import kz.ibrazaim.catalog.service.OrderProductService;
 import kz.ibrazaim.catalog.service.OrderService;
@@ -51,13 +48,26 @@ public class OrderController {
         return "redirect:/myOrders";
     }
 
-    @GetMapping("/myOrders")
-    public String showOrders(Principal principal,Model model) {
+    @GetMapping("/orders")
+    public String showOrders(Principal principal, Model model) {
         User user = userService.findUserByLogin(principal.getName());
-        List<Order> orders = orderService.getAllOrders(user);
-        System.out.println(orders);
-        model.addAttribute("orders", orders);
-        return "myOrders";
+        List<Order> orders;
+
+        if (user.getRole().equals(Role.ADMIN.getServiceName()) || user.getRole().equals(Role.MODER.getServiceName())) {
+            orders = orderService.getAllOrders();
+            model.addAttribute("orders", orders);
+            return "orders";
+        } else {
+            orders = orderService.getOrdersForUser(user);
+            model.addAttribute("orders", orders);
+            return "myOrders";
+        }
+    }
+
+    @PostMapping("/orders/updateStatus")
+    public String updateOrderStatus(@RequestParam("orderId") Long orderId, @RequestParam("status") String status) {
+        orderService.updateOrderStatus(orderId, status);
+        return "redirect:/orders";
     }
 
 

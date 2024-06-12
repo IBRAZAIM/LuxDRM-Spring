@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все Заказы</title>
+    <link rel="stylesheet" th:href="@{/orders.css}">
+</head>
+<body>
+<div class="order-container">
+    <h1 class="myCart">Все Заказы</h1>
+    <div class="order-list">
+        <table>
+            <thead>
+            <tr class="orders-param">
+                <th>Пользователь</th>
+                <th>Продукт</th>
+                <th>Статус</th>
+                <th>Дата оформления</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}" class="order-item">
+                <td th:text="${order.user.login}" class="order-user"></td>
+                <td>
+                    <ul>
+                        <li th:each="orderProduct : ${order.orderProducts}" class="order-product">
+                            <span th:text="${orderProduct.product.name + ' x' + orderProduct.quantity}"></span>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <form th:action="@{/orders/updateStatus}" method="post">
+                        <input type="hidden" th:name="orderId" th:value="${order.id}">
+                        <select th:name="status">
+                            <option th:selected="${order.status == null || order.status == ''}" value="">Оформлено</option>
+                            <option th:selected="${order.status == 'В ожидании'}" value="В ожидании">В ожидании</option>
+                            <option th:selected="${order.status == 'Отправлено'}" value="Отправлено">Отправлено</option>
+                            <option th:selected="${order.status == 'Доставлено'}" value="Доставлено">Доставлено</option>
+                            <option th:selected="${order.status == 'Отменено'}" value="Отменено">Отменено</option>
+                        </select>
+                        <button type="submit">Сохранить</button>
+                    </form>
+                </td>
+                <td th:text="${order.date}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+

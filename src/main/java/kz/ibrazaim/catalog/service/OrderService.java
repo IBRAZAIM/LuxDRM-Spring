@@ -50,12 +50,19 @@ public class OrderService {
             throw e;
         }
     }
-
-    public List<Order> getAllOrders(User user) {
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+    public List<Order> getOrdersForUser(User user) {
         return orderRepository.findByUser(user);
     }
 
 
+    public void updateOrderStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
 }
 
 
