@@ -1,0 +1,59 @@
+*{
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+body {
+    background-color: #f9f9f9;
+    color: #333333;
+}
+
+.order-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.myCart {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+table {
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: none;
+    padding: 10px;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-heading {
+    color: #333333;
+}
+
+.order-row {
+    border-bottom: 1px solid #dddddd;
+}
+
+.order-product {
+    list-style-type: none;
+}
+
+.order-status, .order-date {
+    color: #333333;
+}

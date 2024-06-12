@@ -50,6 +50,12 @@ public class OrderService {
             throw e;
         }
     }
+
+    public List<Order> getAllOrders(User user) {
+        return orderRepository.findByUser(user);
+    }
+
+
 }
 
 

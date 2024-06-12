@@ -103,7 +103,6 @@
     color: #fff;
     background-color: #0c0c3d;
     border: none;
-    border-radius: 5px;
     text-decoration: none;
     text-align: center;
     cursor: pointer;
@@ -112,7 +111,6 @@
 
 .authorization-button:hover {
     background-color: #040423;
-    transform: scale(1.01);
 }
 
 .authorization-button:focus {

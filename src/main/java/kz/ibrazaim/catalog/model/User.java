@@ -22,7 +22,7 @@ public class User {
     String login;
     String password;
     String name;
-    Role role;
+    String role;
     String surname;
     @JoinColumn(name = "registration_date")
     @CreationTimestamp

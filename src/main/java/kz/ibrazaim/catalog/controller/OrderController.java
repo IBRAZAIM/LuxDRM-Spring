@@ -1,6 +1,7 @@
 package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.CartItem;
+import kz.ibrazaim.catalog.model.Order;
 import kz.ibrazaim.catalog.model.OrderProduct;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.CartService;
@@ -24,7 +25,6 @@ public class OrderController {
     private final UserService userService;
     private final CartService cartService;
     private final OrderService orderService;
-    private final OrderProductService orderProductService;
     @GetMapping("/checkout")
     public String getCheckout(
             Principal principal,
@@ -46,10 +46,21 @@ public class OrderController {
     ){
         User user = userService.findUserByLogin(principal.getName());
         List<CartItem> cartItems = userService.findALlCartItems();
-        orderService.create(user, address, cartItems);
-
-        return "redirect:/checkout";
+        orderService.create(user, address,cartItems);
+        cartService.clearCart();
+        return "redirect:/myOrders";
     }
+
+    @GetMapping("/myOrders")
+    public String showOrders(Principal principal,Model model) {
+        User user = userService.findUserByLogin(principal.getName());
+        List<Order> orders = orderService.getAllOrders(user);
+        System.out.println(orders);
+        model.addAttribute("orders", orders);
+        return "myOrders";
+    }
+
+
 
 }
 

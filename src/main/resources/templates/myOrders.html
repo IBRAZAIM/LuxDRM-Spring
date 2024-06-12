@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои Заказы</title>
+    <link rel="stylesheet" th:href="@{/myOrders.css}">
+</head>
+<body>
+<div class="order-container">
+    <h1 class="myCart">Мои Заказы</h1>
+    <div class="order-list">
+        <div class="order-item" th:each="order : ${orders}">
+            <div class="order-details">
+                <ul>
+                    <li th:each="orderProduct : ${order.orderProducts}" class="order-product">
+                        <span th:text="${orderProduct.product.name + ' x' + orderProduct.quantity}"></span>
+                    </li>
+                </ul>
+            </div>
+            <div class="order-status" th:text="${order.status}"></div>
+            <div class="order-date" th:text="${order.date}"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

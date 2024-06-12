@@ -30,7 +30,6 @@
     <div class="customer-info">
         <h2>Информация о покупателе</h2>
         <form th:action="@{/checkout}" method="post">
-            <input type="hidden" name="orderId" th:value="${order != null ? order.id : ''}" /> <!-- Обработка возможного значения null для order -->
             <div class="form-group">
                 <label for="name">Имя</label>
                 <input type="text" id="name" name="name"required>

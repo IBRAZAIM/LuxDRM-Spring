@@ -31,7 +31,7 @@ public class UserService{
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     public void create(User user){
         user.setPassword(encoder.encode(user.getPassword()));
-        user.setRole(Role.USER);
+        user.setRole(Role.USER.getServiceName());
         user.setRegistrationDate(LocalDateTime.now());
         userRepository.save(user);
     }

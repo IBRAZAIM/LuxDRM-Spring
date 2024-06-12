@@ -19,5 +19,12 @@ public class CartController {
         cartService.removeCartItem(itemId);
         return "redirect:/cart";
     }
+
+//  TODO: добавить функцию удаления всех товаров
+//    @PostMapping("clearAll")
+//    public String clearCart(){
+//        cartService.clearCart();
+//        return "redirect:/cart";
+//    }
 }
 
