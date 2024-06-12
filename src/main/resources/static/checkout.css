@@ -6,19 +6,16 @@ body {
     padding: 0;
 }
 
-.navigation-panel {
-    margin-bottom: 20px;
-}
 
 .checkout-container {
-    width: 80%;
-    margin-top: 80px;
-    margin: 0 auto;
+    width: 90%;
+    margin: 100px auto 0 auto; /* Верхний отступ 90px, горизонтальные отступы - auto, нижний отступ - 0 */
     background: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 
 header h1 {
     text-align: center;
@@ -52,10 +49,13 @@ h2 {
     margin-top: 10px;
 }
 
-.customer-info .form-group {
+.customer-info{
+    margin-bottom: 15px;
+    margin-top: 20px;
+}
+.form-group{
     margin-bottom: 15px;
 }
-
 .customer-info label {
     display: block;
     margin-bottom: 5px;

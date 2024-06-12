@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,33 +21,36 @@ public class OrderService {
     private final OrderProductRepository orderProductRepository;
 
     @Transactional
-    public Order createOrder(User user, String address , List<OrderProduct> orderProducts, List<CartItem> cartItems) {
+    public Order create(User user, String address, List<CartItem> cartItems) {
         try {
             Order order = new Order();
             order.setUser(user);
             order.setStatus("Оформлено");
             order.setAddress(address);
-            order.setOrderDate(LocalDateTime.now());
-            for (int i = 0; i < orderProducts.size(); i++) {
-                OrderProduct orderProduct = new OrderProduct();
-                CartItem cartItem = cartItems.get(i);
+            order.setDate(LocalDateTime.now());
 
+            List<OrderProduct> orderProducts = new ArrayList<>();
+            for (CartItem cartItem : cartItems) {
+                OrderProduct orderProduct = new OrderProduct();
                 orderProduct.setOrder(order);
                 orderProduct.setProduct(cartItem.getProduct());
                 orderProduct.setQuantity(cartItem.getQuantity());
-                //Сохраняем orderProduct в базе данных
-                orderProductRepository.save(orderProduct);
+                orderProducts.add(orderProduct);
             }
+
             order.setOrderProducts(orderProducts);
-            //Сохраняем order в базе данных
-            orderRepository.save(order);
+            orderRepository.save(order); // Сохраняем заказ в базе данных
+
+            // Сохраняем все позиции заказа в базе данных после сохранения заказа
+            orderProductRepository.saveAll(orderProducts);
+
             return order;
         } catch (Exception e) {
-            // Запись информации об ошибке в логи
             logger.error("Ошибка при создании заказа: " + e.getMessage(), e);
-            throw e; // Пробрасываем исключение выше для обработки
+            throw e;
         }
     }
 }
+
 
 

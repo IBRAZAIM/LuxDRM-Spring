@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -21,12 +22,11 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
+
     String status;
-    @JoinColumn(name = "delivery_address")
     String address;
-    @JoinColumn(name = "date_of_order")
-    LocalDateTime orderDate;
+    LocalDateTime date;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<OrderProduct> orderProducts;
+    List<OrderProduct> orderProducts = new ArrayList<>();
 }

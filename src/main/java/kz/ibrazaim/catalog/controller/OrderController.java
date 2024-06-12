@@ -40,14 +40,13 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public String createOrder(
+    public String processCheckout(
             Principal principal,
-            @ModelAttribute("cartItems") List<CartItem> cartItems,
             @RequestParam("address") String address
     ){
         User user = userService.findUserByLogin(principal.getName());
-        List<OrderProduct> orderProducts = orderProductService.findAllOrderProduct();
-        orderService.createOrder(user, address, orderProducts, cartItems);
+        List<CartItem> cartItems = userService.findALlCartItems();
+        orderService.create(user, address, cartItems);
 
         return "redirect:/checkout";
     }

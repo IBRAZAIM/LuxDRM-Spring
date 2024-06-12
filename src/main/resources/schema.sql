@@ -28,9 +28,9 @@ CREATE TABLE orders
 (
     id               BIGSERIAL PRIMARY KEY,
     user_id          BIGINT REFERENCES users (id) NOT NULL,
-    status           INT,
-    delivery_address VARCHAR(255)                 NOT NULL,
-    date_of_order    TIMESTAMP
+    status VARCHAR(255),
+    address VARCHAR(255)                 NOT NULL,
+    date    TIMESTAMP
 );
 
 CREATE TABLE users

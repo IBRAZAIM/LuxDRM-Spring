@@ -25,7 +25,7 @@ public class CartService {
     public int returnTotalPrice(List<CartItem> cartItems) {
         int totalPrice = 0;
         for (CartItem item : cartItems) {
-            totalPrice += item.getProduct().getPrice();
+            totalPrice += item.getProduct().getPrice() * item.getQuantity();
         }
         return totalPrice;
     }

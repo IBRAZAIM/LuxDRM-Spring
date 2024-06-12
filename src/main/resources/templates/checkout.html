@@ -33,11 +33,11 @@
             <input type="hidden" name="orderId" th:value="${order != null ? order.id : ''}" /> <!-- Обработка возможного значения null для order -->
             <div class="form-group">
                 <label for="name">Имя</label>
-                <input type="text" id="name" name="name" th:value="${user != null ? user.name : ''}" required>
+                <input type="text" id="name" name="name"required>
             </div>
             <div class="form-group">
                 <label for="surname">Фамилия</label>
-                <input type="text" id="surname" name="surname" th:value="${user != null ? user.surname : ''}" required>
+                <input type="text" id="surname" name="surname"required>
             </div>
             <div class="form-group">
                 <label for="address">Адрес доставки</label>
