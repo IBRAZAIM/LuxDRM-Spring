@@ -10,17 +10,29 @@
 <div class="order-container">
     <h1 class="myCart">Мои Заказы</h1>
     <div class="order-list">
-        <div class="order-item" th:each="order : ${orders}">
-            <div class="order-details">
-                <ul>
-                    <li th:each="orderProduct : ${order.orderProducts}" class="order-product">
-                        <span th:text="${orderProduct.product.name + ' x' + orderProduct.quantity}"></span>
-                    </li>
-                </ul>
-            </div>
-            <div class="order-status" th:text="${order.status}"></div>
-            <div class="order-date" th:text="${order.date}"></div>
-        </div>
+        <table>
+            <thead>
+            <tr class="orders-param">
+                <th class="product-param">ПРОДУКТ</th>
+                <th class="status-param">СТАТУС</th>
+                <th class="date-param">ДАТА ОФОРМЛЕНИЯ</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Добавьте строки для каждого заказа -->
+            <tr th:each="order : ${orders}" class="order-item">
+                <td>
+                    <ul>
+                        <li th:each="orderProduct : ${order.orderProducts}" class="order-product">
+                            <span th:text="${orderProduct.product.name + ' x' + orderProduct.quantity}"></span>
+                        </li>
+                    </ul>
+                </td>
+                <td th:text="${order.status}" class="order-status"></td>
+                <td th:text="${order.date}" class="order-date"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

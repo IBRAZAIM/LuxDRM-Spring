@@ -1,22 +1,16 @@
-*{
+body {
     font-family: 'Montserrat', sans-serif;
+    color: #333;
     margin: 0;
     padding: 0;
 }
-body {
-    background-color: #f9f9f9;
-    color: #333333;
-}
 
 .order-container {
-    max-width: 800px;
+    max-width: 80%;
     margin: 20px auto;
     padding: 20px;
     background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 .myCart {
     font-size: 24px;
     margin-bottom: 20px;
@@ -24,36 +18,35 @@ body {
 }
 
 table {
+    width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
-th, td {
-    border: none;
+.orders-param th {
+    padding: 10px 0;
+    border-bottom: 2px solid #e0e0e0;
+}
+.status-param{
+    text-align: center;
+}
+.order-item td {
     padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
 }
-
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.table-heading {
-    color: #333333;
-}
-
-.order-row {
-    border-bottom: 1px solid #dddddd;
-}
-
-.order-product {
+.order-item td ul {
+    margin: 0;
+    padding: 0;
     list-style-type: none;
 }
 
-.order-status, .order-date {
-    color: #333333;
+.order-item td ul li {
+    margin-bottom: 5px;
 }
+
+.order-item td.order-status,
+.order-item td.order-date {
+    text-align: center;
+}
+
+
+
