@@ -14,12 +14,11 @@ main {
 .product-container {
     display: flex;
     background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
     overflow: hidden;
     width: 100%;
     max-width: 1200px;
     margin: auto;
+    border-bottom: 1px solid #ddd;
 }
 
 .left-column {
@@ -43,21 +42,101 @@ main {
 .description-container {
     padding: 20px;
     display: flex;
+    position: relative;
     flex-direction: column;
 }
 
 .description-div {
     width: 400px;
     font-size: 14px;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    margin-bottom: 40px;
 }
 
+
+.product-characteristics {
+    margin: 20px 0;
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+}
+
+.characteristics-table {
+    width: 100%;
+    border: 1px solid #0c0c3d;
+    justify-content: center;
+}
+
+.characteristics-table th,
+.characteristics-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #0c0c3d;
+}
+
+.characteristics-table thead th {
+    background-color: #0c0c3d;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.characteristics-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.characteristics-table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.characteristics-table tbody td {
+    color: #0c0c3d;
+}
+
+
+/* Скрыть характеристики по умолчанию */
+.product-characteristics {
+     position: absolute;
+     top: 0;
+     right: -100%; /* Начальное положение за пределами видимости */
+     width: 100%;
+     background-color: #fff;
+     padding: 20px;
+     transition: right 0.9s ease; /* Анимация смещения с использованием кривой Безье */
+ }
+
+/* Анимация плавного появления характеристик */
+.product-characteristics.show-characteristics {
+    right: 0; /* Показать характеристики */
+}
+
+/* Кнопка "Показать еще" стилизация */
+.character-btn {
+    margin-bottom: auto;
+    position: relative;
+    display: inline-block;
+    right: -50%;
+    padding-bottom: 15px;
+}
+
+.character-btn a {
+    color: #007bff;
+    cursor: pointer;
+}
+
+/* Показать характеристики при активации */
+.show-characteristics {
+    display: block;
+}
+
+
+/*Имя продукта*/
 .product-name {
     font-size: 2em;
     font-weight: 600;
     margin-bottom: 10px;
     text-align: center;
 }
-
+/*Цена*/
 .price {
     font-size: 20px;
     color: #0c0c3d;
@@ -66,45 +145,9 @@ main {
     text-align: center;
 }
 
-
-.mini-product-card{
-    width: 30%;
+.cart-container{
+    margin-bottom: 30px;
 }
-/* Стили для блока характеристик */
-.characteristics {
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px auto;
-    width: 70%;
-}
-
-.characteristics h3 {
-    font-size: 1.5em;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #0c0c3d;
-}
-
-.characteristics .options-list {
-    list-style-type: none;
-    padding: 0;
-    width: 100%;
-}
-
-.characteristics .option-item {
-    background-color: #f0f0f0;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    font-size: 1em;
-    transition: background 0.3s ease-in-out;
-}
-
-.characteristics .option-item:hover {
-    background-color: #e0e0e0;
-}
-
 .add-to-cart {
     display: block;
     width: 100%;
@@ -128,6 +171,18 @@ main {
     outline: none;
     box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
 }
+
+.icon-container {
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.toggle-icon {
+    width: 30px;
+    height: 30px;
+}
+
 
 
 

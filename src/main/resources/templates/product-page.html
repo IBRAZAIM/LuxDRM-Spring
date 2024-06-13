@@ -7,7 +7,12 @@
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="">
+    <link href="">
+    <link href="">
+    <link href="">
+    <link href="">
+    <link href="">
+    <link href="">
 </head>
 <body>
 <header>
@@ -18,12 +23,37 @@
         <img src="https://polo-man.ru/image/cache/catalog/polo/10_-1050x1200.jpg" class="img" alt="Product Image">
     </div>
     <div class="right-column">
-        <div class="description-container">
+        <div class="product-name-container">
             <span th:text="${product.category.name}"></span>
+            <div class="character-btn">
+                <a onclick="toggleCharacteristics()">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 50 50">
+                        <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
+                    </svg>
+                </a>
+            </div>
             <h1 th:text="${product.name}" class="product-name">Название товара</h1>
             <p th:text="'Цена: ' + ${product.price} + ' ₸'" class="price">Цена</p>
+        </div>
+        <div class="description-container">
             <div class="description-div">
-                <p th:text="${product.description}"></p>
+                <p th:text="${product.description}">Product Description</p>
+            </div>
+            <div id="characteristics" class="product-characteristics">
+                <table class="characteristics-table">
+                     <thead>
+                    <tr>
+                        <th>Характеристика</th>
+                        <th>Значение</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${options}">
+                        <td th:text="${entry.getKey().getName()}"></td>
+                        <td th:text="${entry.getValue().isPresent() ? entry.getValue().get().name : 'Не указано'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="cart-container">
@@ -34,23 +64,21 @@
     </div>
 </main>
 <main>
-    <div class="mini-product-card">
-
-    </div>
-    <div class="characteristics">
-        <h3>Характеристики:</h3>
-        <ul class="options-list">
-            <li th:each="entry : ${options}" th:if="${entry.getValue().isPresent()}"
-                th:text="${entry.getKey().getName() + ': ' + entry.getValue().get().name}"
-                class="option-item">
-            </li>
-            <li th:each="entry : ${options}" th:unless="${entry.getValue().isPresent()}"
-                th:text="${entry.getKey().getName() + ': Не указано'}"
-                class="option-item">
+    <div class="reviews">
+        <h3>Отзывы:</h3>
+        <ul class="reviews-list">
+            <li th:each="comment : ${comments}">
+                <strong th:text="${comment.getUser().getName()}"></strong>: <span th:text="${comment.getText()}"></span>
             </li>
         </ul>
     </div>
 </main>
+<script>
+    function toggleCharacteristics() {
+        const characteristics = document.getElementById('characteristics');
+        characteristics.classList.toggle('show-characteristics');
+    }
+</script>
 </body>
 </html>
 
@@ -78,10 +106,4 @@
 <!--        <button type="submit">Отправить</button>-->
 <!--    </form>-->
 <!--</div>-->
-<!--<h3>Отзывы:</h3>-->
-<!--<ul class="reviews-list">-->
-<!--    <li th:each="comment : ${comments}">-->
-<!--        <strong th:text="${comment.getUser().getName()}"></strong>: <span th:text="${comment.getText()}"></span>-->
-<!--    </li>-->
-<!--</ul>-->
 
