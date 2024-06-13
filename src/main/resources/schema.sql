@@ -15,8 +15,11 @@ CREATE TABLE products
     id    SERIAL PRIMARY KEY ,
     name  VARCHAR(255),
     price   INT,
+    description TEXT CHECK (char_length(description) <= 500),
     category_id INT REFERENCES categories(id)
 );
+ALTER TABLE products ADD COLUMN description TEXT CHECK (char_length(description) <= 500);
+
 
 CREATE TABLE categories
 (
@@ -73,3 +76,10 @@ CREATE TABLE cart (
 
 ALTER TABLE products ADD COLUMN url_image VARCHAR(255);
 ALTER TABLE products DROP COLUMN url_image;
+
+
+CREATE TABLE product_images(
+    id BIGSERIAL PRIMARY KEY,
+    product_id BIGINT REFERENCES products(id) NOT NULL,
+    image TEXT
+)

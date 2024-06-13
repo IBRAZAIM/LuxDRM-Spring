@@ -19,10 +19,13 @@ public class Product {
     long id;
     String name;
     int price;
+    String description;
     @ManyToOne
     @JoinColumn(name="category_id")
     Category category;
     @OneToMany(mappedBy = "product")
     List<Value> valueList;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images;
 }

@@ -22,9 +22,9 @@
       Стоимость товара
       <input id="price" name="price">
     </label>
-    <label for="imageUrl">
-      URL изображения товара
-      <input id="imageUrl" name="imageUrl">
+    <label for="description">
+      Описание
+      <input id="description" name="description">
     </label>
     <br>
     <div th:each="option : ${category.getOptionList()}" class="option-item">
@@ -32,6 +32,10 @@
       <p th:text="${option.name}"></p>
       <input name="values">
     </div>
+    <label for="imageUrl">
+      URL изображения товара
+      <input id="imageUrl" name="imageUrl">
+    </label>
     <button type="submit">Создать</button>
   </form>
 </div>

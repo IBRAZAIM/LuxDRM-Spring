@@ -6,6 +6,7 @@ import kz.ibrazaim.catalog.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -16,22 +17,46 @@ public class ProductService implements AbstractService<Product> {
     private final ValueRepository valueRepository;
     private final OptionRepository optionRepository;
     private final CategoryRepository categoryRepository;
-    private final CartItemRepository cartItemRepository;
+    private final ProductImageService productImageService;
+    private final ProductImageRepository productImageRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     public void create(Product product) {
         productRepository.save(product);
     }
 
-    public void create(Product product, List<String> values, List<Long> optionsIds, Long categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow();
-        product.setCategory(category);
-        productRepository.save(product);
-        createValues(product, values, optionsIds);
+    @Override
+    public void deleteById(long id) {
+        productRepository.deleteById(id);
+    }
+    @Transactional
+    @Override
+    public void deleteProductById(long productId) {
+        productImageRepository.deleteByProductId(productId);
+        valueRepository.deleteAllByProductId(productId);
+        reviewRepository.deleteAllByProductId(productId);
+        deleteById(productId);
     }
 
-    private void createValues(Product product, List<String> values, List<Long> optionsIds) {
+    @Transactional
+    public void create(Product product, List<String> values, List<Long> optionsIds, Long categoryId, String imageUrl) {
+        // Получаем категорию из репозитория для установки связи с продуктом
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        product.setCategory(category);
+        productRepository.save(product);
+        // Создаем значения продукта
+        createValues(product, values, optionsIds);
+        // Создаем изображение продукта
+        productImageService.create(product, imageUrl);
+    }
+
+    public void createValues(Product product, List<String> values, List<Long> optionsIds) {
         List<Option> options = optionRepository.findAllById(optionsIds);
+
+        if (values.size() != options.size()) {
+            throw new IllegalArgumentException("Values and options size mismatch");
+        }
 
         for (int i = 0; i < options.size(); i++) {
             Value value = new Value();
@@ -50,12 +75,6 @@ public class ProductService implements AbstractService<Product> {
     @Override
     public Product findById(long id) {
         return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id + "не найден"));
-    }
-
-    @Override
-    public void deleteById(long id) {
-        valueRepository.deleteAllByProductId(id);
-        productRepository.deleteById(id);
     }
 
     public void update(long id, String name, int price, List<Long> optionIds, List<String> values) {

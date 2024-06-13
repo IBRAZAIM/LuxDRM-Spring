@@ -13,6 +13,11 @@ public class CategoryService implements AbstractService<Category> {
     private final CategoryRepository categoryRepository;
 
     @Override
+    public void deleteProductById(long productId) {
+
+    }
+
+    @Override
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }

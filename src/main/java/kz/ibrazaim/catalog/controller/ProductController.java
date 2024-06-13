@@ -1,12 +1,14 @@
 package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Product;
+import kz.ibrazaim.catalog.model.ProductImage;
 import kz.ibrazaim.catalog.model.User;
-import kz.ibrazaim.catalog.service.CategoryService;
-import kz.ibrazaim.catalog.service.ProductService;
-import kz.ibrazaim.catalog.service.ReviewService;
-import kz.ibrazaim.catalog.service.UserService;
+import kz.ibrazaim.catalog.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,7 +26,7 @@ public class ProductController {
     private final CategoryService categoryService;
     private final ReviewService reviewService;
     private final UserService userService;
-
+    private final ProductImageService productImageService;
 
 
     @GetMapping
@@ -53,19 +55,18 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String showProductForm(
+    public String createProduct(
             @ModelAttribute("product") Product product,
             @RequestParam(required = false) List<String> values,
             @RequestParam(required = false) List<Long> optionsIds,
             @RequestParam(defaultValue = "-1") Long categoryId,
+            @RequestParam(required = false) String imageUrl,
             Model model) {
         if (categoryId == -1) {
             return "redirect:/products/create/chooseCategory";
         }
-        productService.create(product);
         model.addAttribute("options", optionsIds);
-        productService.create(product, values, optionsIds, categoryId);
-
+        productService.create(product, values, optionsIds, categoryId, imageUrl);
         return "redirect:/products";
     }
 
@@ -98,7 +99,7 @@ public class ProductController {
 
     @PostMapping("/delete/{id}")
     public String deleteProduct(@PathVariable long id) {
-        productService.deleteById(id);
+        productService.deleteProductById(id);
         return "redirect:/products";
     }
 
@@ -108,7 +109,7 @@ public class ProductController {
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("comments", reviewService.getCommentsForProduct(product));
-
+        model.addAttribute("imageUrl", productImageService.findByProduct(product));
         // Проверка на авторизацию пользователя
         if (principal != null) {
             User user = userService.findUserByLogin(principal.getName());
@@ -117,7 +118,6 @@ public class ProductController {
             // Создание пустого пользователя для неавторизованных пользователей
             model.addAttribute("user", new User());
         }
-
         return "product-page";
     }
 
