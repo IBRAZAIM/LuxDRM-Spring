@@ -7,26 +7,38 @@
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="">
 </head>
 <body>
-<div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
-<section class="product-container">
-    <article class="image-container">
-        <img src="https://cdna.lystit.com/1040/1300/n/photos/thehut/2dc2843b/lacoste-Green-Large-Croc-Polo-Shirt.jpeg" class="img" alt="Product Image">
-        <h3>Отзывы:</h3>
-        <ul class="reviews-list">
-            <li th:each="comment : ${comments}">
-                <strong th:text="${comment.getUser().getName()}"></strong>: <span th:text="${comment.getText()}"></span>
-            </li>
-        </ul>
-    </article>
-    <aside class="description-container">
-        <header>
+<header>
+    <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
+</header>
+<main class="product-container">
+    <div class="left-column">
+        <img src="https://polo-man.ru/image/cache/catalog/polo/10_-1050x1200.jpg" class="img" alt="Product Image">
+    </div>
+    <div class="right-column">
+        <div class="description-container">
+            <span th:text="${product.category.name}"></span>
             <h1 th:text="${product.name}" class="product-name">Название товара</h1>
-        </header>
-        <p th:text="'Цена: ' + ${product.price} + ' ₸'" class="price">Цена</p>
-        <h3>Описание:</h3>
+            <p th:text="'Цена: ' + ${product.price} + ' ₸'" class="price">Цена</p>
+            <div class="description-div">
+                <p th:text="${product.description}"></p>
+            </div>
+        </div>
+        <div class="cart-container">
+            <form th:action="@{|/cart/${product.getId()}|}" method="post">
+                <button type="submit" class="add-to-cart">Добавить в корзину</button>
+            </form>
+        </div>
+    </div>
+</main>
+<main>
+    <div class="mini-product-card">
+
+    </div>
+    <div class="characteristics">
+        <h3>Характеристики:</h3>
         <ul class="options-list">
             <li th:each="entry : ${options}" th:if="${entry.getValue().isPresent()}"
                 th:text="${entry.getKey().getName() + ': ' + entry.getValue().get().name}"
@@ -37,34 +49,39 @@
                 class="option-item">
             </li>
         </ul>
-        <form th:action="@{|/cart/${product.getId()}|}" method="post">
-            <button type="submit" class="add-to-cart">Добавить в корзину</button>
-        </form>
-        <div th:class="comment-form">
-            <h3>Добавить отзыв</h3>
-            <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="productId" th:value="${product.id}">
-                <input type="hidden" name="userId" th:value="${user.id}">
-
-                <div>
-                    <label for="comment">Текст отзыва:</label>
-                    <textarea name="comment" id="comment" placeholder="Текст комментария" required></textarea>
-                </div>
-                <div>
-                    <label for="estimation">Оценка:</label>
-                    <select name="estimation" id="estimation" required>
-                        <option value="5">5</option>
-                        <option value="4">4</option>
-                        <option value="3">3</option>
-                        <option value="2">2</option>
-                        <option value="1">1</option>
-                    </select>
-                </div>
-                <button type="submit">Отправить</button>
-            </form>
-        </div>
-    </aside>
-</section>
+    </div>
+</main>
 </body>
 </html>
+
+
+<!--<div th:class="comment-form">-->
+<!--    <h3>Добавить отзыв</h3>-->
+<!--    <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">-->
+<!--        <input type="hidden" name="productId" th:value="${product.id}">-->
+<!--        <input type="hidden" name="userId" th:value="${user.id}">-->
+
+<!--        <div>-->
+<!--            <label for="comment">Текст отзыва:</label>-->
+<!--            <textarea name="comment" id="comment" placeholder="Текст комментария" required></textarea>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <label for="estimation">Оценка:</label>-->
+<!--            <select name="estimation" id="estimation" required>-->
+<!--                <option value="5">5</option>-->
+<!--                <option value="4">4</option>-->
+<!--                <option value="3">3</option>-->
+<!--                <option value="2">2</option>-->
+<!--                <option value="1">1</option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--        <button type="submit">Отправить</button>-->
+<!--    </form>-->
+<!--</div>-->
+<!--<h3>Отзывы:</h3>-->
+<!--<ul class="reviews-list">-->
+<!--    <li th:each="comment : ${comments}">-->
+<!--        <strong th:text="${comment.getUser().getName()}"></strong>: <span th:text="${comment.getText()}"></span>-->
+<!--    </li>-->
+<!--</ul>-->
 
