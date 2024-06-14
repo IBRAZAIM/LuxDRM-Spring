@@ -45,7 +45,7 @@ public class OrderController {
         List<CartItem> cartItems = userService.findALlCartItems();
         orderService.create(user, address,cartItems);
         cartService.clearCart();
-        return "redirect:/myOrders";
+        return "redirect:/orders";
     }
 
     @GetMapping("/orders")

@@ -2,6 +2,7 @@ package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.ProductImage;
+import kz.ibrazaim.catalog.model.Role;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.*;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class ProductController {
 
     @GetMapping
     public String findAll(
+            Principal principal,
             @RequestParam(defaultValue = "0") Integer minPrice,
             @RequestParam(defaultValue = "" + Integer.MAX_VALUE) Integer maxPrice,
             @RequestParam(required = false) Long categoryId,
@@ -42,8 +44,12 @@ public class ProductController {
         }
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryId", categoryId);
-
-        return "product-list";
+        User user = userService.findUserByLogin(principal.getName());
+        if (user.getRole().equals(Role.ADMIN.getServiceName())){
+            return "product-list";
+        }else {
+            return "products";
+        }
     }
 
 

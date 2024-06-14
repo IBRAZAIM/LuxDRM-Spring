@@ -20,6 +20,7 @@ public class ProductService implements AbstractService<Product> {
     private final ProductImageService productImageService;
     private final ProductImageRepository productImageRepository;
     private final ReviewRepository reviewRepository;
+    private final OrderProductRepository orderProductRepository;
 
     @Override
     public void create(Product product) {
@@ -36,6 +37,7 @@ public class ProductService implements AbstractService<Product> {
         productImageRepository.deleteByProductId(productId);
         valueRepository.deleteAllByProductId(productId);
         reviewRepository.deleteAllByProductId(productId);
+        orderProductRepository.deleteAllByProductId(productId);
         deleteById(productId);
     }
 

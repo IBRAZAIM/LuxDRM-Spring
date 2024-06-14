@@ -52,7 +52,6 @@ main {
     width: 400px;
     font-size: 14px;
     transition: opacity 0.5s ease, visibility 0.5s ease;
-    margin-bottom: 40px;
 }
 
 
@@ -61,6 +60,7 @@ main {
     width: 100%;
     max-width: 800px;
     border-collapse: collapse;
+    z-index: 999
 }
 
 .characteristics-table {
@@ -174,7 +174,6 @@ main {
     font-size: 20px;
     font-weight: 600;
     text-align: center;
-    font-family: Arial;
     color: #0c0c3d;
     text-decoration: none;
 }
@@ -239,6 +238,8 @@ main {
 .toggle-icon {
     width: 30px;
     height: 30px;
+    font-size: 15px;
+    color: #0c0c3d;
 }
 
 /*Отзывы*/
