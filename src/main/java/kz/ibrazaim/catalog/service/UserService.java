@@ -55,25 +55,29 @@ public class UserService{
         return user.getCartItem();
     }
 
-    public void addItemToCart(long productId) {
-        CartItem cartItem = new CartItem();
-        cartItem.setUser(getUser());
-
-        Product product = productRepository.findById(productId).orElseThrow();
-        cartItem.setProduct(product);
-        cartItem.setQuantity(1);
-
+    public void addItemToCart(long productId, int quantity) {
+        CartItem cartItem = cartItemRepository.findByProductId(productId);
+        if (cartItem != null) {
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+        } else {
+            cartItem = new CartItem();
+            cartItem.setUser(getUser());
+            Product product = productRepository.findById(productId).orElseThrow();
+            cartItem.setProduct(product);
+            cartItem.setQuantity(quantity);
+        }
         cartItemRepository.save(cartItem);
     }
+
+    public void updateCartItem(long productId, int quantity) {
+        addItemToCart(productId, quantity);
+    }
+
 
     private User getUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         return  userRepository.findByLogin(authentication.getName()).orElseThrow();
-    }
-
-    public User findById(Long userId) {
-        return userRepository.findById(userId).orElseThrow();
     }
 
     public User findUserByLogin(String login) {
@@ -84,15 +88,6 @@ public class UserService{
             throw new UserNotFoundException("Пользователь с логином" + ": "  + login + " " + "не найден!");
         }
     }
-
-    public void updateCartItem(long productId) {
-        CartItem cartItem = cartItemRepository.findByProductId(productId);
-        if (cartItem != null) {
-            cartItem.setQuantity(cartItem.getQuantity() + 1);
-            cartItemRepository.save(cartItem);
-        }
-    }
-
     public boolean isProductInCart(long productId) {
         return cartItemRepository.findByProductId(productId) != null;
 

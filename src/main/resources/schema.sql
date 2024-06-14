@@ -55,7 +55,7 @@ CREATE TABLE reviews
     product_id         BIGINT REFERENCES products (id) NOT NULL,
     publication_status BOOLEAN                  NOT NULL,
     estimation         SMALLINT,
-    estimation_text    TEXT,
+    estimation_text    TEXT CHECK (char_length(estimation_text) <= 1000),
     estimation_data    TIMESTAMP
 );
 

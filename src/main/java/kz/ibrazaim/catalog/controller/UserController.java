@@ -21,15 +21,11 @@ public class UserController {
     }
 
     @PostMapping("/cart/{productId}")
-    public String addItemToCart(Principal principal, @PathVariable long productId){
+    public String addItemToCart(Principal principal, @PathVariable long productId,  @RequestParam("quantity") int quantity){
         if (principal == null) {
             return "redirect:/login";
         }
-        if (userService.isProductInCart(productId)) {
-            userService.updateCartItem(productId);
-        } else {
-            userService.addItemToCart(productId);
-        }
+        userService.updateCartItem(productId, quantity);
         return "redirect:/cart";
     }
 
