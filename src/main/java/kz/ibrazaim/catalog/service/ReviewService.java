@@ -25,13 +25,20 @@ public class ReviewService {
         review.setEstimation(estimation);
         review.setText(text);
         review.setDate(LocalDateTime.now());
-        review.setStatus(true);
+        review.setStatus("Не проверено");
+        reviewRepository.save(review);
+    }
+    public void updateReviewStatus(long reviewId, String status){
+        Review review = reviewRepository.findById(reviewId).orElseThrow();
+        review.setStatus(status);
         reviewRepository.save(review);
     }
 
-
     public List<Review> getCommentsForProduct(Product product) {
-        System.out.println(reviewRepository.findByProduct(product));
-        return reviewRepository.findByProduct(product);
+        return reviewRepository.findByProductAndStatus(product,  "Проверено");
+    }
+
+    public List<Review> findALl(){
+        return reviewRepository.findAll();
     }
 }

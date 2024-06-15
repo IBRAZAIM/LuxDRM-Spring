@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все Комментарии</title>
+    <link rel="stylesheet" th:href="@{/reviews.css}">
+</head>
+<body>
+<div class="review-container">
+    <h1 class="myCart">Все Комментарии</h1>
+    <div class="review-list">
+        <table>
+            <thead>
+            <tr class="reviews-param">
+                <th>Пользователь</th>
+                <th>Продукт</th>
+                <th>Статус</th>
+                <th>Дата оформления</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="review : ${reviews}" class="review-item">
+                <td th:text="${review.user.login}" class="review-user"></td>
+                <td th:text="${review.product.name}" class="review-product"></td>
+                <td>
+                    <form th:action="@{/reviews/updateStatus}" method="post">
+                        <input type="hidden" th:name="reviewId" th:value="${review.id}">
+                        <select th:name="status">
+                            <option th:selected="${review.status == null || review.status == ''}" value="">Не проверено</option>
+                            <option th:selected="${review.status == 'Проверено'}" value="Проверено">Проверено</option>
+                        </select>
+                        <button type="submit">Сохранить</button>
+                    </form>
+                </td>
+                <td th:text="${review.date}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

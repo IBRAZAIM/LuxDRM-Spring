@@ -18,7 +18,6 @@ main {
     background-color: #fff;
     overflow: hidden;
     width: 100%;
-    max-width: 1200px;
     margin: auto;
     border-bottom: 1px solid #ddd;
 }
@@ -34,8 +33,8 @@ main {
 }
 
 .img {
-    width: 500px;
-    height: 500px;
+    width: 600px;
+    height: 550px;
     justify-content: center;
     align-items: center;
     padding-left: 30px;
@@ -111,7 +110,6 @@ main {
     right: 0; /* Показать характеристики */
 }
 
-/* Кнопка "Показать еще" стилизация */
 .character-btn {
     margin-bottom: auto;
     position: relative;
@@ -243,7 +241,6 @@ main {
 }
 
 /*Отзывы*/
-/* Star rating styles */
 .star-rating {
     direction: rtl;
     display: flex;
@@ -275,10 +272,8 @@ main {
     color: #e8b623;
 }
 
-/* Other styles for modal and form */
 .reviews {
     width: 100%;
-    margin: 0 auto;
     padding: 20px;
     border: 1px solid #e0e0e0;
     border-radius: 10px;

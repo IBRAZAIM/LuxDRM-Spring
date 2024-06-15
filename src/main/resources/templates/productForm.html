@@ -6,38 +6,35 @@
   <title>Создание товара</title>
 </head>
 <body>
-<div class="container">
-  <h1>Создание товара</h1>
-  <h2>Категория:</h2>
-  <h2 th:text="${category.getName()}"></h2>
-  <form action="/products/create" method="post" th:object="${product}">
-    <input type="hidden" name="categoryId" th:value="${category.getId()}">
-    <label for="name">
-      Название товара
+  <div class="container">
+    <h1>Создание товара</h1>
+    <h2 th:text="${category.getName()}"></h2>
+    <form action="/products/create" th:object="${product}" method="post" class="form">
+      <input type="hidden" name="categoryId" th:value="${category.getId()}">
+      <input type="hidden" th:field="*{id}">
+      <label>Название:</label>
       <input id="name" name="name">
-    </label>
-    <br>
-    <label for="price">
-      Стоимость товара
+      <br>
+      <label>Цена:</label>
       <input id="price" name="price">
-    </label>
-    <label for="description">
-      Описание
+      <label>Описание</label>
       <input id="description" name="description">
-    </label>
-    <br>
-    <div th:each="option : ${category.getOptionList()}" class="option-item">
-      <input type="hidden" name="optionsIds" th:value="${option.id}">
-      <p th:text="${option.name}"></p>
-      <input name="values">
-    </div>
-    <label for="imageUrl">
-      URL изображения товара
-      <input id="imageUrl" name="imageUrl">
-    </label>
-    <button type="submit">Создать</button>
-  </form>
-</div>
+      <br>
+      <label>Характеристики:</label>
+      <table>
+        <tr th:each="option : ${category.getOptionList()}" class="options">
+          <input type="hidden" name="optionsIds" th:value="${option.id}">
+          <td><label th:text="${option.name}"></label></td>
+          <td><input name="values"></td>
+        </tr>
+      </table>
+      <label for="imageUrl">
+        URL изображения товара
+        <input id="imageUrl" name="imageUrl">
+      </label>
+      <input type="submit" value="Создать" class="create-btn">
+    </form>
+  </div>
 </body>
 </html>
 

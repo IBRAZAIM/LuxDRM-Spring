@@ -37,6 +37,14 @@ public class ProductController {
             @RequestParam(defaultValue = "" + Integer.MAX_VALUE) Integer maxPrice,
             @RequestParam(required = false) Long categoryId,
             Model model) {
+        // Если пользователь не авторизован
+        if (principal == null) {
+            model.addAttribute("products", productService.findAll());
+            model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("selectedCategoryId", categoryId);
+            return "products";
+        }
+        // Если пользователь авторизован
         if (minPrice == 0 && maxPrice == Integer.MAX_VALUE && categoryId == null) {
             model.addAttribute("products", productService.findAll());
         } else {
@@ -48,7 +56,6 @@ public class ProductController {
         if (user.getRole().equals(Role.ADMIN.getServiceName())){
             return "product-list";
         }else {
-
             return "products";
         }
     }
@@ -113,7 +120,7 @@ public class ProductController {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
-        model.addAttribute("comments", reviewService.getCommentsForProduct(product));
+        model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
         model.addAttribute("imageUrl", productImageService.findByProduct(product));
         // Проверка на авторизацию пользователя
         if (principal != null) {

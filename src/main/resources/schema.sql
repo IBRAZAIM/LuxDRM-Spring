@@ -53,12 +53,11 @@ CREATE TABLE reviews
     id                 BIGSERIAL PRIMARY KEY,
     user_id            BIGINT REFERENCES users (id)    NOT NULL,
     product_id         BIGINT REFERENCES products (id) NOT NULL,
-    publication_status BOOLEAN                  NOT NULL,
+    publication_status VARCHAR(20)                  NOT NULL,
     estimation         SMALLINT,
     estimation_text    TEXT CHECK (char_length(estimation_text) <= 1000),
     estimation_data    TIMESTAMP
 );
-
 CREATE TABLE order_products
 (
     id         BIGSERIAL PRIMARY KEY,

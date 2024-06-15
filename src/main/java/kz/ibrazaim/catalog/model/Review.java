@@ -33,7 +33,7 @@ public class Review {
     Product product;
 
     @Column(name = "publication_status")
-    boolean status;
+    String status;
 
     @Column(name = "estimation")
     int estimation;

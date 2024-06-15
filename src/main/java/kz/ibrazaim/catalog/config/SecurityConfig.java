@@ -22,6 +22,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/cart").authenticated();
                     auth.requestMatchers("/checkout").authenticated();
                     auth.requestMatchers("/myOrders").authenticated();
+                    auth.requestMatchers("/reviews").authenticated();
                     auth.anyRequest().permitAll();
                 })
                 .formLogin(formLogin -> formLogin

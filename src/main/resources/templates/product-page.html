@@ -67,24 +67,24 @@
 <main>
     <div class="reviews">
         <h3>Отзывы:</h3>
+        <ul class="reviews-list">
+            <li th:each="review : ${reviews}">
+                <strong th:text="${review.getUser().getName()}"></strong><br>
+                <div class="review-rating">
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
+                </div>
+                <span th:text="${review.getText()}" class="comment-text"></span>
+            </li>
+        </ul>
         <div th:if="${#authorization.expression('isAuthenticated()')}">
             <a id="openModalBtn">Добавить отзыв</a>
-            <ul class="reviews-list">
-                <li th:each="comment : ${comments}">
-                    <strong th:text="${comment.getUser().getName()}"></strong><br>
-                    <div class="review-rating">
-                        <i class="fa-regular fa-star" th:classappend="${comment.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${comment.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${comment.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${comment.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${comment.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
-                    </div>
-                    <span th:text="${comment.getText()}" class="comment-text"></span>
-                </li>
-            </ul>
         </div>
         <div th:unless="${#authorization.expression('isAuthenticated()')}">
-            <p>Чтобы оставить отзыв нужно <a th:href="@{/login}" > Авторизоваться</a></p>
+            <p>Чтобы оставить отзыв необходимо <a th:href="@{/login}" >  авторизоваться</a></p>
         </div>
     </div>
     <div id="commentModal" class="modal">
