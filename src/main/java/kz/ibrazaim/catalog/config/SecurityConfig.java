@@ -18,8 +18,6 @@ public class SecurityConfig {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/products/create/chooseCategory").authenticated();
-                    auth.requestMatchers("/products/update/**", "/products/delete/**").authenticated();
                     auth.requestMatchers("/products/addComment").authenticated();
                     auth.requestMatchers("/cart").authenticated();
                     auth.requestMatchers("/checkout").authenticated();

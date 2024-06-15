@@ -48,6 +48,7 @@ public class ProductController {
         if (user.getRole().equals(Role.ADMIN.getServiceName())){
             return "product-list";
         }else {
+
             return "products";
         }
     }
@@ -66,12 +67,10 @@ public class ProductController {
             @RequestParam(required = false) List<String> values,
             @RequestParam(required = false) List<Long> optionsIds,
             @RequestParam(defaultValue = "-1") Long categoryId,
-            @RequestParam(required = false) String imageUrl,
-            Model model) {
+            @RequestParam(required = false) String imageUrl) {
         if (categoryId == -1) {
             return "redirect:/products/create/chooseCategory";
         }
-        model.addAttribute("options", optionsIds);
         productService.create(product, values, optionsIds, categoryId, imageUrl);
         return "redirect:/products";
     }

@@ -12,7 +12,6 @@
   <h2 th:text="${category.getName()}"></h2>
   <form action="/products/create" method="post" th:object="${product}">
     <input type="hidden" name="categoryId" th:value="${category.getId()}">
-
     <label for="name">
       Название товара
       <input id="name" name="name">
@@ -41,5 +40,4 @@
 </div>
 </body>
 </html>
-
 
