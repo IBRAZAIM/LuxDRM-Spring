@@ -18,109 +18,109 @@
         <img th:src="@{${imageUrl.image}}" alt="Product Image" class="img">
     </div>
     <div class="right-column">
-        <div class="product-name-container">
-            <span th:text="${product.category.name}"></span>
-            <div class="character-btn">
-                <a onclick="toggleCharacteristics()">
-                    <i class="fa-solid fa-gear"></i>
-                </a>
-            </div>
-            <h1 th:text="${product.name}" class="product-name">Название товара</h1>
-            <p th:text="'Цена: ' + ${product.price} + ' ₸'" class="price">Цена</p>
-        </div>
-        <div class="description-container">
-            <div class="description-div">
-                <p th:text="${product.description}">Product Description</p>
-            </div>
-            <div id="characteristics" class="product-characteristics">
-                <table class="characteristics-table">
-                    <thead>
-                    <tr>
-                        <th>Характеристика</th>
-                        <th>Значение</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="entry : ${options}">
-                        <td th:text="${entry.getKey().getName()}"></td>
-                        <td th:text="${entry.getValue().isPresent() ? entry.getValue().get().name : 'Не указано'}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="cart-container">
-            <form th:action="@{|/cart/${product.getId()}|}" method="post">
-                <div class="quantity-block">
-                    <label>Кол-во</label>
-                    <div class="number" data-step="1" data-min="1" data-max="20">
-                        <input class="number-text" type="text" name="quantity" value="1">
-                        <a class="number-minus" onclick="decrement()">−</a>
-                        <a class="number-plus" onclick="increment()">+</a>
-                    </div>
+        <div class="description-zone">
+            <div class="product-name-container">
+                <span th:text="${product.category.name}"></span>
+                <div class="character-btn">
+                    <a onclick="toggleCharacteristics()">
+                        <i class="fa-solid fa-gear"></i>
+                    </a>
                 </div>
-                <button type="submit" class="add-to-cart">Добавить в корзину</button>
-            </form>
-        </div>
-    </div>
-</main>
-<main>
-    <div class="reviews">
-        <h3>Отзывы:</h3>
-        <ul class="reviews-list">
-            <li th:each="review : ${reviews}">
-                <strong th:text="${review.getUser().getName()}"></strong><br>
-                <div class="review-rating">
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
+                <h1 th:text="${product.name}" class="product-name">Название товара</h1>
+                <p th:text="'Цена: ' + ${product.price} + ' ₸'" class="price">Цена</p>
+            </div>
+            <div class="description-container">
+                <div class="description-div">
+                    <p th:text="${product.description}">Product Description</p>
                 </div>
-                <span th:text="${review.getText()}" class="comment-text"></span>
-            </li>
-        </ul>
-        <div th:if="${#authorization.expression('isAuthenticated()')}">
-            <a id="openModalBtn">Добавить отзыв</a>
-        </div>
-        <div th:unless="${#authorization.expression('isAuthenticated()')}">
-            <p>Чтобы оставить отзыв необходимо <a th:href="@{/login}" >  авторизоваться</a></p>
-        </div>
-    </div>
-    <div id="commentModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <div th:class="comment-form">
-                <h3>Добавить отзыв</h3>
-                <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="productId" th:value="${product.id}">
-                    <input type="hidden" name="userId" th:value="${user.id}">
-                    <div>
-                        <label th:for="estimation">Оценка:</label>
-                        <div class="star-rating">
-                            <input type="radio" name="estimation" id="star5" value="5" required>
-                            <label for="star5" title="5 stars"><i class="fa-regular fa-star"></i></label>
-                            <input type="radio" name="estimation" id="star4" value="4">
-                            <label for="star4" title="4 stars"><i class="fa-regular fa-star"></i></label>
-                            <input type="radio" name="estimation" id="star3" value="3">
-                            <label for="star3" title="3 stars"><i class="fa-regular fa-star"></i></label>
-                            <input type="radio" name="estimation" id="star2" value="2">
-                            <label for="star2" title="2 stars"><i class="fa-regular fa-star"></i></label>
-                            <input type="radio" name="estimation" id="star1" value="1">
-                            <label for="star1" title="1 star"><i class="fa-regular fa-star"></i></label>
+                <div id="characteristics" class="product-characteristics">
+                    <table class="characteristics-table">
+                        <thead>
+                        <tr>
+                            <th>Характеристика</th>
+                            <th>Значение</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="entry : ${options}">
+                            <td th:text="${entry.getKey().getName()}"></td>
+                            <td th:text="${entry.getValue().isPresent() ? entry.getValue().get().name : 'Не указано'}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="cart-container">
+                <form th:action="@{|/cart/${product.getId()}|}" method="post">
+                    <div class="quantity-block">
+                        <label>Кол-во</label>
+                        <div class="number" data-step="1" data-min="1" data-max="20">
+                            <input class="number-text" type="text" name="quantity" value="1">
+                            <a class="number-minus" onclick="decrement()">−</a>
+                            <a class="number-plus" onclick="increment()">+</a>
                         </div>
                     </div>
-                    <div>
-                        <label for="comment">Текст отзыва:</label>
-                        <textarea name="comment" id="comment" placeholder="Текст комментария" required></textarea>
-                    </div>
-                    <button type="submit">Отправить</button>
+                    <button type="submit" class="add-to-cart">Добавить в корзину</button>
                 </form>
             </div>
         </div>
     </div>
-
 </main>
+<div class="reviews">
+    <h3>Отзывы:</h3>
+    <ul class="reviews-list">
+        <li th:each="review : ${reviews}">
+            <strong th:text="${review.getUser().getName()}"></strong><br>
+            <div class="review-rating">
+                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
+                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
+                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
+                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
+                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
+            </div>
+            <span th:text="${review.getText()}" class="comment-text"></span>
+        </li>
+    </ul>
+    <div th:if="${#authorization.expression('isAuthenticated()')}">
+        <a id="openModalBtn">Добавить отзыв</a>
+    </div>
+    <div th:unless="${#authorization.expression('isAuthenticated()')}">
+        <p>Чтобы оставить отзыв необходимо <a th:href="@{/login}" >  авторизоваться</a></p>
+    </div>
+</div>
+<div id="commentModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <div th:class="comment-form">
+            <h3>Добавить отзыв</h3>
+            <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <input type="hidden" name="userId" th:value="${user.id}">
+                <div>
+                    <label th:for="estimation">Оценка:</label>
+                    <div class="star-rating">
+                        <input type="radio" name="estimation" id="star5" value="5" required>
+                        <label for="star5" title="5 stars"><i class="fa-regular fa-star"></i></label>
+                        <input type="radio" name="estimation" id="star4" value="4">
+                        <label for="star4" title="4 stars"><i class="fa-regular fa-star"></i></label>
+                        <input type="radio" name="estimation" id="star3" value="3">
+                        <label for="star3" title="3 stars"><i class="fa-regular fa-star"></i></label>
+                        <input type="radio" name="estimation" id="star2" value="2">
+                        <label for="star2" title="2 stars"><i class="fa-regular fa-star"></i></label>
+                        <input type="radio" name="estimation" id="star1" value="1">
+                        <label for="star1" title="1 star"><i class="fa-regular fa-star"></i></label>
+                    </div>
+                </div>
+                <div>
+                    <label for="comment">Текст отзыва:</label>
+                    <textarea name="comment" id="comment" placeholder="Текст комментария" required></textarea>
+                </div>
+                <button type="submit">Отправить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     function toggleCharacteristics() {
         const characteristics = document.getElementById('characteristics');

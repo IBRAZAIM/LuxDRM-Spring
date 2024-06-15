@@ -26,7 +26,10 @@
             <input type="text" id="surname" th:field="*{surname}" />
         </div>
         <div>
-            <button type="submit">Register</button>
+            <button type="submit">Зарегистрироваться</button>
+        </div>
+        <div class="create">
+            Уже есть аккаунт? <a th:href="@{/login}">Войти</a>
         </div>
     </form>
 </div>

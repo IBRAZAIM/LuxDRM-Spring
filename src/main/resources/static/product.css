@@ -23,12 +23,12 @@ main {
 }
 
 .left-column {
-    width: 60%;
+    width: 50%;
     position: relative;
 }
 
 .right-column {
-    width: 40%;
+    width: 50%;
     margin-right: 20px;
 }
 
@@ -37,14 +37,19 @@ main {
     height: 550px;
     justify-content: center;
     align-items: center;
+    text-align: center;
     padding-left: 30px;
 }
-
+.description-zone{
+    width: 100%;
+}
 .description-container {
     padding: 20px;
     display: flex;
     position: relative;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .description-div {
@@ -102,7 +107,7 @@ main {
      width: 100%;
      background-color: #fff;
      padding: 20px;
-     transition: right 0.9s ease; /* Анимация смещения с использованием кривой Безье */
+     transition: right 0.6s ease; /* Анимация смещения с использованием кривой Безье */
  }
 
 /* Анимация плавного появления характеристик */
@@ -147,6 +152,8 @@ main {
 
 .cart-container{
     margin-bottom: 30px;
+    align-items: center;
+    justify-content: center;
 }
 .quantity-block{
     align-items: center;
@@ -275,7 +282,6 @@ main {
 .reviews {
     width: 100%;
     padding: 20px;
-    border: 1px solid #e0e0e0;
     border-radius: 10px;
     font-family: Arial, sans-serif;
 }
@@ -283,8 +289,8 @@ main {
 .reviews h3 {
     font-size: 24px;
     color: #0c0c3d;
-    margin-bottom: 20px;
-    padding: 40px;
+    margin-bottom: 5px;
+    padding: 20px;
 }
 
 .reviews a {
