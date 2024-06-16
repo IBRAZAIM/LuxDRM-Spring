@@ -22,6 +22,7 @@ public class OrderController {
     private final UserService userService;
     private final CartService cartService;
     private final OrderService orderService;
+
     @GetMapping("/checkout")
     public String getCheckout(
             Principal principal,
@@ -29,7 +30,7 @@ public class OrderController {
     ){
         User user = userService.findUserByLogin(principal.getName());
         model.addAttribute("user",user);
-        List<CartItem> cartItems = userService.findALlCartItems();
+        List<CartItem> cartItems = userService.findCartItemsByUser(user);
         model.addAttribute("orderItems", cartItems);
         int totalPrice = cartService.returnTotalPrice(cartItems);
         model.addAttribute("totalPrice", totalPrice);
@@ -42,9 +43,9 @@ public class OrderController {
             @RequestParam("address") String address
     ){
         User user = userService.findUserByLogin(principal.getName());
-        List<CartItem> cartItems = userService.findALlCartItems();
+        List<CartItem> cartItems = userService.findCartItemsByUser(user);
         orderService.create(user, address,cartItems);
-        cartService.clearCart();
+        cartService.clearCart(user);
         return "redirect:/orders";
     }
 
@@ -69,8 +70,5 @@ public class OrderController {
         orderService.updateOrderStatus(orderId, status);
         return "redirect:/orders";
     }
-
-
-
 }
 

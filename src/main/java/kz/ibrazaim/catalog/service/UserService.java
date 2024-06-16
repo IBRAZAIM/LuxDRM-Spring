@@ -17,19 +17,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService{
+public class UserService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final PasswordEncoder encoder;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-    public void create(User user){
+
+    public void create(User user) {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole(Role.USER.getServiceName());
         user.setRegistrationDate(LocalDateTime.now());
@@ -50,18 +52,13 @@ public class UserService{
         }
     }
 
-    public List<CartItem> findALlCartItems() {
-        User user = getUser();
-        return user.getCartItem();
-    }
-
-    public void addItemToCart(long productId, int quantity) {
-        CartItem cartItem = cartItemRepository.findByProductId(productId);
+    public void addItemToCart(long productId, int quantity, User user) {
+        CartItem cartItem = cartItemRepository.findByUserAndProductId(user, productId);
         if (cartItem != null) {
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         } else {
             cartItem = new CartItem();
-            cartItem.setUser(getUser());
+            cartItem.setUser(user);
             Product product = productRepository.findById(productId).orElseThrow();
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
@@ -69,15 +66,10 @@ public class UserService{
         cartItemRepository.save(cartItem);
     }
 
-    public void updateCartItem(long productId, int quantity) {
-        addItemToCart(productId, quantity);
-    }
-
-
     private User getUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
-        return  userRepository.findByLogin(authentication.getName()).orElseThrow();
+        return userRepository.findByLogin(authentication.getName()).orElseThrow();
     }
 
     public User findUserByLogin(String login) {
@@ -85,15 +77,23 @@ public class UserService{
         if (userOptional.isPresent()) {
             return userOptional.get();
         } else {
-            throw new UserNotFoundException("Пользователь с логином" + ": "  + login + " " + "не найден!");
+            throw new UserNotFoundException("Пользователь с логином" + ": " + login + " " + "не найден!");
         }
     }
-    public boolean isProductInCart(long productId) {
-        return cartItemRepository.findByProductId(productId) != null;
 
+    public List<CartItem> findCartItemsByUser(User user) {
+        return cartItemRepository.findByUser(user);
     }
 
-    public List<CartItem> findAllCartItems() {
-        return cartItemRepository.findAll();
+    public void updateCartItem(User user, long productId, int quantity) {
+        CartItem cartItem = cartItemRepository.findByUserAndProductId(user, productId);
+        if (cartItem == null) {
+            cartItem = new CartItem();
+            cartItem.setUser(user);
+            cartItem.setProduct(productRepository.findById(productId).orElseThrow());
+        }
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
     }
 }
+

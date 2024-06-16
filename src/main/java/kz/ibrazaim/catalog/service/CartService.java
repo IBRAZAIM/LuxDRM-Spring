@@ -1,15 +1,9 @@
 package kz.ibrazaim.catalog.service;
 
 import kz.ibrazaim.catalog.model.CartItem;
-import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.repository.CartItemRepository;
-import kz.ibrazaim.catalog.repository.ProductRepository;
-import kz.ibrazaim.catalog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +27,8 @@ public class CartService {
     }
 
     @Transactional
-    public void clearCart() {
-        cartItemRepository.deleteAll();
+    public void clearCart(User user) {
+        cartItemRepository.deleteAllByUser(user);
         System.out.println("Корзина очищена");
     }
 }

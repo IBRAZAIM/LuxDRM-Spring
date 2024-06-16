@@ -17,7 +17,6 @@ public class CartController {
     private final CartService cartService;
     private final CartItemRepository cartItemRepository;
 
-
     @PostMapping("/delete")
     public String deleteItem(@RequestParam("id") Long itemId) {
         cartService.removeCartItem(itemId);
@@ -33,12 +32,6 @@ public class CartController {
         return "redirect:/cart";
     }
 
-
 //  TODO: добавить функцию удаления всех товаров
-//    @PostMapping("clearAll")
-//    public String clearCart(){
-//        cartService.clearCart();
-//        return "redirect:/cart";
-//    }
 }
 

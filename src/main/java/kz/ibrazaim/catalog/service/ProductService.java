@@ -53,7 +53,7 @@ public class ProductService implements AbstractService<Product> {
         productImageService.create(product, imageUrl);
     }
 
-    public void createValues(Product product, List<String> values, List<Long> optionsIds) {
+    private void createValues(Product product, List<String> values, List<Long> optionsIds) {
         System.out.println(optionsIds);
         List<Option> options = optionRepository.findAllById(optionsIds);
         if (values.size() != options.size()) {
