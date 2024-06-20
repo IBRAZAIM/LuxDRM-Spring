@@ -35,7 +35,6 @@ public class UserController {
         }
         User user = userService.findUserByLogin(principal.getName());
         userService.addItemToCart(productId, quantity, user);
-        userService.updateCartItem(user, productId, quantity);
         return "redirect:/cart";
     }
 }

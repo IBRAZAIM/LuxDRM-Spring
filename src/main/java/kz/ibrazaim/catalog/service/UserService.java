@@ -66,6 +66,7 @@ public class UserService {
         cartItemRepository.save(cartItem);
     }
 
+
     private User getUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
@@ -91,9 +92,12 @@ public class UserService {
             cartItem = new CartItem();
             cartItem.setUser(user);
             cartItem.setProduct(productRepository.findById(productId).orElseThrow());
+            cartItem.setQuantity(quantity);
+        } else {
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
         }
-        cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
     }
+
 }
 
