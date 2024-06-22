@@ -15,7 +15,9 @@ public class Option {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
     String name;
+
     @ManyToOne
     @JoinColumn(name="category_id")
     Category category;

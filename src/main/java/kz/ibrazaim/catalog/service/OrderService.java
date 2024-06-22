@@ -45,18 +45,19 @@ public class OrderService {
             orderProductRepository.saveAll(orderProducts);
 
             return order;
-        } catch (Exception e) {
-            logger.error("Ошибка при создании заказа: " + e.getMessage(), e);
-            throw e;
+        } catch (Exception ex) {
+            logger.error("Ошибка при создании заказа: " + ex.getMessage(), ex);
+            throw ex;
         }
     }
+
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
+
     public List<Order> getOrdersForUser(User user) {
         return orderRepository.findByUser(user);
     }
-
 
     public void updateOrderStatus(Long orderId, String status) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));

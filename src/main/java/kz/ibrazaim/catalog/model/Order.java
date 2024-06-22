@@ -19,12 +19,15 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
 
     String status;
+
     String address;
+
     LocalDateTime date;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

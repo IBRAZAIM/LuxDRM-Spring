@@ -10,5 +10,4 @@ public class Controller {
     public String getPage(){
         return "LUXDRM";
     }
-
 }

@@ -3,13 +3,14 @@ package kz.ibrazaim.catalog.controller;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,7 +24,11 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") User user, BindingResult result, Model model) {
+    public String registerUser(
+            @ModelAttribute("user") User user,
+            BindingResult result,
+            Model model
+    ) {
         if (result.hasErrors()) {
             return "registerForm";
         }
@@ -43,9 +48,9 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestParam String login, @RequestParam String password, Model model) {
-        boolean isAuthenticated = userService.authenticate(login, password);
-        if (isAuthenticated) {
+    public String loginUser(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
             return "redirect:" ;
         } else {
             model.addAttribute("loginError", true);

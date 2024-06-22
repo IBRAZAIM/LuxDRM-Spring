@@ -31,6 +31,7 @@ public class ProductService implements AbstractService<Product> {
     public void deleteById(long id) {
         productRepository.deleteById(id);
     }
+
     @Transactional
     @Override
     public void deleteProductById(long productId) {

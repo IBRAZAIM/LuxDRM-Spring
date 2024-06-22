@@ -18,6 +18,7 @@ public class ProductImageService {
         productImageRepository.save(productImage);
         return productImage;
     }
+
     public ProductImage findByProduct(Product product){
         return productImageRepository.findByProduct(product);
     }

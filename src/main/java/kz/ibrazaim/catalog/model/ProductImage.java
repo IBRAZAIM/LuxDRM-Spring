@@ -15,9 +15,11 @@ public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
     @ManyToOne
     @JoinColumn(name="product_id")
     Product product;
+
     @JoinColumn(name = "image")
     String image;
 }

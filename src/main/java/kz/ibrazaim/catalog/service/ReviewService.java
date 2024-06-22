@@ -28,6 +28,7 @@ public class ReviewService {
         review.setStatus("Не проверено");
         reviewRepository.save(review);
     }
+
     public void updateReviewStatus(long reviewId, String status){
         Review review = reviewRepository.findById(reviewId).orElseThrow();
         review.setStatus(status);

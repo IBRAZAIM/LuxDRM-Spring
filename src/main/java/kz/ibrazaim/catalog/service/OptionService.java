@@ -11,6 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OptionService{
     private final OptionRepository optionRepository;
+
     public void create(List<String> optionNames, Category category) {
         if (optionNames != null) {
             for (String optionName : optionNames) {
@@ -20,9 +21,5 @@ public class OptionService{
                 optionRepository.save(option);
             }
         }
-    }
-
-    List<Option> findAllByCategoryId(long categoryId){
-        return null;
     }
 }

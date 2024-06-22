@@ -4,8 +4,6 @@ import kz.ibrazaim.catalog.model.Category;
 import kz.ibrazaim.catalog.service.CategoryService;
 import kz.ibrazaim.catalog.service.OptionService;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +33,8 @@ public class CategoryController {
     public String createPost(
             @ModelAttribute Category category,
             @RequestParam List<String> optionNames,
-            Model model) {
+            Model model
+    ) {
         categoryService.create(category);
         if (optionNames != null) {
             model.addAttribute("optionNames",optionNames);
@@ -43,7 +42,5 @@ public class CategoryController {
         }
         return "redirect:/categories";
     }
-
-
 }
 

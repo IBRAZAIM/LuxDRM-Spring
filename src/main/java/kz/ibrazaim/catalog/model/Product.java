@@ -17,12 +17,17 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
     String name;
+
     int price;
+
     String description;
+
     @ManyToOne
     @JoinColumn(name="category_id")
     Category category;
+
     @OneToMany(mappedBy = "product")
     List<Value> valueList;
 

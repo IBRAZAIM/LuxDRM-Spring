@@ -13,9 +13,9 @@
         <h1>Каталог</h1>
         <form method="get" action="#" th:action="@{/products}">
             <label for="minPrice">Минимальная цена:</label>
-            <input type="number" id="minPrice" name="minPrice" step="100" th:value="${param.minPrice}">
+            <input type="number" id="minPrice" name="minPrice" step="100" min="0" th:value="${param.minPrice}">
             <label for="maxPrice">Максимальная цена:</label>
-            <input type="number" id="maxPrice" name="maxPrice" step="100" th:value="${param.maxPrice}">
+            <input type="number" id="maxPrice" name="maxPrice" step="100" min="0" th:value="${param.maxPrice}">
             <label type="text" class="category-label">Категория</label>
             <select name="categoryId" class="category">
                 <option value="">Все</option>

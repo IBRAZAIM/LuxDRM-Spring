@@ -14,7 +14,6 @@ public class CategoryService implements AbstractService<Category> {
 
     @Override
     public void deleteProductById(long productId) {
-
     }
 
     @Override
@@ -34,6 +33,5 @@ public class CategoryService implements AbstractService<Category> {
 
     @Override
     public void deleteById(long id) {
-
     }
 }

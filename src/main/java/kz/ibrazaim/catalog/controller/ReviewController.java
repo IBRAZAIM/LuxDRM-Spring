@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -24,8 +23,8 @@ public class ReviewController {
     private final UserService userService;
 
     @GetMapping
-    public String allOrders(Principal principal, Model model){
-        User user = userService.findUserByLogin(principal.getName());
+    public String allOrders(Model model){
+        User user = userService.getUser();
         List<Review> reviews;
         if (user.getRole().equals(Role.ADMIN.getServiceName()) || user.getRole().equals(Role.MODER.getServiceName())){
             reviews = reviewService.findALl();
@@ -34,7 +33,10 @@ public class ReviewController {
     }
 
     @PostMapping("/updateStatus")
-    public String updateOrderStatus(@RequestParam("reviewId") Long reviewId, @RequestParam("status") String status) {
+    public String updateOrderStatus(
+            @RequestParam("reviewId") Long reviewId,
+            @RequestParam("status") String status
+    ) {
         reviewService.updateReviewStatus(reviewId, status);
         return "redirect:/reviews";
     }

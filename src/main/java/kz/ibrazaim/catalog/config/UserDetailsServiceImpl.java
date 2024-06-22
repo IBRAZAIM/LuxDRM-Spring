@@ -1,6 +1,5 @@
 package kz.ibrazaim.catalog.config;
 
-import kz.ibrazaim.catalog.exception.EntityNotFoundException;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        String password = userRepository.findByLogin(login).orElseThrow().getPassword();
         User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь с login=" + login + " не найден!"));
 

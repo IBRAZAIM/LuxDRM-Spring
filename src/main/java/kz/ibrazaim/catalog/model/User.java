@@ -19,11 +19,17 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
     String login;
+
     String password;
+
     String name;
+
     String role;
+
     String surname;
+
     @JoinColumn(name = "registration_date")
     @CreationTimestamp
     LocalDateTime registrationDate;

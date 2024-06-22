@@ -1,22 +1,14 @@
 package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Product;
-import kz.ibrazaim.catalog.model.ProductImage;
 import kz.ibrazaim.catalog.model.Role;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -29,40 +21,37 @@ public class ProductController {
     private final UserService userService;
     private final ProductImageService productImageService;
 
-
     @GetMapping
     public String findAll(
-            Principal principal,
             @RequestParam(defaultValue = "0") Integer minPrice,
             @RequestParam(defaultValue = "" + Integer.MAX_VALUE) Integer maxPrice,
             @RequestParam(required = false) Long categoryId,
-            Model model) {
-        // Если пользователь не авторизован
-        if (principal == null) {
-            model.addAttribute("products", productService.findAll());
-            model.addAttribute("categories", categoryService.findAll());
-            model.addAttribute("selectedCategoryId", categoryId);
-            return "products";
-        }
-        // Если пользователь авторизован
+            Model model
+    ) {
+        User user = userService.getUser();
+        // Получаем список продуктов в зависимости от фильтров
+        List<Product> products;
         if (minPrice == 0 && maxPrice == Integer.MAX_VALUE && categoryId == null) {
-            model.addAttribute("products", productService.findAll());
+            products = productService.findAll();
         } else {
-            model.addAttribute("products", productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice));
+            products = productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice);
         }
+        // Добавляем атрибуты в модель
+        model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryId", categoryId);
-        User user = userService.findUserByLogin(principal.getName());
-        if (user.getRole().equals(Role.ADMIN.getServiceName())){
-            return "product-list";
-        }else {
-            return "products";
+        // Определяем шаблон для отображения в зависимости от роли пользователя
+        if (user != null && user.getRole().equals(Role.ADMIN.getServiceName())) {
+            return "productsByAdmin";
         }
+        return "productsByUser";
     }
 
-
     @GetMapping("/create")
-    public String showProductForm(Model model, @RequestParam long categoryId) {
+    public String showProductForm(
+            Model model,
+            @RequestParam long categoryId
+    ) {
         model.addAttribute("product", new Product());
         model.addAttribute("category", categoryService.findById(categoryId));
         return "productForm";
@@ -74,7 +63,8 @@ public class ProductController {
             @RequestParam(required = false) List<String> values,
             @RequestParam(required = false) List<Long> optionsIds,
             @RequestParam(defaultValue = "-1") Long categoryId,
-            @RequestParam(required = false) String imageUrl) {
+            @RequestParam(required = false) String imageUrl
+    ) {
         if (categoryId == -1) {
             return "redirect:/products/create/chooseCategory";
         }
@@ -89,7 +79,10 @@ public class ProductController {
     }
 
     @GetMapping("/update/{id}")
-    public String showUpdateProductForm(@PathVariable("id") long id, Model model) {
+    public String showUpdateProductForm(
+            @PathVariable("id") long id,
+            Model model
+    ) {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
@@ -97,13 +90,21 @@ public class ProductController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable long id, String name, int price, @RequestParam List<Long> optionIds, @RequestParam List<String> values) {
+    public String updateProduct(
+            @PathVariable long id,
+            String name, int price,
+            @RequestParam List<Long> optionIds,
+            @RequestParam List<String> values
+    ) {
         productService.update(id, name, price, optionIds, values);
         return "redirect:/products";
     }
 
     @GetMapping("/delete/{id}")
-    public String showDeleteConfirmation(@PathVariable long id, Model model) {
+    public String showDeleteConfirmation(
+            @PathVariable long id,
+            Model model
+    ) {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
         return "product-delete";
@@ -116,15 +117,18 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String productCard(@PathVariable Long id, Model model, Principal principal) {
+    public String productCard(
+            @PathVariable Long id,
+            Model model
+    ) {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
         model.addAttribute("imageUrl", productImageService.findByProduct(product));
+        User user = userService.getUser();
         // Проверка на авторизацию пользователя
-        if (principal != null) {
-            User user = userService.findUserByLogin(principal.getName());
+        if (user != null) {
             model.addAttribute("user", user);
         } else {
             // Создание пустого пользователя для неавторизованных пользователей
@@ -133,23 +137,19 @@ public class ProductController {
         return "product-page";
     }
 
-
     @PostMapping("/addComment")
     public String addReview(
             @RequestParam("productId") Long productId,
             @RequestParam("comment") String commentText,
-            @RequestParam("estimation") int estimation,
-            Principal principal
+            @RequestParam("estimation") int estimation
     ) {
-        if (principal == null) {
+        User user = userService.getUser();
+        if (user == null) {
             return "redirect:/login";
         }
-
-        User user = userService.findUserByLogin(principal.getName());
         Product product = productService.getProductById(productId);
         reviewService.create(product, user, estimation, commentText);
 
         return "redirect:/products/" + productId;
     }
-
 }
