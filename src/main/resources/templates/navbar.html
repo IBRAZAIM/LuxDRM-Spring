@@ -13,17 +13,12 @@
         <a th:href="@{/products}">Каталог</a>
         <a href="#">Поддержка</a>
     </nav>
-    <div th:if="${#authorization.expression('isAuthenticated()')}" class="search-container">
-        <form>
-            <input type="text" placeholder="Поиск..." class="search-input">
-            <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
-        </form>
-        <a href="#" class="user-icon">
-            <i class="fas fa-user-circle"></i>
-        </a>
-        <a th:href="@{/cart}" class="cart-icon"><i class="fa-solid fa-cart-shopping"></i></a>
+    <div th:if="${#authorization.expression('isAuthenticated()')}" class="user-container">
+        <div class="user-icon">
+            <i class="fa-solid fa-user"></i>
+        </div>
     </div>
-    <div th:unless="${#authorization.expression('isAuthenticated()')}" class="user-icon-container">
+    <div th:unless="${#authorization.expression('isAuthenticated()')}" class="authorization-container">
         <a th:href="@{/login}" class="authorization-button">Войти</a>
         <a th:href="@{/register}" class="authorization-button">Регистрация</a>
     </div>

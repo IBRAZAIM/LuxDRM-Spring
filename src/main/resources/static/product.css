@@ -110,11 +110,6 @@ main {
      transition: right 0.6s ease; /* Анимация смещения с использованием кривой Безье */
  }
 
-/* Анимация плавного появления характеристик */
-.product-characteristics.show-characteristics {
-    right: 0; /* Показать характеристики */
-}
-
 .character-btn {
     margin-bottom: auto;
     position: relative;
@@ -126,6 +121,11 @@ main {
 .character-btn a {
     color: #007bff;
     cursor: pointer;
+}
+
+/* Анимация плавного появления характеристик */
+.product-characteristics.show-characteristics {
+    right: 0; /* Показать характеристики */
 }
 
 /* Показать характеристики при активации */

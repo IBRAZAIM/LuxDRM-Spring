@@ -11,7 +11,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 0 40px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
@@ -26,19 +26,26 @@
     text-transform: uppercase;
     letter-spacing: 4px;
     color: #0c0c3d;
-    transition: color 0.3s ease; /* анимация смены цвета текста */
+    transition: color 0.3s ease;
+}
+
+.burger-menu {
+    display: none; /* Скрываем кнопку бургер меню на больших экранах */
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
 }
 
 .navbar {
+    display: flex;
     margin-right: auto;
 }
 
 .navbar a {
     padding: 25px;
-    justify-content: center;
     text-decoration: none;
     color: #0c0c3d;
-    transition: color 0.3s ease; /* анимация смены цвета ссылок */
+    transition: color 0.3s ease;
 }
 
 .navbar a:hover {
@@ -50,77 +57,45 @@
     align-items: center;
 }
 
-.user-icon {
+.user-icon, .cart-icon {
     color: #0c0c3d;
     opacity: 0.85;
     font-size: 30px;
     margin-right: 15px;
     padding-left: 20px;
-    transition: transform 0.3s ease; /* анимация при наведении на кнопку*/
-}
-.cart-icon{
-    color: #0c0c3d;
-    opacity: 0.85;
-    font-size: 30px;
-    margin-right: 15px;
-    padding-left: 20px;
-    transition: transform 0.3s ease; /* анимация при наведении на кнопку*/
-}
-.user-icon:hover {
-    transform: scale(1.1); /* увеличиваем размер при наведении */
+    transition: transform 0.3s ease;
 }
 
-.search-container {
+.user-icon:hover, .cart-icon:hover {
+    transform: scale(1.1);
+}
+
+.authorization-container {
     display: flex;
     align-items: center;
 }
 
-.search-input {
-    border: none;
-    background-color: #f0f0f0;
-    border-radius: 25px;
-    padding: 10px 25px;
-    transition: background-color 0.3s ease; /* анимация изменения цвета фона поля ввода */
-}
-
-.search-input:focus {
-    background-color: #e0e0e0;
-    outline: none;
-}
-
-.search-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 25px;
-    color: #0c0c3d;
-    opacity: 0.85;
-    transition: transform 0.3s ease; /* анимация при наведении на кнопку*/
-}
-
-.search-button:hover {
-    transform: scale(1.05); /* увеличиваем размер при наведении */
-}
 .authorization-button {
     display: inline-block;
     padding: 10px 20px;
-    margin: 0 10px;
-    font-size: 14px;
+    border: 2px solid #0c0c3d;
+    background-color: transparent;
+    color: #0c0c3d;
+    font-size: 1em;
     font-weight: 600;
-    color: #fff;
-    background-color: #0c0c3d;
-    border: none;
+    cursor: pointer;
     text-decoration: none;
     text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    margin-left: 10px;
 }
 
 .authorization-button:hover {
-    background-color: #040423;
+    background-color: #0c0c3d;
+    color: #fff;
 }
 
 .authorization-button:focus {
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
 }
