@@ -5,27 +5,40 @@
     <title>LuxDRM</title>
     <link rel="stylesheet" th:href="@{/LUXDRM.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/userPanel.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}"></div>
 <main>
     <section class="products">
-        <h2>Новинки</h2>
+        <h2 class="topic">Новинки</h2>
         <!-- Здесь будет содержимое о новых товарах -->
     </section>
 
     <section class="promotions">
-        <h2>Акции</h2>
+        <h2 class="topic">Акции</h2>
         <!-- Здесь будет информация о текущих акциях -->
     </section>
 
     <section class="news">
-        <h2>Новости</h2>
+        <h2 class="topic">Новости</h2>
         <!-- Здесь будет список последних новостей -->
     </section>
 </main>
+<div th:if="${#authorization.expression('isAuthenticated()')}">
+    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>
+</div>
+<script>
+    function togglePanel() {
+        document.querySelector('.slide').classList.toggle('visible');
+        document.querySelector('.open-icon').classList.toggle('hide');
+    }
 
+    document.querySelector('.close-icon').addEventListener('click', function() {
+        togglePanel();
+    });
+</script>
 </body>
 </html>
 

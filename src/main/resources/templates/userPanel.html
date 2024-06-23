@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Panel</title>
+    <link rel="stylesheet" th:href="/userPanel.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body th:fragment="user-panel" class="user-panel">
+    <div class="slide">
+        <i class="fas fa-arrow-right toggle-icon close-icon"></i>
+        <h2>LUXDRM</h2>
+        <div>
+            <!--TODO-->
+        </div>
+        <ul class="panel-items">
+            <li class="panel-item"><a href="#"><i class="fas fa-user"></i> Мой профиль</a></li>
+            <li class="panel-item"><a th:href="@{/cart}"><i class="fas fa-shopping-cart"></i> Корзина</a></li>
+            <li class="panel-item"><a th:href="@{/orders}"><i class="fas fa-box"></i> Мои заказы</a></li>
+            <li class="panel-item"><a href="#"><i class="fas fa-truck"></i> Доставка</a></li>
+            <li class="panel-item"><a href="#"><i class="fas fa-phone"></i> Связь</a></li>
+        </ul>
+        <footer>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Выход</a>
+            <!--TODO-->
+        </footer>
+    </div>
+</body>
+</html>
+

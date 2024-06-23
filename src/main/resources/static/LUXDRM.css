@@ -14,32 +14,12 @@
 }
 
 
-.products h2,
-.promotions h2,
-.news h2 {
+.products .topic,
+.promotions .topic,
+.news .topic {
     color: #0c0c3d;
     font-size: 24px;
     margin-bottom: 15px;
     text-transform: uppercase;
 }
 
-.products p,
-.promotions p,
-.news p {
-    color: #333;
-    line-height: 1.6;
-}
-
-.products a,
-.promotions a,
-.news a {
-    color: #007bff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.products a:hover,
-.promotions a:hover,
-.news a:hover {
-    color: #0056b3;
-}

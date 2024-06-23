@@ -1,0 +1,96 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.slide {
+    width: 300px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    right: -300px;
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.slide.visible {
+    right: 0;
+}
+
+.user-panel h2 {
+    color: #0c0c3d;
+    font-size: 24px;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #d5cfcf;
+}
+
+.user-panel .panel-items {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-panel .panel-item {
+    border-bottom: 1px solid #d5cfcf;
+}
+
+.user-panel .panel-item a {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #fff;
+    color: #0c0c3d;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.user-panel .panel-item a i {
+    margin-right: 10px;
+}
+
+.user-panel .panel-item a:hover {
+    background-color: #f4f4f4;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #0c0c3d;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+footer a i {
+    margin-right: 10px;
+}
+
+footer a:hover {
+    color: #f4f4f4;
+}
+
+.toggle-icon {
+    top: 0;
+    padding-top: 20px;
+    font-size: 24px;
+    color: #0c0c3d;
+    cursor: pointer;
+    z-index: 1000;
+    position: absolute;
+    right: 20px; /* Правильное положение на правом краю */
+    transition: color 0.3s;
+}

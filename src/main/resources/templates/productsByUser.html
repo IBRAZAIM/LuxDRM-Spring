@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/productList.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/userPanel.css}">
     <title>Каталог</title>
 </head>
 <body>
@@ -47,7 +48,20 @@
         </table>
     </div>
 </main>
+<div th:if="${#authorization.expression('isAuthenticated()')}">
+    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>
+</div>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+<script>
+    function togglePanel() {
+        document.querySelector('.slide').classList.toggle('visible');
+        document.querySelector('.open-icon').classList.toggle('hide');
+    }
+
+    document.querySelector('.close-icon').addEventListener('click', function() {
+        togglePanel();
+    });
+</script>
 </body>
 </html>
 
