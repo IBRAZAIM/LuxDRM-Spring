@@ -11,14 +11,15 @@
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
 <main class="catalog-body">
     <div class="product-container">
-        <h1>Каталог</h1>
         <form method="get" action="#" th:action="@{/products}">
             <label for="minPrice">Минимальная цена:</label>
             <input type="number" id="minPrice" name="minPrice" step="100" min="0" th:value="${param.minPrice}">
+
             <label for="maxPrice">Максимальная цена:</label>
             <input type="number" id="maxPrice" name="maxPrice" step="100" min="0" th:value="${param.maxPrice}">
-            <label type="text" class="category-label">Категория</label>
-            <select name="categoryId" class="category">
+
+            <label for="categoryId" class="category-label">Категория:</label>
+            <select id="categoryId" name="categoryId" class="category">
                 <option value="">Все</option>
                 <option th:each="category : ${categories}"
                         th:value="${category.id}"
@@ -26,7 +27,8 @@
                         th:selected="${category.id == selectedCategoryId}">
                 </option>
             </select>
-            <button type="submit">Фильтр</button>
+
+            <button type="submit" class="filter-btn">Фильтр</button>
         </form>
         <table>
             <thead>
