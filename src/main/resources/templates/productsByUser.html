@@ -31,7 +31,6 @@
         <table>
             <thead>
             <tr>
-                <th>ID</th>
                 <th>Название</th>
                 <th>Цена</th>
                 <th>Категория</th>
@@ -39,7 +38,6 @@
             </thead>
             <tbody>
             <tr th:each="product : ${products}">
-                <td th:text="${product.getId()}"></td>
                 <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}" class="product-name"></a></td>
                 <td th:text="${product.getPrice()}"></td>
                 <td th:text="${product.category.getName()}"></td>
