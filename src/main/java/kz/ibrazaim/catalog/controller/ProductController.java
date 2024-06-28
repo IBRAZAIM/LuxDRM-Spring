@@ -29,18 +29,15 @@ public class ProductController {
             Model model
     ) {
         User user = userService.getUser();
-        // Получаем список продуктов в зависимости от фильтров
         List<Product> products;
         if (minPrice == 0 && maxPrice == Integer.MAX_VALUE && categoryId == null) {
             products = productService.findAll();
         } else {
             products = productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice);
         }
-        // Добавляем атрибуты в модель
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryId", categoryId);
-        // Определяем шаблон для отображения в зависимости от роли пользователя
         if (user != null && user.getRole().equals(Role.ADMIN.getServiceName())) {
             return "productsByAdmin";
         }

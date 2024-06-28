@@ -2,50 +2,23 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/productList.css}">
+    <link rel="stylesheet" th:href="@{/productsByUser.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/userPanel.css}">
     <title>Каталог</title>
+
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
 <main class="catalog-body">
+    <div class="filter-container" th:insert="~{filter :: filter-div}"></div>
     <div class="product-container">
-        <form method="get" action="#" th:action="@{/products}">
-            <label for="minPrice">Минимальная цена:</label>
-            <input type="number" id="minPrice" name="minPrice" step="100" min="0" th:value="${param.minPrice}">
-
-            <label for="maxPrice">Максимальная цена:</label>
-            <input type="number" id="maxPrice" name="maxPrice" step="100" min="0" th:value="${param.maxPrice}">
-
-            <label for="categoryId" class="category-label">Категория:</label>
-            <select id="categoryId" name="categoryId" class="category">
-                <option value="">Все</option>
-                <option th:each="category : ${categories}"
-                        th:value="${category.id}"
-                        th:text="${category.getName()}"
-                        th:selected="${category.id == selectedCategoryId}">
-                </option>
-            </select>
-
-            <button type="submit" class="filter-btn">Фильтр</button>
-        </form>
-        <table>
-            <thead>
-            <tr>
-                <th>Название</th>
-                <th>Цена</th>
-                <th>Категория</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="product : ${products}">
-                <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}" class="product-name"></a></td>
-                <td th:text="${product.getPrice()}"></td>
-                <td th:text="${product.category.getName()}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div th:each="product : ${products}" class="product-card">
+            <img th:src="${product.getImages().get(0).image}" alt="product-img">
+            <a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}"></a>
+            <p class="price" th:text="${product.getPrice()} + ' тг'"></p>
+            <p th:text="${product.category.getName()}"></p>
+        </div>
     </div>
 </main>
 <div th:if="${#authorization.expression('isAuthenticated()')}">

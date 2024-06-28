@@ -1,0 +1,99 @@
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    background-color: #f9f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.catalog-body {
+    margin-top: 120px;
+    display: flex;
+}
+
+.filter-container {
+    width: 20%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-container {
+    width: 80%;
+    margin: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.product-card {
+    width: calc(25% - 20px);
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.product-card a {
+    text-decoration: none;
+    color: #0c0c3d;
+    font-weight: bold;
+}
+
+.product-card .price {
+    color: #e91e63;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label {
+    opacity: 0.7;
+}
+
+input[type="number"],
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #0c0c3d;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    background-color: #333;
+}
+
+.category-label {
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #333;
+}

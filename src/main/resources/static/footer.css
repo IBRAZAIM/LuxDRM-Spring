@@ -1,74 +1,10 @@
 .footer {
-    background: #232f3e;
-    padding: 50px 0px;
-}
-.quicklink-menu {
-    list-style: none;
-    padding-left: 10px;
-}
-.quicklink-menu li a {
-    color: #fff;
-    line-height: 2.5;
-    font-size: 15px;
-    text-decoration: none;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-.social-media {
-    list-style: none;
-    margin-top: 10px;
-}
-.social-media li a img {
-    width: 30px;
-}
-.social-media li {
-    float: left;
-    padding: 0px 8px;
-}
-.quicklink-heading {
-    font-size: 18px;
-    font-weight: bold;
-    color: #fff;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin-bottom: 10px;
-}
-.get-in-touch {
-    list-style: none;
-    padding-left: 10px;
-}
-.get-in-touch li i {
-    color: #ed372c;
-    font-size: 20px;
-}
-.get-in-touch li {
-    color: #fff;
-    line-height: 2.5;
-    font-size: 15px;
-    text-decoration: none;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-.footer-e-mail {
-    font-size: 15px;
-    font-weight: bold;
-    color: #fff;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-decoration: none;
-}
-.footer-website {
-    font-size: 12px;
-    font-weight: bold;
-    color: #fff;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-decoration: none;
-}
-.footer2-bacbor {
-    background: #232f3e;
-    padding: 10px 0px;
-    border-top: 1px solid #898989;
-}
-.footer2-content {
-    font-size: 14px;
-    color: #fff;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #0c0c3d;
+    color: white;
     text-align: center;
+    padding: 20px 0;
 }
-/**********   Footer-Section CSS Code Ends  **********/
+
+.footer p {
+    margin: 0;
+}
