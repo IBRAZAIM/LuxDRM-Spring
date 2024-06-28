@@ -28,7 +28,12 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/main", true)
                         .permitAll())
-                .logout(LogoutConfigurer::permitAll);
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/main")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll());
         return http.build();
     }
 
