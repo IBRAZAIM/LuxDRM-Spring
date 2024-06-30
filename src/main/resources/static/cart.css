@@ -1,15 +1,14 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    font-family: Montserrat, sans-serif;
     margin: 0;
     padding: 0;
 }
 
 .cart-container {
-    width: 80%;
+    height: 90%;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
-    margin-top: 80px;
 }
 
 h1 {
@@ -17,48 +16,77 @@ h1 {
     color: #0c0c3d;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-}
-
-th {
-    background-color: #0c0c3d;
-    color: tan;
-    text-align: center;
-}
-
-.total {
-    font-size: 1.2em;
-    text-align: right;
-    margin-bottom: 20px;
-}
-
-.actions {
+.cart-content {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-.btn {
+.left-column {
+    width: 80%;
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+.right-column {
+    width: 30%;
     background-color: #0c0c3d;
-    color: tan;
+    color: #ffffff;
+    padding: 20px;
+}
+
+.cart-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.cart-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    display: table-row;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+}
+
+.product-info img {
+    width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.product-details a {
+    color: #0c0c3d;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.product-details a:hover {
+    color: #e91e63;
+}
+
+.actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.continue-btn {
+    background-color: #0c0c3d;
+    color: white;
     border: none;
     padding: 10px 20px;
+    margin: 30px;
     cursor: pointer;
     text-decoration: none;
     font-size: 1em;
-    border-radius: 5px;
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-.btn:hover {
+.continue-btn:hover {
     background-color: #0a0a33;
 }
 
@@ -72,3 +100,29 @@ th {
 .icon-delete:hover {
     color: #0c0c3d;
 }
+
+.total {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 100px 0 0 20px;
+}
+
+.checkout {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn {
+    background-color: white;
+    color: #0c0c3d;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background-color: #f4f4f4;
+}
+

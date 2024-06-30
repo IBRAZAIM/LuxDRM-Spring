@@ -8,50 +8,61 @@
 </head>
 <body>
 <div class="cart-container">
-    <h1>Корзина</h1>
-    <table class="cart-table">
-        <thead>
-        <tr>
-            <th>Товар</th>
-            <th>Количество</th>
-            <th>Цена</th>
-            <th>Итого</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="cartItem : ${cartItems}">
-            <td th:href="@{'/products/' + ${cartItem.product.getId()}}" th:text="${cartItem.product.name}">Название</td>
-            <td>
-                <form th:action="@{'/cart/update/' + ${cartItem.id}}" method="post">
-                    <input type="number" min="1" max="20" step="1" th:value="${cartItem.quantity}" name="quantity">
-                    <button type="submit">Обновить</button>
-                </form>
-            </td>
-
-            <td><span th:text="${cartItem.product.price}" class="product-price"></span> KZT</td>
-            <td><span th:text="${cartItem.quantity * cartItem.product.price}" class="total-price"></span> KZT</td>
-            <td>
-                <form th:action="@{/cart/delete}" method="post">
-                    <input type="hidden" name="id" th:value="${cartItem.id}">
-                    <button type="submit" class="icon-delete"><i class="fa-regular fa-trash-can"></i></button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-<!--    TODO:-->
-<!--    <div class="clear-btn">-->
-<!--        <a th:href="@{'/cart/clearAll'}">Очистить все</a>-->
-<!--    </div>-->
-    <div class="total">
-        Итого: <span id="grand-total">0.00</span> KZT
-    </div>
-    <div class="actions">
-        <a th:href="@{'/checkout'}" class="btn">Оформить заказ</a>
-        <a th:href="@{'/main'}" class="btn">Продолжить покупки</a>
+    <h1>Моя Корзина (<span th:text="${cartItems.size()}"></span>)</h1>
+    <div class="cart-content">
+        <div class="left-column">
+            <table class="cart-items">
+                <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Итого</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cartItem : ${cartItems}" class="cart-item">
+                    <td>
+                        <div class="product-info">
+                            <img th:src="${cartItem.product.getImages().get(0).image}" alt="Product Image">
+                            <div class="product-details">
+                                <a th:href="@{'/products/' + ${cartItem.product.getId()}}" th:text="${cartItem.product.name}"></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form th:action="@{'/cart/update/' + ${cartItem.id}}" method="post">
+                            <input type="number" min="1" max="20" step="1" th:value="${cartItem.quantity}" name="quantity">
+                            <button type="submit">Обновить</button>
+                        </form>
+                    </td>
+                    <td><span th:text="${cartItem.product.price}" class="product-price"></span> KZT</td>
+                    <td><span th:text="${cartItem.quantity * cartItem.product.price}" class="total-price"></span> KZT</td>
+                    <td>
+                        <form th:action="@{/cart/delete}" method="post">
+                            <input type="hidden" name="id" th:value="${cartItem.id}">
+                            <button type="submit" class="icon-delete"><i class="fas fa-times"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="actions">
+                <a th:href="@{'/main'}" class="continue-btn">Продолжить покупки</a>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="total">
+                Итого: <span id="grand-total">0.00</span> KZT
+            </div>
+            <div class="checkout">
+                <a th:href="@{'/checkout'}" class="btn">Оформить заказ</a>
+            </div>
+        </div>
     </div>
 </div>
+
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -69,13 +80,13 @@
             totalElements.forEach(function (element) {
                 grandTotal += parseInt(element.textContent);
             });
-            document.getElementById('grand-total').textContent = grandTotal.toFixed(0); // Изменили с .toFixed(2) на .toFixed(0) для целых чисел
+            document.getElementById('grand-total').textContent = grandTotal.toFixed(0);
         }
     });
-
 </script>
 </body>
 </html>
+
 
 
 

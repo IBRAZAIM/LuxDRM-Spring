@@ -2,12 +2,10 @@
     background-color: #0c0c3d;
     color: white;
     padding: 20px 0;
-    text-align: center;
     width: 100%;
 }
 
 .footer-content {
-    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
