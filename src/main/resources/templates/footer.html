@@ -5,10 +5,26 @@
     <title>Title</title>
 </head>
 <body>
-<footer th:fragment="footer-code">
-    <div class="container">
-        <p>&copy; 2024 Lacoste. All Rights Reserved.</p>
-    </div>
-</footer>
+    <footer class="footer" th:fragment="footer-code">
+        <div class="footer-content">
+            <div class="footer-left">
+                <ul class="footer-links">
+                    <li class="list"><a class="ssylka" href="#">О нас</a></li>
+                    <li class="list"><a class="ssylka" href="#">Контакты</a></li>
+                    <li class="list"><a class="ssylka" href="#">Условия использования</a></li>
+                    <li class="list"><a class="ssylka" href="#">Политика конфиденциальности</a></li>
+                </ul>
+                <p class="footer-text">© 2024 LuxDRM. Все права защищены.</p>
+            </div>
+            <div class="footer-right">
+                <p class="footer-text">Мы в социальных сетях:</p>
+                <div class="footer-social">
+                    <a class="ssylka" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="ssylka" href="#"><i class="fab fa-twitter"></i></a>
+                    <a class="ssylka" href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

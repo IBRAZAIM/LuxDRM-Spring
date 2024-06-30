@@ -6,7 +6,6 @@
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/userPanel.css}">
     <title>Каталог</title>
-
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
@@ -14,10 +13,12 @@
     <div class="filter-container" th:insert="~{filter :: filter-div}"></div>
     <div class="product-container">
         <div th:each="product : ${products}" class="product-card">
-            <img th:src="${product.getImages().get(0).image}" alt="product-img">
-            <a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}"></a>
-            <p class="price" th:text="${product.getPrice()} + ' тг'"></p>
-            <p th:text="${product.category.getName()}"></p>
+            <a th:href="@{'/products/' + ${product.getId()}}" class="product">
+                <p class="category" th:text="${product.category.getName()}"></p>
+                <img th:src="${product.getImages().get(0).image}" alt="product-img">
+                <p class="product-name" th:text="${product.getName()}"></p>
+                <p class="price" th:text="${product.getPrice()} + ' тг'"></p>
+            </a>
         </div>
     </div>
 </main>
@@ -37,4 +38,3 @@
 </script>
 </body>
 </html>
-
