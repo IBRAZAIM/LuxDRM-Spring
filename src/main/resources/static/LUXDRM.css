@@ -1,92 +1,70 @@
-* {
-    box-sizing: border-box;
-    font-family: "Montserrat", sans-serif;
-}
-
+/* Общие стили */
 body {
-    color: #333;
     margin: 0;
     padding: 0;
+    font-family: "Inter", sans-serif;
+    color: #333;
 }
 
-main {
-    margin: 20px;
+h1, h2, p {
+    margin: 0;
+    font-family: Montserrat, sans-serif;
 }
 
-.welcome-main {
-    background-color: #0c0c3d;
-    color: white;
-    padding: 100px 20px;
-    text-align: center;
-    margin-top: 40px;
-}
-
-.welcome-main h1 {
-    font-size: 3em;
-    margin-bottom: 20px;
-}
-
-.welcome-main p {
-    font-size: 1.5em;
-    margin-bottom: 30px;
-}
-
-.welcome-main .btn {
-    display: inline-block;
-    padding: 12px 24px;
-    border: none;
-    background-color: #e91e63;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s;
-}
-
-.welcome-main .btn:hover {
-    background-color: #333;
-}
-
-
-.welcome {
+/* Navbar */
+.navbar {
+    border-bottom: 2px solid #e0e0e0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень под navbar */
     position: relative;
+    z-index: 100;
+}
+
+/* Welcome Section */
+.welcome-main {
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    padding: 100px 0;
-    background-color: #0c0c3d;
+    height: 60vh;
+    background: linear-gradient(45deg, #0c0c3d, #333); /* Градиентный фон */
+    padding: 20px;
     color: white;
-    overflow: hidden;
-}
-
-.welcome-content {
-    z-index: 2;
-}
-
-.welcome-image {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    z-index: 1;
-    opacity: 0.4;
-}
-
-.topic {
     text-align: center;
-    font-size: 2em;
-    color: #0c0c3d;
-    display: inline-block;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.welcome-content h1 {
+    font-size: 3em;
+    font-weight: 700;
+    color: #fff;
     margin-bottom: 20px;
-    width: 100%;
 }
 
-.products {
-    margin-top: 40px;
+.welcome-content p {
+    font-size: 1.5em;
+    color: #ccc;
+    margin-bottom: 30px;
 }
 
+.welcome-content .btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #fff;
+    color: #0c0c3d;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.2em;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.welcome-content .btn:hover {
+    background-color: #0c0c3d;
+    color: #fff;
+}
+/* Обновленные стили для карточек товаров */
 .product-container {
+    width: 80%;
+    margin: 20px auto;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -97,95 +75,115 @@ main {
     width: calc(25% - 20px);
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 10px;
     text-align: center;
+    position: relative;
     transition: transform 0.3s, box-shadow 0.3s;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Изображение товара */
 .product-card img {
     width: 100%;
     height: auto;
-    border-bottom: 1px solid #ccc;
+}
+
+/* Секция для цены */
+.price-wrapper {
+    display: flex;
+    justify-content: center;
     margin-bottom: 10px;
 }
 
-.product-card a {
-    text-decoration: none;
+.price {
+    color: #9A073D;
     font-weight: bold;
-    display: block;
+    font-size: 1.2em;
+    margin-bottom: 1px;
 }
 
+/* Ссылки и кнопки */
+.product-card a {
+    text-decoration: none;
+    color: #0c0c3d;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+/* Название товара */
 .product-card .product-info {
-    margin-top: auto;
+    margin-top: 10px;
 }
 
 .product-card .product-name {
-    color: #0c0c3d;
     flex: 1;
     margin-right: 10px;
-}
-.product-card .price {
-    color: #e91e63; /* Розовый цвет */
-    font-weight: bold;
-}
-
-
-.sponsors {
-    background-color: #f4f4f4;
-    padding: 40px 20px;
-    text-align: center;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+    transition: color 0.3s ease;
 }
 
-.sponsors-content {
-    max-width: 800px;
-    margin: 0 auto;
+.product-card .product-name:hover {
+    color: #0c0c3d; /* Изменение цвета при наведении */
 }
 
-.sponsors h2 {
+/* Для раздела с новинками */
+#product-section .topic {
     font-size: 2em;
+    font-weight: 600;
     color: #0c0c3d;
-    margin-bottom: 20px;
-}
-
-.sponsor-icons {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin-top: 20px;
-}
-
-.sponsor-icon {
     text-align: center;
-    filter: grayscale(100%);
-    transition: filter 0.3s ease;
+    margin: 20px 0 40px 0;
 }
 
-.sponsor-icon:hover {
-    filter: none;
+.products{
+    margin-bottom: 30px;
 }
 
-.sponsor-icon img {
-    width: auto;
-    height: 45px;
-    margin-bottom: 10px;
+.marquee-container {
+    background: linear-gradient(90deg, #FFFDD0, #FAF0E6, #FFFDD0);
+    color: #0c0c3d; /* Тёмно-синий текст */
+    font-size: 16px; /* Оптимальный размер шрифта */
+    font-weight: 500; /* Средняя толщина шрифта */
+    font-family: Montserrat, sans-serif;
+    overflow: hidden; /* Скрытие лишнего текста */
+    border-top: 1px solid #ddd; /* Тонкая граница сверху */
+    border-bottom: 1px solid #ddd; /* Тонкая граница снизу */
+    white-space: nowrap; /* Запрет на перенос строк */
+    position: relative; /* Для управления содержимым */
+    height: 34px; /* Явная высота контейнера */
+    line-height: 40px; /* Выравнивание текста по вертикали */
 }
 
-@media screen and (min-width: 1480px) {
-    .sponsor-icon img {
-        height: 60px;
+.marquee {
+    display: inline-block;
+    position: absolute;
+    white-space: nowrap;
+    animation: scroll 10s linear infinite; /* Плавное движение */
+}
+
+
+@keyframes scroll {
+    0% {
+        transform: translateX(100%); /* Текст начинается за пределами справа */
+    }
+    100% {
+        transform: translateX(-100%); /* Текст уходит за пределы слева */
     }
 }
-
-
-
-
-
 

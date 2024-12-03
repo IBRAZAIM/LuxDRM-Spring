@@ -1,59 +1,76 @@
-
-/* Add your CSS rules here */
-
-* {
-    box-sizing: border-box;
-    font-family: "Montserrat", sans-serif;
+/* Общие стили */
+body {
+    margin: 0;
+    padding: 0;
 }
 
 .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    transition: background-color 0.3s ease;
+    height: 69px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.logo {
-    font-weight: 710;
-    text-decoration: none;
-    margin-right: auto;
-    font-size: 2em;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    color: #0c0c3d;
-    transition: color 0.3s ease;
+.navbar-container {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
 }
 
-.burger-menu {
-    display: none; /* Скрываем кнопку бургер меню на больших экранах */
-    color: white;
-    font-size: 20px;
+/* Меню */
+.menu-icon {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #4f4f4f;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.menu-icon i {
+    font-size: 22px;
     cursor: pointer;
 }
 
-.navbar {
-    display: flex;
-    margin-right: auto;
+.menu-icon span {
+    font-size: 17px;
+    font-weight: 500;
+    font-family: "Montserrat Light", sans-serif;
 }
 
-.navbar a {
-    padding: 25px;
-    text-decoration: none;
+/* Логотип */
+.logo {
+    font-size: 34px;
+    font-weight: bold;
+    font-family: "Inter Semi Bold", sans-serif;
     color: #0c0c3d;
-    transition: color 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-.navbar a:hover {
-    color: tan;
+/* Иконки */
+.icons-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
+
+.icon-link {
+    color: #545454;
+    font-size: 22px;
+    text-decoration: none;
+}
+
+.icon-link:hover {
+    color: #0c0c3d;
+}
+
+
 
 .authorization-container {
     display: flex;
@@ -64,7 +81,7 @@
     display: inline-block;
     padding: 10px 20px;
     border: 2px solid #0c0c3d;
-    background-color: transparent;
+    background-color: white;
     color: #0c0c3d;
     font-size: 1em;
     font-weight: 600;

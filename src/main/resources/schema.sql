@@ -1,7 +1,8 @@
 CREATE TABLE options(
                         id SERIAL PRIMARY KEY,
                         name VARCHAR(255),
-                        category_id INT REFERENCES categories(id));
+                        category_id INT REFERENCES categories(id)
+);
 
 CREATE TABLE values(
                        id SERIAL PRIMARY KEY,

@@ -91,6 +91,6 @@ footer a:hover {
     cursor: pointer;
     z-index: 1000;
     position: absolute;
-    right: 20px; /* Правильное положение на правом краю */
+    right: 20px;
     transition: color 0.3s;
 }

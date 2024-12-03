@@ -1,63 +1,72 @@
 .footer {
-    background-color: #0c0c3d;
-    color: white;
-    padding: 20px 0;
-    width: 100%;
+    background-color: #F4F4F4;
+    color: #292929;
+    padding: 50px 0;
+    font-size: 14px;
 }
 
 .footer-content {
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Равное деление на 4 колонки */
+    gap: 70px; /* Равное расстояние между колонками */
+    padding: 0 71px; /* Внутренние отступы для центрирования */
+    justify-items: center; /* Центрирует элементы в колонках */
 }
 
-.footer-left {
-    text-align: left;
+.footer-left, .footer-middle, .footer-services, .footer-right {
+    padding: 0;
 }
 
-.footer-right {
-    text-align: right;
+.footer-left h3, .footer-middle h3, .footer-services h3, .footer-right h3 {
+    color: #545454;
+    font-weight: bold;
+    font-family: Montserrat, sans-serif;
+    font-size: 17px;
+    margin-bottom: 39px;
 }
 
 .footer-links {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    justify-content: center;
 }
 
 .footer-links .list {
-    margin: 0 15px;
+    margin-bottom: 22px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .footer-links .ssylka {
-    color: white;
+    color: #292929;
     text-decoration: none;
-    transition: color 0.3s;
+    font-style: italic;
+    font-size: 16px;
+    font-family: "Montserrat Light", sans-serif;
 }
 
 .footer-links .ssylka:hover {
-    color: #e91e63;
-}
-
-.footer-text {
-    font-size: 0.9em;
-    margin-top: 10px;
+    text-decoration: underline;
 }
 
 .footer-social {
-    font-size: 1.5em;
-    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
 }
 
-.footer-social i {
-    margin: 0 15px;
-    transition: color 0.3s;
+.footer-social a {
+    color: #292929;
+    font-size: 46px;
+    transition: color 0.3s ease;
 }
 
-.footer-social i:hover {
-    color: #e91e63;
+.footer-social a:hover {
+    color: #0c0c3d;
+}
+
+.footer-text{
+    margin: 0 auto;
+    white-space: nowrap;
 }

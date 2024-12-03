@@ -5,21 +5,26 @@
     <title>LuxDRM</title>
     <link rel="stylesheet" th:href="@{/LUXDRM.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
-    <link rel="stylesheet" th:href="@{/userPanel.css}">
+<!--    <link rel="stylesheet" th:href="@{/userPanel.css}">-->
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}"></div>
-
+<div class="marquee-container">
+    <div class="marquee">
+        🔥 Скидки до 15% на домашнюю одежду! Акция ограничена! 🔥
+        🌟 Удобство и стиль для всей семьи!
+        🕒 Успейте! Предложение заканчивается скоро!
+    </div>
+</div>
 <main class="welcome-main">
     <div class="welcome-content">
-        <h1>Добро пожаловать в LuxDRM!</h1>
+        <h1>Добро пожаловать в LUXDRM!</h1>
         <p>Мы рады приветствовать вас. Ознакомьтесь с нашими новинками и акциями ниже.</p>
-        <a href="#product-section" class="btn">Начать покупки</a>
+        <a th:href="@{'/products'}" class="btn">Начать покупки</a>
     </div>
 </main>
-
 <main class="products">
     <section id="product-section">
         <h2 class="topic">Новинки</h2>
@@ -27,27 +32,13 @@
             <div th:each="product : ${products}" class="product-card">
                 <a th:href="@{'/products/' + ${product.getId()}}" class="product">
                     <img th:src="${product.getImages().get(0).image}" alt="product-img">
-                    <div class="product-info">
-                        <p class="product-name" th:text="${product.getName()}"></p>
+                    <div class="price-wrapper">
                         <p class="price" th:text="${product.getPrice()} + ' тг'"></p>
                     </div>
+                    <div class="product-info">
+                        <p class="product-name" th:text="${product.getName()}"></p>
+                    </div>
                 </a>
-            </div>
-        </div>
-    </section>
-</main>
-<main class="sponsors">
-    <section class="sponsors-content">
-        <h2 class="topic">Наши спонсоры</h2>
-        <div class="sponsor-icons">
-            <div class="sponsor-icon">
-                <img src="https://woowclub.b-cdn.net/wp-content/uploads/2022/02/Campaign-logos-10.png" alt="Lacoste">
-            </div>
-            <div class="sponsor-icon">
-                <img src="https://cdn.dividendmax.com/companies/kaspi-kz-jsc.png" alt="Kaspi">
-            </div>
-            <div class="sponsor-icon">
-                <img src="https://upload.wikimedia.org/wikipedia/ru/4/4c/FlyArystan_regular_logo.png" alt="FlyArystan">
             </div>
         </div>
     </section>
