@@ -18,6 +18,14 @@
     <div class="left-column">
         <img th:src="@{${imageUrl.image}}" alt="Product Image" class="img">
     </div>
+    <div class="product-images">
+        <h3>Изображения продукта:</h3>
+        <ul>
+            <li th:each="image : ${product.images}">
+                <img th:src="${image.image}" alt="Product Image">
+            </li>
+        </ul>
+    </div>
     <div class="right-column">
         <div class="description-zone">
             <div class="product-name-container">

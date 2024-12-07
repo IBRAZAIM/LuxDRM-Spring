@@ -82,4 +82,10 @@ CREATE TABLE product_images(
     id BIGSERIAL PRIMARY KEY,
     product_id BIGINT REFERENCES products(id) NOT NULL,
     image TEXT
-)
+);
+
+CREATE TABLE product_sizes (
+                               id BIGSERIAL PRIMARY KEY,
+                               product_id BIGINT REFERENCES products(id) NOT NULL,
+                               size VARCHAR(50) NOT NULL
+);

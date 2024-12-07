@@ -7,7 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -18,6 +23,7 @@ public class ProductService implements AbstractService<Product> {
     private final OptionRepository optionRepository;
     private final CategoryRepository categoryRepository;
     private final ProductImageService productImageService;
+    private final ProductSizeService productSizeService;
     private final ProductImageRepository productImageRepository;
     private final ReviewRepository reviewRepository;
     private final OrderProductRepository orderProductRepository;
@@ -42,8 +48,8 @@ public class ProductService implements AbstractService<Product> {
         deleteById(productId);
     }
 
-    @Transactional
-    public void create(Product product, List<String> values, List<Long> optionsIds, Long categoryId, String imageUrl) {
+
+    public void create(Product product, List<String> values, List<Long> optionsIds, Long categoryId, List<String> imageUrls, List<String> sizes) {
         // Получаем категорию из репозитория для установки связи с продуктом
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         product.setCategory(category);
@@ -51,11 +57,15 @@ public class ProductService implements AbstractService<Product> {
         // Создаем значения продукта
         createValues(product, values, optionsIds);
         // Создаем изображение продукта
-        productImageService.create(product, imageUrl);
+        productImageService.create(product, imageUrls);
+        //Создаем линейку размеров
+        productSizeService.saveSizes(product, sizes);
     }
 
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
-        System.out.println(optionsIds);
+        if (optionsIds == null || optionsIds.isEmpty()) {
+            throw new IllegalArgumentException("Options IDs must not be null or empty");
+        }
         List<Option> options = optionRepository.findAllById(optionsIds);
         if (values.size() != options.size()) {
             throw new IllegalArgumentException("Values and options size mismatch");

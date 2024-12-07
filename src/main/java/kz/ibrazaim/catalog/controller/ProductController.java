@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -58,14 +59,20 @@ public class ProductController {
     public String createProduct(
             @ModelAttribute("product") Product product,
             @RequestParam(required = false) List<String> values,
-            @RequestParam(required = false) List<Long> optionsIds,
+            @RequestParam("optionsIds[]") List<Long> optionsIds,
             @RequestParam(defaultValue = "-1") Long categoryId,
-            @RequestParam(required = false) String imageUrl
+            @RequestParam("imageUrls[]") List<String> imageUrls,
+            @RequestParam("sizes") List<String> sizes
     ) {
         if (categoryId == -1) {
             return "redirect:/products/create/chooseCategory";
         }
-        productService.create(product, values, optionsIds, categoryId, imageUrl);
+//        System.out.println("optionsIds: " + optionsIds);
+//        for (String size : sizes){
+//            System.out.println("size: " + size);
+//        }
+//        System.out.println("Image URLs: " + imageUrls);
+        productService.create(product, values, optionsIds, categoryId, imageUrls, sizes);
         return "redirect:/products";
     }
 

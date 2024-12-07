@@ -3,6 +3,7 @@ package kz.ibrazaim.catalog.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -12,17 +13,18 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "product_images")
-public class ProductImage {
+@Table(name = "product_sizes")
+public class ProductSize {
 
-    @Id
+    @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     Product product;
 
-    @Column(name = "image", nullable = false)
-    String image;
+    @Column(name = "size", nullable = false)
+    String size; // Хранит отдельный размер, например, "S", "M", "L".
 }
+
