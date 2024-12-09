@@ -21,6 +21,8 @@ public class Product {
     String name;
 
     int price;
+    int discount;
+    double rating;
 
     String description;
 

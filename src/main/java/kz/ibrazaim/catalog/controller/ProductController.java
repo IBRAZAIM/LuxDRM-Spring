@@ -1,6 +1,7 @@
 package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Product;
+import kz.ibrazaim.catalog.model.ProductSize;
 import kz.ibrazaim.catalog.model.Role;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.*;
@@ -21,6 +22,7 @@ public class ProductController {
     private final ReviewService reviewService;
     private final UserService userService;
     private final ProductImageService productImageService;
+    private final ProductSizeService productSizeService;
 
     @GetMapping
     public String findAll(
@@ -127,19 +129,25 @@ public class ProductController {
     ) {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
+        model.addAttribute("products", productService.findAll());
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
-        model.addAttribute("imageUrl", productImageService.findByProduct(product));
+        model.addAttribute("imageUrls", productImageService.findAllByProduct(product));
+
+        // Fetch the sizes for the product
+        List<ProductSize> sizes = productSizeService.findByProduct(product);
+        model.addAttribute("sizes", sizes);  // Add the sizes to the model
+
         User user = userService.getUser();
-        // Проверка на авторизацию пользователя
         if (user != null) {
             model.addAttribute("user", user);
         } else {
-            // Создание пустого пользователя для неавторизованных пользователей
             model.addAttribute("user", new User());
         }
         return "product-page";
     }
+
+
 
     @PostMapping("/addComment")
     public String addReview(

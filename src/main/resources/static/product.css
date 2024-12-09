@@ -5,46 +5,75 @@ body {
 }
 
 main {
-    padding-top: 70px;
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 .navigation-panel{
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 .product-container {
     display: flex;
     background-color: #fff;
     overflow: hidden;
     width: 100%;
-    margin: auto;
     border-bottom: 1px solid #ddd;
 }
-
-.left-column {
-    width: 50%;
-    position: relative;
+.product-gallery {
+    width: 60%;
+    display: flex;
 }
+
+.main-image {
+    margin-left: 20px;
+}
+
+.large-img {
+    width: 80%;
+    height: auto;
+}
+
+.thumbnail-column {
+    width: 10%;
+    display: flex;
+    margin-left: 20px;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.thumbnail-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.thumbnail-column li {
+    margin-bottom: 10px; /* Расстояние между миниатюрами */
+}
+
+.thumbnail-img {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.thumbnail-img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 
 .right-column {
-    width: 50%;
-    margin-right: 20px;
+    width: 40%;
+    margin-right: 38px;
+    margin-top: 43px;
 }
 
-.img {
-    width: 600px;
-    height: 550px;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding-left: 30px;
-}
 .description-zone{
     width: 100%;
 }
 .description-container {
-    padding: 20px;
     display: flex;
     position: relative;
     flex-direction: column;
@@ -58,32 +87,34 @@ main {
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-
+/* Общий контейнер для характеристик */
 .product-characteristics {
-    margin: 20px 0;
-    width: 100%;
+    margin: 20px auto;
     max-width: 800px;
-    border-collapse: collapse;
-    z-index: 999
+    width: 100%;
+    z-index: 999;
 }
 
+/* Таблица характеристик */
 .characteristics-table {
     width: 100%;
-    border: 1px solid #0c0c3d;
-    justify-content: center;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
 }
 
 .characteristics-table th,
 .characteristics-table td {
-    padding: 10px;
+    padding: 12px 16px;
     text-align: left;
-    border-bottom: 1px solid #0c0c3d;
+    border-bottom: 1px solid #ddd;
 }
 
 .characteristics-table thead th {
-    background-color: #0c0c3d;
-    color: #ffffff;
-    font-weight: bold;
+    background-color: #f7f7f7;
+    color: #0c0c3d;
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
 }
 
 .characteristics-table tbody tr:nth-child(odd) {
@@ -98,57 +129,145 @@ main {
     color: #0c0c3d;
 }
 
-
-/* Скрыть характеристики по умолчанию */
-.product-characteristics {
-     position: absolute;
-     top: 0;
-     right: -100%; /* Начальное положение за пределами видимости */
-     width: 100%;
-     background-color: #fff;
-     padding: 20px;
-     transition: right 0.6s ease; /* Анимация смещения с использованием кривой Безье */
- }
-
-.character-btn {
-    margin-bottom: auto;
+/* Контейнер вкладок */
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 54px;
+    margin-bottom: 20px;
     position: relative;
-    display: inline-block;
-    right: -50%;
-    padding-bottom: 15px;
 }
 
-.character-btn a {
-    color: #0c0c3d;
-    font-size: 20px;
+/* Кнопки вкладок */
+.tab-button {
+    position: relative;
     cursor: pointer;
+    font-family: "Montserrat Light", sans-serif;
+    font-style: italic;
+    font-size: 20px;
+    color: #545454;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    transition: color 0.3s ease, font-weight 0.3s ease;
 }
 
-/* Анимация плавного появления характеристик */
-.product-characteristics.show-characteristics {
-    right: 0; /* Показать характеристики */
+.tab-button.active {
+    color: #0c0c3d;
 }
 
-/* Показать характеристики при активации */
-.show-characteristics {
+/* Подчеркивание активной вкладки */
+.tab-button.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #0c0c3d;
+}
+
+.tab-button:not(:last-child) {
+    margin-right: 15px;
+}
+
+/* Секции контента вкладок */
+.tab-content {
+    max-width: 100%;
+    margin-bottom:  54px;
+}
+
+.tab-section {
+    width: 100%;
+    display: none;
+}
+
+.tab-section.active {
     display: block;
 }
 
+.footer{
+    width: 100%;
+}
+.category{
+    color: #545454;
+    font-family: "Montserrat Light", sans-serif;
+    font-size: 17px;
+    margin-bottom: 18px;
+}
 
 /*Имя продукта*/
 .product-name {
-    font-size: 2em;
-    font-weight: 600;
-    margin-bottom: 10px;
-    text-align: center;
+    color: #0c0c3d;
+    font-size: 29px;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 0;
 }
+.product-info {
+    position: relative; /* Для правильного позиционирования скидки */
+    display: flex; /* Для размещения элементов в одну линию */
+    align-items: flex-start; /* Выравнивание элементов по верхнему краю */
+}
+.discount-percentage {
+    position: relative; /* Позиционирование относительно названия */
+    background-color: #D4AF37;
+    color: #fff;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px; /* Немного больший шрифт для скидки */
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: 10px; /* Отступ от названия */
+}
+
+.discount-percentage:hover {
+    background-color: #e0b74d; /* Темнее при наведении */
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.star {
+    font-size: 24px; /* Размер звезды */
+    color: #ccc; /* Цвет для незаполненной звезды */
+    transition: color 0.2s ease; /* Плавное изменение цвета */
+}
+
+.star.filled {
+    color: #f39c12; /* Золотой цвет для заполненной звезды */
+}
+
+.rating-value {
+    font-family: "Montserrat Light", sans-serif;
+    font-size: 18px; /* Размер текста рейтинга */
+    color: #333; /* Цвет текста */
+    margin-left: 10px; /* Отступ между звездами и числовым значением */
+}
+
 /*Цена*/
 .price {
-    font-size: 20px;
-    color: #e91e63;
+    color: #9A073D;
+    font-size: 29px;
+    font-family: Montserrat, sans-serif;
     font-weight: bold;
     margin-bottom: 20px;
-    text-align: center;
+}
+
+.discount {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.original-price{
+    text-decoration: line-through;
+    color: #aaa;
+    margin-right: 10px;
 }
 
 .cart-container{
@@ -156,64 +275,83 @@ main {
     align-items: center;
     justify-content: center;
 }
-.quantity-block{
+
+/* Контейнер для блока с количеством */
+.quantity-block {
+    display: flex;
     align-items: center;
+    margin-bottom: 39px;
+    gap: 15px;
 }
-.number {
-    user-select: none;
-    position: relative;
-    text-align: left;
-    padding: 0;
-    width: 140px;
-    border: 1px solid #ddd;
-    display: inline-block;
-    margin-bottom: 20px;
-}
-.number-minus, .number-plus {
-    position: absolute;
-    top: 0;
-    width: 40px;
-    height: 32px;
-    line-height: 32px;
-    display: block;
-    background: #faf4f2;
-    font-size: 20px;
+
+/* Название "Кол-во" */
+.quantity {
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    color: #0c0c3d; /* Спокойный, темно-синий цвет */
     font-weight: 600;
-    text-align: center;
-    color: #0c0c3d;
-    text-decoration: none;
 }
-.number-minus {
-    left: 0;
-    border-right: 1px solid #ddd;
+
+/* Контейнер для инкремента/декремента */
+.number {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5px;
+    width: 120px;
+    height: 36px;
+    border: 1px solid #ccc; /* Нейтральная граница */
+    overflow: hidden;
 }
-.number-plus {
-    right: 0;
-    border-left: 1px solid #ddd;
+
+/* Внешний вид кнопок + и - */
+.number-minus, .number-plus {
+    width: 36px;
+    height: 100%;
+    color: #0C0C3D; /* Темно-серый цвет для текста */
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+/* Псевдоклассы для кнопок при наведении и активации */
 .number-minus:hover, .number-plus:hover {
-    background: #fffcfb;
+    background-color: #c5c5c5; /* Немного темнее при наведении */
 }
+
 .number-minus:active, .number-plus:active {
-    background: #e8e4e2;
+    background-color: #b0b0b0; /* Еще более темный цвет при нажатии */
+    transform: scale(0.95); /* Легкое сжатие для эффекта нажатия */
 }
-.number-text{
-    display: inline-block;
-    font-size: 14px;
-    color: #000;
-    line-height: 32px;
-    height: 32px;
-    padding: 0;
-    margin: 0 0 0 42px;
-    background: #fff;
-    outline: none;
+
+/* Поле ввода количества */
+.number-text {
+    width: 48px;
+    height: 100%;
+    background-color: transparent;
+    color: #0C0C3D; /* Темно-серый цвет */
     border: none;
-    width: 57px;
     text-align: center;
+    font-size: 16px;
+    font-family: "Montserrat Light", sans-serif;
+    outline: none;
+    padding: 0;
+    transition: color 0.3s ease;
 }
+
+/* При фокусе поле становится немного темнее */
+.number-text:focus {
+    color: #0c0c3d;
+}
+
 .add-to-cart {
     display: block;
     width: 100%;
+    height: 50px;
     padding: 10px;
     border: 2px solid #0c0c3d;
     background-color: transparent;
@@ -233,19 +371,6 @@ main {
 .add-to-cart:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
-}
-
-.icon-container {
-    cursor: pointer;
-    display: inline-block;
-    margin-top: 10px;
-}
-
-.toggle-icon {
-    width: 30px;
-    height: 30px;
-    font-size: 15px;
-    color: #0c0c3d;
 }
 
 /*Отзывы*/
@@ -438,6 +563,120 @@ main {
     background-color: #333;
 }
 
+/* Контейнер размеров */
+.sizes-container {
+    margin-top: 18px;
+    margin-bottom: 33px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.size-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0c0c3d; /* Тёмно-синий */
+    margin-bottom: 10px;
+}
+
+.sizes-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* Для перехода на новую строку при нехватке места */
+}
+
+/* Визуальное оформление кнопок размеров */
+.size-option {
+    position: relative;
+}
+
+.size-input {
+    display: none; /* Скрыть стандартный input */
+}
+
+.size-label-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    text-align: center;
+    background-color: #ffffff; /* Белый фон */
+    border: 1px solid #dcdcdc; /* Серый контур */
+    border-radius: 5px; /* Округленные углы */
+    cursor: pointer;
+    color: #0c0c3d; /* Тёмно-синий текст */
+    transition: all 0.3s ease; /* Плавный переход */
+}
+
+/* Ховер эффект */
+.size-label-btn:hover {
+    background-color: #f9f9f9;
+    border-color: #9a073d; /* Красный цвет при наведении */
+    color: #9a073d;
+}
+
+/* Активное состояние */
+.size-input:checked + .size-label-btn {
+    background-color: #9a073d; /* Красный фон */
+    color: #ffffff; /* Белый текст */
+    border-color: #9a073d; /* Красный контур */
+}
 
 
+/* Основной стиль секции продуктов */
+.products-section {
+    margin: 40px auto;
+    max-width: 100%;
+    padding: 20px;
+}
+
+.products-section-header {
+    text-align: center;
+}
+
+.products-section-topic {
+    font-size: 24px;
+    font-weight: bold;
+    color: #292929;
+    margin-bottom: 20px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.products-section-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    max-width: 1600px; /* Ограничение ширины для 8 карточек */
+    margin: 0 auto;
+}
+
+.products-section-card {
+    background-color: #F4F4F4;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 200px; /* Ограничение размера карточки */
+}
+
+.products-section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.products-section-link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: inherit;
+    padding: 15px;
+}
+
+.products-section-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
 

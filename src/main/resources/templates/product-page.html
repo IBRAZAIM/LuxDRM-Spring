@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/product.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <link rel="stylesheet" th:href="@{/userPanel.css}">
+<!--    <link rel="stylesheet" th:href="@{/userPanel.css}">-->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -15,89 +15,145 @@
     <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
 </header>
 <main class="product-container">
-    <div class="left-column">
-        <img th:src="@{${imageUrl.image}}" alt="Product Image" class="img">
-    </div>
-    <div class="product-images">
-        <h3>Изображения продукта:</h3>
-        <ul>
-            <li th:each="image : ${product.images}">
-                <img th:src="${image.image}" alt="Product Image">
-            </li>
-        </ul>
+    <!-- Product Images Gallery -->
+    <div class="product-gallery">
+        <div class="thumbnail-column">
+            <ul>
+                <li th:each="image, iterStat : ${product.images}" th:if="${!iterStat.first}">
+                    <img th:src="${image.image}" alt="Product Thumbnail" class="thumbnail-img">
+                </li>
+            </ul>
+        </div>
+        <div class="main-image">
+            <img th:src="${product.images[0].image}" alt="Main Product Image" class="large-img">
+        </div>
     </div>
     <div class="right-column">
         <div class="description-zone">
             <div class="product-name-container">
-                <span th:text="${product.category.name}"></span>
-                <div class="character-btn">
-                    <a onclick="toggleCharacteristics()">
-                        <i class="fa-solid fa-gear"></i>
-                    </a>
+                <span th:text="${product.category.name}" class="category"></span>
+                <div class="product-info" th:if="${product.discount > 0}">
+                    <h1 th:text="${product.name}" class="product-name">Название товара</h1>
+                    <span class="discount-percentage" th:text="${product.discount + '%'}">Скидка</span>
                 </div>
-                <h1 th:text="${product.name}" class="product-name">Название товара</h1>
-                <p th:text="'Цена: ' + ${product.price} + ' ₸'" class="price">Цена</p>
-            </div>
-            <div class="description-container">
-                <div class="description-div">
-                    <p th:text="${product.description}">Product Description</p>
+                <div class="product-info" th:unless="${product.discount > 0}">
+                    <h1 th:text="${product.name}" class="product-name">Название товара</h1>
                 </div>
-                <div id="characteristics" class="product-characteristics">
-                    <table class="characteristics-table">
-                        <thead>
-                        <tr>
-                            <th>Характеристика</th>
-                            <th>Значение</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="entry : ${options}">
-                            <td th:text="${entry.getKey().getName()}"></td>
-                            <td th:text="${entry.getValue().isPresent() ? entry.getValue().get().name : 'Не указано'}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <!-- Звезды для рейтинга -->
+                <div class="product-rating">
+                    <div class="stars">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}" class="star" th:classappend="${i <= (product.rating != null ? (product.rating < 4.0 ? 4.0 : product.rating) : 4.0) ? ' filled' : ''}">&#9733;</span>
+                    </div>
+                    <!-- Рейтинг в формате 4.0/5.0 -->
+                    <span class="rating-value" th:text="${product.rating != null ? (product.rating < 4.0 ? 4.0 : product.rating) : 4.0} + '/5.0'">4.0/5.0</span>
+                </div>
+                <div class="discount" th:if="${product.discount > 0}">
+                    <span class="price" th:text="${product.price - product.price * product.discount / 100}" id="formattedDiscountPrice">Цена со скидкой</span>
+                    <span class="original-price" th:text="${product.price}" id="formattedOriginalPrice">Цена</span>
+                </div>
+                <div th:unless="${product.discount > 0}">
+                    <p th:text="${product.price}" class="price" id="formattedPrice">Цена</p>
                 </div>
             </div>
+
+            <div class="sizes-container">
+                <span class="size-label">Размер</span>
+                <div class="sizes-options">
+                    <div th:each="size : ${sizes}" class="size-option">
+                        <input type="checkbox" id="size-${size.size}" name="sizes" th:value="${size}" class="size-input" />
+                        <label for="size-${size.size}" th:text="${size.size}" class="size-label-btn"></label>
+                    </div>
+                </div>
+            </div>
+
             <div class="cart-container">
                 <form th:action="@{|/cart/${product.getId()}|}" method="post">
                     <div class="quantity-block">
-                        <label>Кол-во</label>
+                        <label class="quantity">Кол-во</label>
                         <div class="number" data-step="1" data-min="1" data-max="20">
-                            <input class="number-text" type="text" name="quantity" value="1">
                             <a class="number-minus" onclick="decrement()">−</a>
+                            <input class="number-text" type="text" name="quantity" value="1">
                             <a class="number-plus" onclick="increment()">+</a>
                         </div>
                     </div>
                     <button type="submit" class="add-to-cart">Добавить в корзину</button>
                 </form>
             </div>
-
         </div>
     </div>
 </main>
-<div class="reviews">
-    <h3>Отзывы:</h3>
-    <ul class="reviews-list">
-        <li th:each="review : ${reviews}">
-            <strong th:text="${review.getUser().getName()}"></strong><br>
-            <div class="review-rating">
-                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
-                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
-                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
-                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
-                <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
-            </div>
-            <span th:text="${review.getText()}" class="comment-text"></span>
-        </li>
-    </ul>
-    <div th:if="${#authorization.expression('isAuthenticated()')}">
-        <a id="openModalBtn">Добавить отзыв</a>
+<div class="tabs-container">
+    <p class="tab-button active" data-tab="description">Описание</p>
+    <p class="tab-button" data-tab="characteristics">Характеристики</p>
+    <p class="tab-button" data-tab="reviews">Отзывы</p>
+</div>
+<div class="tab-content">
+    <!-- Описание -->
+    <div class="tab-section active" id="description-section">
+        <p th:text="${product.description}">Product Description</p>
     </div>
-    <div th:unless="${#authorization.expression('isAuthenticated()')}">
-        <p>Чтобы оставить отзыв необходимо <a th:href="@{/login}" >  авторизоваться</a></p>
+
+    <!-- Характеристики -->
+    <div class="tab-section" id="characteristics-section">
+        <table class="characteristics-table">
+            <thead>
+            <tr>
+                <th>Характеристика</th>
+                <th>Значение</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry : ${options}">
+                <td th:text="${entry.getKey().getName()}">Характеристика</td>
+                <td th:text="${entry.getValue().isPresent() ? entry.getValue().get().name : 'Не указано'}">Значение</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Отзывы -->
+    <div class="tab-section" id="reviews-section">
+        <ul class="reviews-list">
+            <li th:each="review : ${reviews}">
+                <strong th:text="${review.getUser().getName()}">Имя пользователя</strong><br>
+                <div class="review-rating">
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
+                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
+                </div>
+                <span th:text="${review.getText()}" class="comment-text">Комментарий</span>
+            </li>
+        </ul>
+        <div th:if="${#authorization.expression('isAuthenticated()')}">
+            <a id="openModalBtn">Добавить отзыв</a>
+        </div>
+        <div th:unless="${#authorization.expression('isAuthenticated()')}">
+            <p>Чтобы оставить отзыв необходимо <a th:href="@{/login}">авторизоваться</a></p>
+        </div>
     </div>
 </div>
+<main class="products-section">
+    <section id="product-section">
+        <div class="products-section-header">
+            <h2 class="products-section-topic">Похожие</h2>
+        </div>
+        <div class="products-section-container">
+            <div th:each="product : ${products}" class="products-section-card">
+                <a th:href="@{'/products/' + ${product.getId()}}" class="products-section-link">
+                    <img th:src="${product.getImages().get(0).image}" alt="product-img" class="products-section-img">
+                    <div class="products-section-price-wrapper">
+                        <p class="products-section-price" th:text="${product.getPrice()} + ' тг'"></p>
+                    </div>
+                    <div class="products-section-info">
+                        <p class="products-section-name" th:text="${product.getName()}"></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
 <div id="commentModal" class="modal">
     <div class="modal-content">
         <span class="close-btn">&times;</span>
@@ -130,14 +186,12 @@
         </div>
     </div>
 </div>
-<div th:if="${#authorization.expression('isAuthenticated()')}">
-    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>
-</div>
+    <div th:insert="footer :: footer-code"></div>
+<!--<div th:if="${#authorization.expression('isAuthenticated()')}">-->
+<!--    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>-->
+<!--</div>-->
 <script>
-    function toggleCharacteristics() {
-        const characteristics = document.getElementById('characteristics');
-        characteristics.classList.toggle('show-characteristics');
-    }
+    // Modal for adding review
     document.addEventListener("DOMContentLoaded", function() {
         const modal = document.getElementById("commentModal");
         const openModalBtn = document.getElementById("openModalBtn");
@@ -157,8 +211,7 @@
             }
         }
     });
-</script>
-<script>
+
     function increment() {
         var input = document.querySelector('.number-text');
         var value = parseInt(input.value);
@@ -176,17 +229,57 @@
             input.value = value - 1;
         }
     }
-</script>
-<script>
-    function togglePanel() {
-        document.querySelector('.slide').classList.toggle('visible');
-        document.querySelector('.open-icon').classList.toggle('hide');
+
+    // Функция для форматирования числа с пробелами
+    function formatPrice(price) {
+        return price.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
 
-    document.querySelector('.close-icon').addEventListener('click', function() {
-        togglePanel();
+    // Форматируем цену со скидкой
+    var discountPriceElement = document.getElementById("formattedDiscountPrice");
+    if (discountPriceElement) {
+        var discountPrice = discountPriceElement.innerText;
+        var formattedDiscountPrice = formatPrice(discountPrice);
+        discountPriceElement.innerText = formattedDiscountPrice + " ₸";
+    }
+
+    // Форматируем оригинальную цену
+    var originalPriceElement = document.getElementById("formattedOriginalPrice");
+    if (originalPriceElement) {
+        var originalPrice = originalPriceElement.innerText;
+        var formattedOriginalPrice = formatPrice(originalPrice);
+        originalPriceElement.innerText = formattedOriginalPrice + " ₸";
+    }
+
+    // Форматируем цену, если нет скидки
+    var priceElement = document.getElementById("formattedPrice");
+    if (priceElement) {
+        var price = priceElement.innerText;
+        var formattedPrice = formatPrice(price);
+        priceElement.innerText = formattedPrice + " ₸";
+    }
+
+    //Разделы
+    document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll(".tab-button");
+        const sections = document.querySelectorAll(".tab-section");
+
+        buttons.forEach(button => {
+            button.addEventListener("click", () => {
+                // Удаляем класс active у всех кнопок и секций
+                buttons.forEach(btn => btn.classList.remove("active"));
+                sections.forEach(section => section.classList.remove("active"));
+
+                // Добавляем класс active к текущей кнопке и соответствующей секции
+                button.classList.add("active");
+                const tabId = button.getAttribute("data-tab");
+                document.getElementById(`${tabId}-section`).classList.add("active");
+            });
+        });
     });
+
 </script>
 </body>
 </html>
+
 

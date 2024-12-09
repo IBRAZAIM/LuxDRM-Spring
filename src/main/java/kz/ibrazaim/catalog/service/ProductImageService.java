@@ -27,7 +27,8 @@ public class ProductImageService {
         }
     }
 
-    public ProductImage findByProduct(Product product){
-        return productImageRepository.findByProduct(product);
+    public List<ProductImage> findAllByProduct(Product product) {
+        return productImageRepository.findAllByProduct(product);
     }
+
 }
