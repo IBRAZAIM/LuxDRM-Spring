@@ -37,6 +37,7 @@ main {
     display: flex;
     margin-left: 20px;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     gap: 10px;
 }
@@ -48,6 +49,8 @@ main {
 }
 
 .thumbnail-column li {
+    position: relative; /* Устанавливаем относительно для блока */
+    transition: transform 0.3s ease-in-out; /* Плавный переход для сдвига */
     margin-bottom: 10px; /* Расстояние между миниатюрами */
 }
 
@@ -55,14 +58,22 @@ main {
     width: 100%;
     height: auto;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.2s, box-shadow 0.3s;
 }
 
 .thumbnail-img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
+/* Активный элемент миниатюры */
+.thumbnail-column li.active img {
+    border: 1.5px solid #9a073d; /* Добавляем рамку для активной миниатюры */
+    transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; /* Плавный переход для рамки и сдвига */
+}
+
+.thumbnail-column li img {
+    transition: transform 0.2s ease-in-out; /* Плавный переход для изображения */
+}
 
 .right-column {
     width: 40%;
@@ -87,6 +98,16 @@ main {
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
+.description-text{
+    color: #0c0c3d;
+    font-family: Montserrat, sans-serif;
+    font-style: italic;
+    font-size: 24px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 177px 0 177px;
+}
+
 /* Общий контейнер для характеристик */
 .product-characteristics {
     margin: 20px auto;
@@ -97,24 +118,28 @@ main {
 
 /* Таблица характеристик */
 .characteristics-table {
-    width: 100%;
+    width: 85%;
+    margin: 0 auto;
     border-collapse: collapse;
-    border: 1px solid #ddd;
+    border: 1px #000000;
+    overflow: hidden;
 }
 
 .characteristics-table th,
 .characteristics-table td {
-    padding: 12px 16px;
+    padding: 16px 24px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee; /* Легкий контур */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Плавный эффект при наведении */
 }
 
-.characteristics-table thead th {
-    background-color: #f7f7f7;
-    color: #0c0c3d;
-    font-weight: 600;
+.characteristics-table th {
+    background: #0c0c3d;
+    color: #fff;
+    font-weight: 700;
     font-size: 18px;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .characteristics-table tbody tr:nth-child(odd) {
@@ -125,9 +150,36 @@ main {
     background-color: #ffffff;
 }
 
-.characteristics-table tbody td {
-    color: #0c0c3d;
+.characteristics-table tbody tr:hover {
+    background-color: #f1f1f1; /* Подсветка строки при наведении */
 }
+
+.characteristics-table tbody td {
+    color: #333; /* Более темный текст для лучшего контраста */
+    font-size: 16px;
+}
+
+.characteristics-table td:first-child {
+    font-weight: 600; /* Выделение первой колонки */
+    color: #0c0c3d; /* Цвет для первой колонки */
+}
+
+.characteristics-table td:last-child {
+    font-style: italic; /* Курсив для значений в последних колонках */
+}
+
+.characteristics-table thead th {
+    border-bottom: 2px solid #0c0c3d; /* Толстая граница для заголовков */
+}
+
+.characteristics-table tbody tr:nth-child(odd):hover {
+    background-color: #f2f2f2; /* Эффект наведения для нечетных строк */
+}
+
+.characteristics-table tbody tr:nth-child(even):hover {
+    background-color: #f2f2f2; /* Эффект наведения для четных строк */
+}
+
 
 /* Контейнер вкладок */
 .tabs-container {
@@ -160,11 +212,11 @@ main {
 .tab-button.active::after {
     content: "";
     position: absolute;
-    bottom: -2px;
+    bottom: -1px;
     left: 0;
     width: 100%;
-    height: 2px;
-    background-color: #0c0c3d;
+    height: 0.5px;
+    background-color: #666666;
 }
 
 .tab-button:not(:last-child) {
@@ -373,12 +425,129 @@ main {
     box-shadow: 0 0 5px rgba(12, 12, 61, 0.3);
 }
 
-/*Отзывы*/
+/* Основной стиль для отзывов */
+.reviews {
+    width: 100%;
+    padding: 50px;
+    background: linear-gradient(135deg, #f8f8f8, #eaeaea);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.06);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Заголовок отзывов */
+.reviews h3 {
+    font-size: 32px;
+    color: #0c0c3d;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка добавить отзыв */
+.add-review-btn {
+    margin-left: 50px;
+    display: inline-block;
+    padding: 14px 25px;
+    background-color: #0c0c3d;
+    color: #fff;
+    font-size: 18px;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-review-btn:hover {
+    background-color: #040469;
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Промт авторизации */
+.login-prompt {
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+}
+
+.login-prompt a {
+    color: #9a073d;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Список отзывов */
+.reviews-list {
+    list-style: none;
+    padding: 0 50px 0 50px;
+    margin: 0;
+}
+
+.reviews-list li {
+    padding: 20px 30px;
+    margin-bottom: 25px;
+    background-color: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.reviews-list li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    background-color: #f9f9f9;
+}
+
+/* Заголовок отзыва */
+.reviews-list li strong {
+    font-size: 18px;
+    color: #0c0c3d;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Текст отзыва */
+.reviews-list li span {
+    font-size: 15px;
+    color: #555;
+    margin-left: 15px;
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1.6;
+}
+
+/* Звезды рейтинга */
+.review-rating {
+    display: flex;
+    margin-top: 15px;
+}
+
+.review-rating .fa-star {
+    font-size: 22px;
+    color: #f5c518;
+}
+
+.review-rating .fa-regular {
+    color: #f5c518;
+}
+
+/* Стили для отзывов с разными фонами */
+.reviews-list li:nth-child(odd) {
+    background-color: #f7f7f7;
+}
+
+.reviews-list li:nth-child(even) {
+    background-color: #ffffff;
+}
+
+/* Анимации звезд */
 .star-rating {
     direction: rtl;
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .star-rating input {
@@ -386,9 +555,9 @@ main {
 }
 
 .star-rating label {
-    font-size: 30px;
+    font-size: 35px;
     color: #ccc;
-    padding: 0 5px;
+    padding: 0 8px;
     cursor: pointer;
 }
 
@@ -403,79 +572,6 @@ main {
 .star-rating input:checked ~ label:hover ~ label,
 .star-rating input:checked ~ label:hover ~ input:checked ~ label {
     color: #e8b623;
-}
-
-.reviews {
-    width: 100%;
-    padding: 20px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-}
-
-.reviews h3 {
-    font-size: 24px;
-    color: #0c0c3d;
-    margin-bottom: 5px;
-    padding: 20px;
-}
-
-.reviews a {
-    display: inline-block;
-    margin-bottom: 20px;
-    padding: 10px 15px;
-    background-color: #0c0c3d;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.reviews-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.reviews-list li {
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.reviews-list li strong {
-    font-size: 16px;
-    color: #0c0c3d;
-}
-
-.reviews-list li span {
-    font-size: 14px;
-    color: #333;
-    margin-left: 10px;
-    display: inline-block;
-    vertical-align: top;
-}
-
-.reviews-list li:nth-child(odd) {
-    background-color: #f0f0f0;
-}
-
-.reviews-list li:nth-child(even) {
-    background-color: #fff;
-}
-.review-rating {
-    display: flex;
-    margin-top: 5px;
-}
-
-.review-rating .fa-star {
-    font-size: 20px;
-    color: #f5c518;
-}
-
-.review-rating .fa-regular {
-    color: #f5c518;
 }
 
 .modal {
@@ -604,7 +700,7 @@ main {
     border-radius: 5px; /* Округленные углы */
     cursor: pointer;
     color: #0c0c3d; /* Тёмно-синий текст */
-    transition: all 0.3s ease; /* Плавный переход */
+    transition: all 0.2s ease; /* Плавный переход */
 }
 
 /* Ховер эффект */
@@ -615,68 +711,132 @@ main {
 }
 
 /* Активное состояние */
-.size-input:checked + .size-label-btn {
+.size-label-btn.selected {
     background-color: #9a073d; /* Красный фон */
-    color: #ffffff; /* Белый текст */
-    border-color: #9a073d; /* Красный контур */
+    color: #fff; /* Белый текст */
+    border-color: #9a073d; /* Красная граница */
 }
-
-
 /* Основной стиль секции продуктов */
 .products-section {
-    margin: 40px auto;
-    max-width: 100%;
-    padding: 20px;
+    margin: 60px auto;
+    padding: 60px 20px;
+    max-width: 1200px;
 }
 
+/* Заголовок секции */
 .products-section-header {
     text-align: center;
+    margin-bottom: 40px;
 }
 
 .products-section-topic {
-    font-size: 24px;
-    font-weight: bold;
-    color: #292929;
-    margin-bottom: 20px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #0c0c3d;
+    margin-bottom: 15px;
     font-family: 'Montserrat', sans-serif;
+    letter-spacing: 1px;
 }
 
+/* Контейнер карточек с максимальными 4 карточками в ряду */
 .products-section-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    justify-content: center;
-    max-width: 1600px; /* Ограничение ширины для 8 карточек */
+    grid-template-columns: repeat(4, 1fr); /* Максимум 4 карточки в ряду */
+    gap: 30px;
     margin: 0 auto;
 }
 
+/* Стили карточек продуктов */
 .products-section-card {
-    background-color: #F4F4F4;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Более глубокая тень */
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    max-width: 200px; /* Ограничение размера карточки */
+    cursor: pointer;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    position: relative;
+    box-sizing: border-box;
 }
 
+/* Эффект на карточке при наведении */
 .products-section-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px); /* Легкое поднятие карточки */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* Более выраженная тень */
 }
 
+/* Ссылка на карточке */
 .products-section-link {
     text-decoration: none;
     display: flex;
     flex-direction: column;
     align-items: center;
     color: inherit;
-    padding: 15px;
 }
 
+/* Скидка сверху */
+.discount-znak {
+    background-color: #D4AF37;
+    color: white;
+    font-weight: 700;
+    font-family: Montserrat, sans-serif;
+    padding: 5px 10px;
+    font-size: 15px;
+    position: absolute;
+    top: 15px; /* Отступ сверху */
+    right: 15px; /* Отступ справа */
+    z-index: 10;
+    display: inline-block;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Тень для скидки */
+}
+
+/* Изображение в карточке */
 .products-section-img {
     width: 100%;
-    height: 200px;
+    height: 250px;
     object-fit: cover;
-    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+/* Эффект на изображении при наведении */
+.products-section-card:hover .products-section-img {
+    transform: scale(1.05); /* Легкое увеличение изображения */
+}
+
+/* Информация о продукте */
+.products-section-info {
+    padding: 10px 0;
+}
+
+.products-section-name {
+    font-size: 18px;
+    font-weight: 500;
+    color: #0c0c3d;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.products-section-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #9a073d; /* Цена выделена акцентным цветом */
+    transition: color 0.3s ease;
+}
+
+/* Стиль для знака верификации качества */
+.quality-verification {
+    display: flex;
+    align-items: center;
+    margin-top: 21px;
+}
+
+.verification-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
 }
 

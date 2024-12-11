@@ -16,11 +16,10 @@ CREATE TABLE products
     id    SERIAL PRIMARY KEY ,
     name  VARCHAR(255),
     price   INT,
-    description TEXT CHECK (char_length(description) <= 500),
+    description TEXT CHECK (char_length(description) <= 5000),
     category_id INT REFERENCES categories(id)
 );
-ALTER TABLE products ADD COLUMN description TEXT CHECK (char_length(description) <= 500);
-
+ALTER TABLE products ADD COLUMN description TEXT CHECK (char_length(description) <= 5000);
 
 CREATE TABLE categories
 (

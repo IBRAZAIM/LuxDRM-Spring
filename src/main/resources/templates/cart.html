@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/cart.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
     <title>Корзина</title>
 </head>
 <body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
 <div class="cart-container">
-    <h1>Моя Корзина (<span th:text="${cartItems.size()}"></span>)</h1>
+    <p class="cart-p">Корзина (<span th:text="${cartItems.size()}"></span>)</p>
     <div class="cart-content">
         <div class="left-column">
             <table class="cart-items">
                 <thead>
                 <tr>
                     <th>Товар</th>
+                    <th>Размер</th>
                     <th>Количество</th>
                     <th>Цена</th>
                     <th>Итого</th>
@@ -27,34 +30,43 @@
                         <div class="product-info">
                             <img th:src="${cartItem.product.getImages().get(0).image}" alt="Product Image">
                             <div class="product-details">
-                                <a th:href="@{'/products/' + ${cartItem.product.getId()}}" th:text="${cartItem.product.name}"></a>
+                                <a class="product-name" th:href="@{'/products/' + ${cartItem.product.getId()}}" th:text="${cartItem.product.name}"></a>
                             </div>
                         </div>
                     </td>
                     <td>
+                        <div class="size" th:text="${cartItem.size}"></div>
+                    </td>
+                    <td class="quantity">
                         <form th:action="@{'/cart/update/' + ${cartItem.id}}" method="post">
                             <input type="number" min="1" max="20" step="1" th:value="${cartItem.quantity}" name="quantity">
                             <button type="submit">Обновить</button>
                         </form>
                     </td>
-                    <td><span th:text="${cartItem.product.price}" class="product-price"></span> KZT</td>
-                    <td><span th:text="${cartItem.quantity * cartItem.product.price}" class="total-price"></span> KZT</td>
+                    <td><span th:text="${cartItem.product.price}" class="product-price"></span> тг</td>
+                    <td><span th:text="${cartItem.quantity * cartItem.product.price}" class="total-price"></span> тг</td>
                     <td>
-                        <form th:action="@{/cart/delete}" method="post">
+                        <form th:action="@{/cart/delete}" method="post" style="display: inline;">
                             <input type="hidden" name="id" th:value="${cartItem.id}">
-                            <button type="submit" class="icon-delete"><i class="fas fa-times"></i></button>
+                            <button type="submit" style="background: none; border: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </form>
                     </td>
+
                 </tr>
                 </tbody>
             </table>
+
             <div class="actions">
                 <a th:href="@{'/main'}" class="continue-btn">Продолжить покупки</a>
             </div>
         </div>
         <div class="right-column">
+            <h2>Оформление</h2>
+
             <div class="total">
-                Итого: <span id="grand-total">0.00</span> KZT
+                Итого: <span id="grand-total">0.00</span> тг
             </div>
             <div class="checkout">
                 <a th:href="@{'/checkout'}" class="btn">Оформить заказ</a>

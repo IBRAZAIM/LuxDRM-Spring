@@ -16,6 +16,8 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+    String size;
+
     int quantity;
 
     @ManyToOne

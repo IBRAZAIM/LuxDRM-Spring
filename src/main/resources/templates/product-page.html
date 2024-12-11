@@ -15,28 +15,43 @@
     <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
 </header>
 <main class="product-container">
+
     <!-- Product Images Gallery -->
     <div class="product-gallery">
         <div class="thumbnail-column">
             <ul>
-                <li th:each="image, iterStat : ${product.images}" th:if="${!iterStat.first}">
+                <li th:each="image, iterStat : ${product.images}"
+                    onclick="changeMainImage(this)">
                     <img th:src="${image.image}" alt="Product Thumbnail" class="thumbnail-img">
                 </li>
             </ul>
         </div>
         <div class="main-image">
-            <img th:src="${product.images[0].image}" alt="Main Product Image" class="large-img">
+            <img id="mainImage" th:src="${product.images[0].image}" alt="Main Product Image" class="large-img">
         </div>
     </div>
+
     <div class="right-column">
         <div class="description-zone">
             <div class="product-name-container">
                 <span th:text="${product.category.name}" class="category"></span>
                 <div class="product-info" th:if="${product.discount > 0}">
+                    <!-- Знак верификации качества -->
+                    <div class="quality-verification">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
+                            <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
+                        </svg>
+                    </div>
                     <h1 th:text="${product.name}" class="product-name">Название товара</h1>
                     <span class="discount-percentage" th:text="${product.discount + '%'}">Скидка</span>
                 </div>
                 <div class="product-info" th:unless="${product.discount > 0}">
+                    <!-- Знак верификации качества -->
+                    <div class="quality-verification">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
+                            <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
+                        </svg>
+                    </div>
                     <h1 th:text="${product.name}" class="product-name">Название товара</h1>
                 </div>
                 <!-- Звезды для рейтинга -->
@@ -55,19 +70,17 @@
                     <p th:text="${product.price}" class="price" id="formattedPrice">Цена</p>
                 </div>
             </div>
-
-            <div class="sizes-container">
-                <span class="size-label">Размер</span>
-                <div class="sizes-options">
-                    <div th:each="size : ${sizes}" class="size-option">
-                        <input type="checkbox" id="size-${size.size}" name="sizes" th:value="${size}" class="size-input" />
-                        <label for="size-${size.size}" th:text="${size.size}" class="size-label-btn"></label>
+            <form th:action="@{|/cart/${product.getId()}|}" method="post">
+                <div class="sizes-container">
+                    <span class="size-label">Размер</span>
+                    <div class="sizes-options">
+                        <div th:each="size, iterStat : ${sizes}" class="size-option">
+                            <div th:text="${size.size}" class="size-label-btn" onclick="selectSize(this, '${size.size}')"></div>
+                        </div>
                     </div>
+                    <input type="hidden" name="size" id="selected-size">
                 </div>
-            </div>
-
-            <div class="cart-container">
-                <form th:action="@{|/cart/${product.getId()}|}" method="post">
+                <div class="cart-container">
                     <div class="quantity-block">
                         <label class="quantity">Кол-во</label>
                         <div class="number" data-step="1" data-min="1" data-max="20">
@@ -76,9 +89,9 @@
                             <a class="number-plus" onclick="increment()">+</a>
                         </div>
                     </div>
-                    <button type="submit" class="add-to-cart">Добавить в корзину</button>
-                </form>
-            </div>
+                </div>
+                <button type="submit" class="add-to-cart">Добавить в корзину</button>
+            </form>
         </div>
     </div>
 </main>
@@ -90,7 +103,7 @@
 <div class="tab-content">
     <!-- Описание -->
     <div class="tab-section active" id="description-section">
-        <p th:text="${product.description}">Product Description</p>
+        <p th:text="${product.description}" class="description-text">Product Description</p>
     </div>
 
     <!-- Характеристики -->
@@ -115,45 +128,50 @@
     <div class="tab-section" id="reviews-section">
         <ul class="reviews-list">
             <li th:each="review : ${reviews}">
-                <strong th:text="${review.getUser().getName()}">Имя пользователя</strong><br>
-                <div class="review-rating">
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
-                    <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
+                <div class="review-header">
+                    <strong th:text="${review.getUser().getName()}">Имя пользователя</strong>
+                    <div class="review-rating">
+                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
+                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
+                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
+                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
+                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
+                    </div>
                 </div>
-                <span th:text="${review.getText()}" class="comment-text">Комментарий</span>
+                <p th:text="${review.getText()}" class="comment-text"></p>
             </li>
         </ul>
         <div th:if="${#authorization.expression('isAuthenticated()')}">
-            <a id="openModalBtn">Добавить отзыв</a>
+            <a id="openModalBtn" class="add-review-btn">Добавить отзыв</a>
         </div>
         <div th:unless="${#authorization.expression('isAuthenticated()')}">
-            <p>Чтобы оставить отзыв необходимо <a th:href="@{/login}">авторизоваться</a></p>
+            <p class="login-prompt">Чтобы оставить отзыв необходимо <a th:href="@{/login}">авторизоваться</a></p>
         </div>
     </div>
+    <!-- Отзывы -->
+
 </div>
 <main class="products-section">
     <section id="product-section">
         <div class="products-section-header">
-            <h2 class="products-section-topic">Похожие</h2>
+            <h2 class="products-section-topic">Похожие товары</h2>
         </div>
         <div class="products-section-container">
             <div th:each="product : ${products}" class="products-section-card">
                 <a th:href="@{'/products/' + ${product.getId()}}" class="products-section-link">
+                    <!-- Скидка сверху -->
+                    <div class="discount-znak" th:text="${product.discount != null ? product.discount + '%' : ''}" th:if="${product.discount != null && product.discount > 0}"></div>
                     <img th:src="${product.getImages().get(0).image}" alt="product-img" class="products-section-img">
-                    <div class="products-section-price-wrapper">
-                        <p class="products-section-price" th:text="${product.getPrice()} + ' тг'"></p>
-                    </div>
                     <div class="products-section-info">
                         <p class="products-section-name" th:text="${product.getName()}"></p>
+                        <p class="products-section-price" th:text="${product.getPrice()} + ' тг'"></p>
                     </div>
                 </a>
             </div>
         </div>
     </section>
 </main>
+
 <div id="commentModal" class="modal">
     <div class="modal-content">
         <span class="close-btn">&times;</span>
@@ -278,6 +296,42 @@
         });
     });
 
+    function selectSize(element) {
+        // Проверяем, был ли уже выбран этот размер
+        if (element.classList.contains('selected')) {
+            // Если выбран, отменяем выбор
+            element.classList.remove('selected');
+            // Сбрасываем значение скрытого поля
+            document.getElementById('selected-size').value = '';
+        } else {
+            // Если не выбран, добавляем класс "selected" и удаляем его с других элементов
+            var allSizes = document.querySelectorAll('.size-label-btn');
+            allSizes.forEach(function(size) {
+                size.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            // Устанавливаем значение выбранного размера в скрытое поле
+            document.getElementById('selected-size').value = element.textContent.trim();
+        }
+    }
+
+
+    function changeMainImage(thumbnail) {
+        // Получаем источник изображения из миниатюры
+        var newImageSrc = thumbnail.querySelector('img').getAttribute('src');
+
+        // Изменяем источник основного изображения
+        document.getElementById('mainImage').setAttribute('src', newImageSrc);
+
+        // Убираем активное состояние со всех миниатюр
+        var allThumbnails = document.querySelectorAll('.thumbnail-column li');
+        allThumbnails.forEach(function(item) {
+            item.classList.remove('active');
+        });
+
+        // Добавляем активное состояние на выбранную миниатюру
+        thumbnail.classList.add('active');
+    }
 </script>
 </body>
 </html>

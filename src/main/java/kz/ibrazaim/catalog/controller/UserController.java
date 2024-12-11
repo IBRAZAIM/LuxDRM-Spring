@@ -28,12 +28,16 @@ public class UserController {
     }
 
     @PostMapping("/cart/{productId}")
-    public String addItemToCart(@PathVariable long productId, @RequestParam("quantity") int quantity) {
+    public String addItemToCart(
+            @PathVariable long productId,
+            @RequestParam("quantity") int quantity,
+            @RequestParam("size") String size
+    ) {
         User user = userService.getUser();
         if (user == null) {
             return "redirect:/login";
         }
-        userService.addItemToCart(productId, quantity);
+        userService.addItemToCart(productId, quantity, size);
         return "redirect:/cart";
     }
 }

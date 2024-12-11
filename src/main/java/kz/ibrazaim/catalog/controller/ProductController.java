@@ -133,8 +133,6 @@ public class ProductController {
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
         model.addAttribute("imageUrls", productImageService.findAllByProduct(product));
-
-        // Fetch the sizes for the product
         List<ProductSize> sizes = productSizeService.findByProduct(product);
         model.addAttribute("sizes", sizes);  // Add the sizes to the model
 

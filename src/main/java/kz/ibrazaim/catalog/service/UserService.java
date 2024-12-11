@@ -34,20 +34,31 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void addItemToCart(long productId, int quantity) {
+    public void addItemToCart(long productId, int quantity, String size) {
         User user = getUser();
-        CartItem cartItem = cartItemRepository.findByUserAndProductId(user, productId);
+        // Ищем элемент в корзине с учетом размера
+        CartItem cartItem = cartItemRepository.findByUserAndProductIdAndSize(user, productId, size)
+                .orElse(null);
         if (cartItem != null) {
+            // Если элемент с таким размером уже существует, увеличиваем количество
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
-        } else {
+        }
+        else {
+            // Если элемент с таким размером не найден, создаем новый
             cartItem = new CartItem();
             cartItem.setUser(user);
-            Product product = productRepository.findById(productId).orElseThrow();
-            cartItem.setProduct(product);
+            cartItem.setSize(size);
             cartItem.setQuantity(quantity);
+
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            cartItem.setProduct(product);
         }
+        // Сохраняем изменения
         cartItemRepository.save(cartItem);
     }
+
+
 
     public User getUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
