@@ -1,51 +1,163 @@
-body {
-    font-family: 'Montserrat', sans-serif;
-    color: #333;
-    margin: 0;
-    padding: 0;
+.container {
+    width: 90%;
+    margin: 40px auto;
+    padding: 50px;
 }
 
-.order-container {
-    max-width: 80%;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #ffffff;
+.title {
+    font-size: 36px;
+    color: #0c0c3d;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    margin-bottom: 40px;
 }
-.myCart {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333333;
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.filters label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #9A073D;
+}
+
+.filters select {
+    padding: 6px 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    background-color: #fff;
+    color: #0c0c3d;
+    transition: all 0.3s ease;
+}
+
+.filters select:hover {
+    border-color: #9A073D;
+}
+
+.filters .download-invoice {
+    background-color: #9A073D;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+}
+
+.filters .download-invoice:hover {
+    background-color: #7A052F;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 30px;
 }
 
-.orders-param th {
-    padding: 10px 0;
-    border-bottom: 2px solid #e0e0e0;
-}
-.status-param{
+th, td {
+    padding: 12px;
     text-align: center;
 }
-.order-item td {
-    padding: 10px;
-    border-bottom: 1px solid #e0e0e0;
+
+th {
+    background-color: #0c0c3d;
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 20px;
 }
-.order-item td ul {
+
+td {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    font-family: 'Poppins', sans-serif;
+}
+
+.product-list {
     margin: 0;
     padding: 0;
+    display: flex;
+    align-items: center;
     list-style-type: none;
 }
 
-.order-item td ul li {
-    margin-bottom: 5px;
+.product-item {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 30px;
 }
 
-.order-item td.order-status,
-.order-item td.order-date {
-    text-align: center;
+.product-name{
+    font-family: Montserrat, sans-serif;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.product-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+
+
+.status[data-status="Подтверждено"] {
+    color: #4CAF50;
+}
+
+.status[data-status="Оформлено"] {
+    color: #FF9800;
+}
+
+.status[data-status="Отменено"] {
+    color: #F44336;
+}
+
+
+
+.total, .date, .status {
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+}
+
+.order-item:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 30px;
+    }
+
+    .title {
+        font-size: 30px;
+    }
+
+    .filters {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    th, td {
+        font-size: 14px;
+    }
+
+    .filters select, .filters .download-invoice {
+        width: 100%;
+    }
 }
 
 
