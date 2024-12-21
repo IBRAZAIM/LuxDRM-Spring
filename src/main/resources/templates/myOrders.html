@@ -5,44 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои Заказы</title>
     <link rel="stylesheet" th:href="@{/myOrders.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Роскошные шрифты -->
 </head>
 <body>
-<div class="order-container">
-    <h1 class="myCart">Мои Заказы</h1>
+<div class="container">
+    <h1 class="title">Мои Заказы</h1>
+
+    <div class="filters">
+        <div>
+            <label for="order-filter">Фильтровать:</label>
+            <select id="order-filter" title="Выберите статус заказа">
+                <option value="all">Все</option>
+                <option value="completed">Завершенные</option>
+                <option value="pending">Ожидающие</option>
+                <option value="cancelled">Отмененные</option>
+            </select>
+        </div>
+        <button class="download-invoice" title="Скачать счет для этого заказа">
+            Скачать счет
+        </button>
+    </div>
+
     <div class="order-list">
         <table>
             <thead>
             <tr class="orders-param">
-                <th class="product-param">Продукт</th>
-                <th class="status-param">Статус</th>
-                <th class="date-param">Дата оформления</th>
+                <th class="param">Продукт</th>
+                <th class="param">Статус</th>
+                <th class="param">Дата оформления</th>
+                <th class="param">Сумма</th>
             </tr>
             </thead>
             <tbody>
-            <!-- Добавьте строки для каждого заказа -->
             <tr th:each="order : ${orders}" class="order-item">
-                <td>
-                    <ul>
-                        <li th:each="orderProduct : ${order.orderProducts}" class="order-product">
-                            <span th:text="${orderProduct.product.name + ' x' + orderProduct.quantity}"></span>
-                        </li>
-                    </ul>
-                </td>
-                <td th:text="${order.status}" class="order-status"></td>
-                <td th:text="${order.date}" class="order-date"></td>
+                <a th:href="@{/orderы/{id}(id=${order.id})}" style="display: contents; text-decoration: none; color: inherit;">
+                    <td>
+                        <ul class="product-list">
+                            <li th:each="orderProduct : ${order.orderProducts}" class="product-item">
+                                <img th:src="${orderProduct.product.getImages().get(0).image}" class="product-image" alt="product image">
+                                <span th:text="${orderProduct.product.name + ' x' + orderProduct.quantity}" class="product-name"></span>
+                            </li>
+                        </ul>
+                    </td>
+                    <td class="status" th:text="${order.status}"></td>
+                    <td class="date" th:text="${order.date}"></td>
+                    <td class="total" th:text="${order.totalPrice} + ' ₸'"></td>
+                </a>
             </tr>
             </tbody>
         </table>
     </div>
 </div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateElements = document.querySelectorAll('.date');
+
+        dateElements.forEach(function(dateElement) {
+            const dateStr = dateElement.textContent.trim();
+
+            if (dateStr) {
+                const date = new Date(dateStr);
+
+                const day = ("0" + date.getDate()).slice(-2);
+                const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                const year = date.getFullYear();
+                const hours = ("0" + date.getHours()).slice(-2);
+                const minutes = ("0" + date.getMinutes()).slice(-2);
+
+                const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+                dateElement.textContent = formattedDate;
+            }
+        });
+    });
+</script>
 </html>
-
-
-
-
-
-
-
-
-

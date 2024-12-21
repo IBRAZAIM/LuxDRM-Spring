@@ -2,6 +2,7 @@ package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.User;
+import kz.ibrazaim.catalog.service.CartService;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequestMapping
 public class UserController {
     private final UserService userService;
+    private final CartService cartService;
 
     @GetMapping("/cart")
     public String getCartPage(Model model) {
@@ -24,6 +26,16 @@ public class UserController {
         }
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
         model.addAttribute("cartItems", cartItems);
+        double averageDiscount = cartItems.stream()
+                .mapToInt(cartItem -> cartItem.getProduct().getDiscount())
+                .average()
+                .orElse(0.0); // Если список пуст, вернуть 0.0
+        model.addAttribute("averageDiscount", Math.round(averageDiscount)); // Округление
+        model.addAttribute("totalPrice", cartService.totalPrice(cartItems));
+        int totalPrice = cartService.totalPrice(cartItems);  // Получаем полную цену товаров
+        int finalPrice = (int)(totalPrice * (1 - averageDiscount / 100));  // Применяем скидку
+        model.addAttribute("finalPrice", finalPrice);
+
         return "cart";
     }
 

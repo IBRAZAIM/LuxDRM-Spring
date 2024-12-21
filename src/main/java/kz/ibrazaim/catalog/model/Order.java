@@ -24,11 +24,29 @@ public class Order {
     @JoinColumn(name = "user_id")
     User user;
 
+    @Column(name = "serial_number")
+    String serialNumber;
+
     String status;
+
+    String email;
+
+    String phone;
+
+    String fullName;
+
+    String country;
+
+    String city;
 
     String address;
 
+    String postalCode;
+
     LocalDateTime date;
+
+    @Column(name = "total_price")
+    int totalPrice;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<OrderProduct> orderProducts = new ArrayList<>();

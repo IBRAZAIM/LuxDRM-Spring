@@ -1,9 +1,7 @@
 package kz.ibrazaim.catalog.controller;
 
-import kz.ibrazaim.catalog.model.CartItem;
-import kz.ibrazaim.catalog.model.Order;
-import kz.ibrazaim.catalog.model.Role;
-import kz.ibrazaim.catalog.model.User;
+import kz.ibrazaim.catalog.model.*;
+import kz.ibrazaim.catalog.service.CardService;
 import kz.ibrazaim.catalog.service.CartService;
 import kz.ibrazaim.catalog.service.OrderService;
 import kz.ibrazaim.catalog.service.UserService;
@@ -22,6 +20,7 @@ public class OrderController {
     private final UserService userService;
     private final CartService cartService;
     private final OrderService orderService;
+    private final CardService cardService;
 
     @GetMapping("/checkout")
     public String getCheckout(Model model) {
@@ -35,10 +34,24 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public String processCheckout(@RequestParam("address") String address) {
+    public String processCheckout(
+            @RequestParam("email") String email,
+            @RequestParam("phone") String phone,
+            @RequestParam("fullName") String fullName,
+            @RequestParam("country") String country,
+            @RequestParam("city") String city,
+            @RequestParam("address") String address,
+            @RequestParam("postalCode") String postalCode,
+            @RequestParam String cardNumber,
+            @RequestParam String cardHolderName,
+            @RequestParam String expiryMonth,
+            @RequestParam String expiryYear,
+            @RequestParam String cvv
+    ) {
         User user = userService.getUser();
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
-        orderService.create(user, address,cartItems);
+        orderService.create(user, email, phone, fullName, country, city, address, postalCode, cartItems);
+        cardService.saveCard(user, cardNumber, cardHolderName, expiryMonth, expiryYear, cvv);
         cartService.clearCart(user);
         return "redirect:/orders";
     }
@@ -46,15 +59,29 @@ public class OrderController {
     @GetMapping("/orders")
     public String showOrders(Model model) {
         User user = userService.getUser();
+
+        // Проверка на авторизованного пользователя
+        if (user == null) {
+            return "redirect:/login";  // Перенаправление на страницу входа, если пользователь не авторизован
+        }
+
         List<Order> orders;
 
+        // Если роль пользователя - ADMIN или MODER, показываем все заказы
         if (user.getRole().equals(Role.ADMIN.getServiceName()) || user.getRole().equals(Role.MODER.getServiceName())) {
             orders = orderService.getAllOrders();
             model.addAttribute("orders", orders);
             return "orders";
         } else {
+            // Для обычных пользователей показываем только его заказы
             orders = orderService.getOrdersForUser(user);
             model.addAttribute("orders", orders);
+
+            // Если у пользователя нет заказов, можно показать сообщение
+            if (orders.isEmpty()) {
+                model.addAttribute("message", "У вас нет заказов.");
+            }
+
             return "myOrders";
         }
     }

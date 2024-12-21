@@ -1,84 +1,520 @@
-body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-
 .checkout-container {
-    width: 90%;
-    margin: 100px auto 0 auto; /* Верхний отступ 90px, горизонтальные отступы - auto, нижний отступ - 0 */
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    user-select: none;
+    justify-content: space-between;
 }
 
-
-header h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.order-summary, .customer-info {
-    margin-bottom: 20px;
+.left-part {
+    width: 60%;
+    margin-left: 73px;
 }
 
 h2 {
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-size: 30px;
+    margin-bottom: 22px;
+}
+
+.option {
+    font-family: "Montserrat Medium", sans-serif;
+    font-style: italic;
+    font-size: 19px;
     margin-bottom: 10px;
+    color: #545454;
 }
 
-.order-items {
-    list-style: none;
-    padding: 0;
+.inputs {
+    margin-top: 12px;
 }
 
-.order-items li {
+.inputs input.name {
+    width: calc(745px - 28px);
+}
+
+.checkbox-line {
     display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
+    gap: 50px;
 }
 
-.total-price {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.2em;
-    margin-top: 10px;
-}
-
-.customer-info{
-    margin-bottom: 15px;
-    margin-top: 20px;
-}
-.form-group{
-    margin-bottom: 15px;
-}
-.customer-info label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.customer-info input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+.input-block input {
+    width: calc(350px - 28px);
+    height: 40px;
+    margin-bottom: 10px;
     border-radius: 5px;
+    border: 0.5px solid #9b9b9b;
+    font-family: "Montserrat Light", sans-serif;
+    font-style: italic;
+    font-size: 17px;
+    color: #0c0c3d;
+    padding-left: 28px;
 }
 
-.submit-order {
-    width: 100%;
-    padding: 15px;
+.inputs input:nth-child(1), .address{
+    margin-right: 37px;
+}
+
+.input-block input::placeholder {
+    font-family: "Montserrat Light", sans-serif;
+    font-style: italic;
+    font-size: 17px;
+    color: #545454;
+    opacity: 0.6;
+}
+
+.checkbox-option {
+    margin-top: 12px;
+    display: flex;
+    user-select: none;
+}
+
+.checkbox-input {
+    display: none;
+}
+
+.checkbox-icon {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #0c0c3d;
+    border-radius: 5px;
+    margin-right: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.checkbox-icon.private-policy {
+    margin-top: 33px;
+}
+
+.checkbox-input:checked + .checkbox-icon {
+    border-color: #0c0c3d;
+}
+
+.checkbox-input:checked + .checkbox-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 10px;
+    border: solid #0c0c3d;
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -50%) rotate(30deg);
+}
+
+.checkbox-input:focus-visible + .checkbox-icon {
+    outline: 2px solid #0c0c3d;
+    outline-offset: 3px;
+    border-color: #0c0c3d;
+}
+
+.checkbox-details {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.checkbox-text {
+    font-family: "Montserrat", sans-serif;
+    font-style: italic;
+    font-size: 15px;
+    color: #545454;
+    opacity: 0.8;
+    transition: color 0.2s ease;
+}
+
+.checkbox-input:checked ~ .checkbox-details .checkbox-text {
+    color: #000000;
+    font-size: 16px;
+}
+
+.private-policy {
+    margin-top: 33px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #545454;
+    opacity: 0.7;
+}
+
+.payment-button {
+    border: 2px solid #0c0c3d;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-top: 16px;
+    margin-bottom: 46px;
+    width: 420px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    margin-left: 73px;
+}
+
+.pay-btn {
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-size: 22px;
+    color: #0c0c3d;
+}
+
+.payment-button:hover {
     background-color: #0c0c3d;
-    color: #fff;
+    .pay-btn{
+        color: #FFFFFF;
+    }
+}
+
+.payment-button:active {
+    transform: translateY(1px);
+}
+
+button {
     border: none;
-    border-radius: 5px;
-    font-size: 1.2em;
+    background: none;
+    outline: none;
     cursor: pointer;
 }
 
-.submit-order:hover {
-    background-color: #0a0a2e;
+button:focus {
+    outline: none;
 }
+
+button:active {
+    transform: scale(0.95);
+}
+
+.right-part {
+    width: 40%;
+}
+
+.card-container {
+    background-color: #0c0c3d;
+    width: 500px;
+    height: 450px;
+    top: 0;
+    right: 0;
+    margin-top: 70px;
+    position: absolute;
+}
+
+.card-div{
+    height: 50%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.card, .card-back{
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-style: italic;
+    color: #0c0c3d;
+    width: 300px;
+    height: 185px;
+    background: linear-gradient(135deg, #F2F2F2, #E5E5E5, #FFFFFF);
+    margin-top: 50px;
+    margin-left: 31px;
+    position: absolute;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid #DCDCDC;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.visa {
+    margin-left: 15px;
+}
+
+.nfc {
+    margin-right: 15px;
+}
+
+.card-number {
+    margin: 36px 0 36px 0;
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+.card-number-text {
+    font-weight: bold;
+}
+
+.card-down {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.card-name {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 0 20px 16px;
+}
+
+.card-date {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 27px 20px 0;
+}
+
+
+.card-back {
+    transform: rotateY(180deg);
+}
+
+.card-div.flipped {
+    transform: rotateY(180deg);
+}
+.black-stripe {
+    background-color: #000;
+    height: 30px;
+    margin: 15px 10px;
+    border-radius: 5px;
+}
+
+.cvv-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 15px;
+    padding: 10px;
+    background-color: #E5E5E5;
+    border-radius: 5px;
+    border: 1px solid #DCDCDC;
+}
+
+.cvv-label {
+    font-size: 12px;
+    color: #545454;
+}
+
+.cvv-value {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.signature-block {
+    margin: 10px 15px 20px 15px;
+    padding: 10px;
+    background-color: #F8F8F8;
+    border-radius: 5px;
+    border: 1px solid #DCDCDC;
+    text-align: center;
+}
+
+.signature-label {
+    font-size: 12px;
+    color: #545454;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.signature {
+    height: 20px;
+    background-color: #FFF;
+    border: 1px dashed #9b9b9b;
+    border-radius: 3px;
+}
+
+
+
+/* Общая зона ввода */
+.card-input-zone {
+    margin-left: 31px;
+    color: #FFFFFF;
+}
+
+/* Заголовки для полей */
+.input-title {
+    font-family: "Montserrat", sans-serif;
+    font-style: italic;
+    font-size: 14px;
+    margin: 26px 0 13px;
+    display: block;
+}
+
+/* Контейнер для нижних элементов */
+.cart-container-down {
+    display: flex;
+}
+
+.card-input {
+    all: unset;
+    font-family: "Montserrat Medium", sans-serif;
+    font-style: italic;
+    box-sizing: border-box;
+    border-bottom: 1px solid #FFFFFF;
+    background-color: transparent;
+    transition: border-color 0.3s ease;
+    padding-bottom: 9px; /* Сместить линию вниз */
+}
+
+.card-month-input, .card-year-input {
+    all: unset;
+    font-family: "Montserrat Medium", sans-serif;
+    font-style: italic;
+    font-size: 14px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #FFFFFF;
+    background-color: transparent;
+    transition: border-color 0.3s ease;
+    width: 45px; /* Небольшая корректировка ширины */
+    text-align: center; /* Центрирование ввода */
+    padding-bottom: 9px;
+}
+
+.card-number-input,
+.card-name-input {
+    width: 230px;
+    font-size: 16px;
+}
+
+.card-name-input {
+    margin-right: 15px;
+}
+
+.cvv-input, .card-date-input {
+    font-size: 14px;
+}
+
+.cvv-input {
+    width: 50px;
+    margin-right: 28px;
+    text-align: center;
+}
+
+.cvv-input label {
+    text-align: center;
+}
+
+.cvv-input input {
+    width: 100%;
+}
+
+.card-date-input {
+    width: auto;
+    text-align: center;
+    margin-right: 37px;
+}
+
+/* Убираем стрелки для полей типа number */
+input[type="text"] {
+    -moz-appearance: textfield; /* Firefox */
+    -webkit-appearance: none; /* Chrome, Safari, Edge */
+    appearance: none; /* Современные браузеры */
+}
+
+/* Для мобильных устройств */
+input[type="text"]::-webkit-inner-spin-button,
+input[type="text"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"]::placeholder {
+    color: #FFFFFF;
+}
+
+/* Container for the card expiry input */
+.card-expiry-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    flex-wrap: wrap;
+    position: relative; /* Needed for error message positioning */
+}
+
+/* Error message styling */
+.error-message {
+    font-family: 'Montserrat', sans-serif;
+    position: fixed;
+    bottom: -100px; /* Initially hidden off the screen */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #d32f2f; /* Dark background for contrast */
+    color: #fff; /* White text */
+    font-size: 14px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: bottom 0.3s ease-out, opacity 0.3s ease-out;
+    z-index: 1000;
+    opacity: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+    max-width: 90%; /* Restrict width to avoid stretching */
+    word-wrap: break-word;
+}
+
+
+/* When the error message becomes visible */
+.error-message.show {
+    bottom: 20px;
+    opacity: 1;
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+/* Smooth slide-in animation for the error message */
+@keyframes slideIn {
+    0% {
+        bottom: -100px;
+        opacity: 0;
+    }
+    100% {
+        bottom: 20px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effect for interactivity */
+.error-message:hover {
+    background-color: #333; /* Slightly darker red on hover */
+    cursor: pointer;
+}
+
+
+/* Общий стиль для отображения карты */
+.card-number-text span {
+    display: inline-block;
+    font-size: 17px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(0);
+}
+
+/* Эффект для скрытия элемента */
+.fade-out {
+    transform: translateY(-20px); /* Двигаем элемент вверх */
+    opacity: 0; /* Прячем элемент */
+}
+
+/* Эффект для появления элемента */
+.fade-in {
+    transform: translateY(0); /* Элемент на своем месте */
+    opacity: 1; /* Полностью видимый */
+}
+
+
+

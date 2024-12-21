@@ -1,5 +1,4 @@
 body {
-    font-family: Montserrat, sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -14,7 +13,7 @@ body {
     font-style: italic;
     font-size: 33px;
     text-align: left;
-    margin:  34px 0 47px 73px;
+    margin:  34px 0 30px 73px;
     color: #0c0c3d;
 }
 
@@ -29,40 +28,33 @@ body {
     margin-left: 65px;
 }
 
-.right-column {
-    width: 350px;
-    height: 350px;
-    background-color: #0c0c3d;
-    color: #ffffff;
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 125px 51px 0 0;
-}
-
-.right-column h2{
-    font-family: Montserrat, sans-serif;
-    font-weight: bold;
-    font-size: 24px;
-    justify-content: center;
-}
-
-.cart-items {
+.cart-table {
     width: 100%;
     border-collapse: collapse;
 }
-.cart-items thead{
+
+.cart-item-header th {
+    padding: 12px;
+    text-align: center;
     font-family: "Montserrat SemiBold", sans-serif;
     font-style: italic;
     font-size: 17px;
     color: #545454;
-    margin-bottom: 17px;
-
 }
+
 .cart-item {
     height: 100px;
-    border: 1px solid #ddd;
     display: table-row;
+    border: 1px solid #ddd;
+}
+
+.cart-item td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.cart-item-column {
+    text-align: center;
 }
 
 .product-info {
@@ -70,10 +62,15 @@ body {
     align-items: center;
 }
 
-.product-info img {
+.product-image-td{
     width: 100px;
-    height: auto;
-    margin-right: 10px;
+    height: 100px;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    display: block; /* Убирает нижний отступ */
 }
 
 .product-name {
@@ -84,11 +81,47 @@ body {
     text-decoration: none;
 }
 
-.product-name:hover {
-    color: #9A073D;
+.product-size, .product-price, .total-price {
+    font-family: "Montserrat Light", sans-serif;
+    font-size: 18px;
+    color: #000000;
+}
+
+.quantity-control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete-button {
+    margin-right: 10px;
+}
+
+.delete-button:hover {
+    color: #0c0c3d;
+}
+
+.btns{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.clear-cart{
+    margin: 7px 50px 0 0;
+    justify-items: end;
+}
+
+.clear-btn{
+    color: #545454;
+    font-family: "Montserrat Light", sans-serif;
+    font-size: 17px;
+    border-bottom: 1px solid #545454; /* Цвет и толщина линии */
+    padding-bottom: 2px;
 }
 
 .actions {
+    width: 50%;
     margin-top: 10px;
     display: flex;
     justify-content: space-between;
@@ -112,39 +145,163 @@ body {
     background-color: #0a0a33;
 }
 
-.fas fa-times {
-    color: #666666;
-    margin: 5px;
-    font-size: 25px;
-    transition: color 0.3s ease-in-out;
+/* Название "Кол-во" */
+.product-quantity {
+    justify-items: center;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    color: #0c0c3d; /* Спокойный, темно-синий цвет */
+    font-weight: 600;
 }
 
-.fas fa-times:hover {
+/* Контейнер для инкремента/декремента */
+.number {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    width: 120px;
+    height: 36px;
+    border: 1px solid #ccc; /* Нейтральная граница */
+    overflow: hidden;
+}
+
+/* Внешний вид кнопок + и - */
+.number-minus, .number-plus {
+    width: 36px;
+    height: 100%;
+    color: #0C0C3D; /* Темно-серый цвет для текста */
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Псевдоклассы для кнопок при наведении и активации */
+.number-minus:hover, .number-plus:hover {
+    background-color: #c5c5c5; /* Немного темнее при наведении */
+}
+
+.number-minus:active, .number-plus:active {
+    background-color: #b0b0b0; /* Еще более темный цвет при нажатии */
+    transform: scale(0.95); /* Легкое сжатие для эффекта нажатия */
+}
+
+/* Поле ввода количества */
+.number-text {
+    width: 48px;
+    height: 100%;
+    background-color: transparent;
+    color: #0C0C3D; /* Темно-серый цвет */
+    border: none;
+    text-align: center;
+    font-size: 16px;
+    font-family: "Montserrat Light", sans-serif;
+    outline: none;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+/* При фокусе поле становится немного темнее */
+.number-text:focus {
     color: #0c0c3d;
 }
 
-.total {
-    font-size: 1.2em;
+
+.right-column {
+    color: #ffffff;
+    width: 350px;
+    height: 350px;
+    background-color: #0c0c3d;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 125px 51px 0 0;
+}
+
+.right-column h2 {
+    font-family: Montserrat, sans-serif;
+    font-weight: bold;
+    font-size: 24px;
     text-align: center;
-    margin: 100px 0 0 20px;
+    margin-bottom: 27px;
+}
+
+.final-price {
+    width: 50%;
+    white-space: nowrap; /* Предотвращает перенос текста */
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-style: italic;
+    display: flex;
+    font-size: 19px;
+    margin: 35px 0 32px 0;
+}
+
+.final-price-value{
+    white-space: nowrap; /* Предотвращает перенос текста */
+    text-align: center;
+    margin-top: 35px;
+    font-size: 19px;
+}
+
+.order-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.order-summary .item-option,
+.order-summary .item-value {
+    font-family: "Montserrat Light",sans-serif;
+    font-style: italic;
+    font-size: 17px;
+    display: flex;
+    flex-direction: column; /* Расположение span в столбик */
+    gap: 13px; /* Расстояние между элементами */
+}
+
+.order-summary .item-option span {
+    justify-self: start; /* Расположение текста в начале ячейки */
+    margin-left: 41px;
+}
+
+.order-summary .item-value span{
+    text-align: center;
 }
 
 .checkout {
     text-align: center;
-    margin-top: 20px;
+    /*margin: 0 25px 18px 25px;*/
 }
 
-.btn {
-    background-color: white;
+.checkout .btn {
+    background-color: #ffffff;
     color: #0c0c3d;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1em;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    padding: 11px 82px;
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-size: 15px;
+    font-style: italic;
     text-decoration: none;
+    transition: background-color 0.3s ease;
 }
 
-.btn:hover {
+.checkout .btn:hover {
     background-color: #f4f4f4;
 }
 
+button {
+    border: none; /* Убирает границу */
+    background: none; /* Делает фон прозрачным */
+    outline: none; /* Убирает обводку при фокусе */
+    cursor: pointer; /* Меняет курсор на указатель */
+}
+
+button:focus {
+    outline: none; /* Убирает обводку при фокусе */
+}
+
+button:active {
+    transform: scale(0.95); /* Добавляет эффект нажатия */
+}

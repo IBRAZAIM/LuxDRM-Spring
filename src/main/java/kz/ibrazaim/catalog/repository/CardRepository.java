@@ -1,10 +1,9 @@
 package kz.ibrazaim.catalog.repository;
 
-import kz.ibrazaim.catalog.model.Category;
+import kz.ibrazaim.catalog.model.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CardRepository extends JpaRepository<Card, Long> {
 }
-
-

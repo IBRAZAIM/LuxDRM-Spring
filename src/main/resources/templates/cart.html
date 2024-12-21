@@ -13,60 +13,104 @@
     <p class="cart-p">Корзина (<span th:text="${cartItems.size()}"></span>)</p>
     <div class="cart-content">
         <div class="left-column">
-            <table class="cart-items">
-                <thead>
-                <tr>
-                    <th>Товар</th>
-                    <th>Размер</th>
-                    <th>Количество</th>
-                    <th>Цена</th>
-                    <th>Итого</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="cartItem : ${cartItems}" class="cart-item">
-                    <td>
-                        <div class="product-info">
-                            <img th:src="${cartItem.product.getImages().get(0).image}" alt="Product Image">
-                            <div class="product-details">
-                                <a class="product-name" th:href="@{'/products/' + ${cartItem.product.getId()}}" th:text="${cartItem.product.name}"></a>
+            <div class="cart-items">
+                <table class="cart-table">
+                    <thead>
+                        <tr class="cart-item-header">
+                            <th class="cart-item-column"></th>
+                            <th class="cart-item-column">Товар</th>
+                            <th class="cart-item-column">Размер</th>
+                            <th class="cart-item-column">Количество</th>
+                            <th class="cart-item-column">Цена</th>
+                            <th class="cart-item-column">Итого</th>
+                            <th class="cart-item-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Product Info Section -->
+                    <tr th:each="cartItem : ${cartItems}" class="cart-item">
+                        <td class="product-image-td">
+                            <img th:src="${cartItem.product.getImages().get(0).image}" alt="Product Image" class="product-image">
+                        </td>
+                        <td class="product-details">
+                            <a class="product-name" th:href="@{'/products/' + ${cartItem.product.getId()}}" th:text="${cartItem.product.name}"></a>
+                        </td>
+
+                        <!-- Product Size -->
+                        <td class="cart-item-column">
+                            <div class="product-size" th:text="${cartItem.size}"></div>
+                        </td>
+
+                        <!-- Quantity Control -->
+                        <td class="cart-item-column">
+                            <div class="product-quantity">
+                                <form th:action="@{'/cart/update/' + ${cartItem.id}}" method="post">
+                                    <div class="quantity-block">
+                                        <div class="number" data-step="1" data-min="1" data-max="20">
+                                            <button type="submit" class="number-minus" onclick="decrement(event)">−</button>
+                                            <input class="number-text" type="text" name="quantity" th:value="${cartItem.quantity}">
+                                            <button type="submit" class="number-plus" onclick="increment(event)">+</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="size" th:text="${cartItem.size}"></div>
-                    </td>
-                    <td class="quantity">
-                        <form th:action="@{'/cart/update/' + ${cartItem.id}}" method="post">
-                            <input type="number" min="1" max="20" step="1" th:value="${cartItem.quantity}" name="quantity">
-                            <button type="submit">Обновить</button>
-                        </form>
-                    </td>
-                    <td><span th:text="${cartItem.product.price}" class="product-price"></span> тг</td>
-                    <td><span th:text="${cartItem.quantity * cartItem.product.price}" class="total-price"></span> тг</td>
-                    <td>
-                        <form th:action="@{/cart/delete}" method="post" style="display: inline;">
-                            <input type="hidden" name="id" th:value="${cartItem.id}">
-                            <button type="submit" style="background: none; border: none;">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </form>
-                    </td>
+                        </td>
 
-                </tr>
-                </tbody>
-            </table>
+                        <!-- Price and Total Price -->
+                        <td class="cart-item-column">
+                            <span class="product-price" th:text="${cartItem.product.price}" data-price></span>
+                        </td>
+                        <td class="cart-item-column">
+                            <span class="total-price" th:text="${cartItem.quantity * cartItem.product.price}" data-total-price></span>
+                        </td>
 
-            <div class="actions">
-                <a th:href="@{'/main'}" class="continue-btn">Продолжить покупки</a>
+                        <!-- Delete Item -->
+                        <td class="cart-item-column">
+                            <form th:action="@{/cart/delete}" method="post" class="delete-form">
+                                <input type="hidden" name="id" th:value="${cartItem.id}">
+                                <button type="submit" class="delete-button">
+                                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                        <g id="SVGRepo_iconCarrier">
+                                            <path d="M6 6L18 18" stroke="#545454" stroke-linecap="round"></path>
+                                            <path d="M18 6L6.00001 18" stroke="#545454" stroke-linecap="round"></path>
+                                        </g>
+                                    </svg>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="btns">
+                <div class="actions">
+                    <a th:href="@{'/main'}" class="continue-btn">Продолжить покупки</a>
+                </div>
+                <form th:action="@{/cart/clear}" method="post" class="clear-cart">
+                    <button type="submit" class="clear-btn">Очистить корзину</button>
+                </form>
             </div>
         </div>
         <div class="right-column">
             <h2>Оформление</h2>
-
-            <div class="total">
-                Итого: <span id="grand-total">0.00</span> тг
+            <div class="order-summary">
+                <div class="item-option">
+                    <span>Товары:</span>
+                    <span>Доставка:</span>
+                    <span>Скидка:</span>
+                    <span>Итого:</span>
+                    <span class="final-price">К оплате:</span>
+                </div>
+                <div class="item-value">
+                    <span th:text="${cartItems.size()} + ' шт'"></span>
+                    <span id="delivery-fee">Бесплатно</span>
+                    <span id="discount" th:text="${averageDiscount + '%'}"></span>
+                    <span id="grand-total" th:text="${totalPrice + ' ₸'}"></span>
+                    <span class="final-price-value" id="final-total"
+                          th:text="${finalPrice}" data-final-price></span>
+                </div>
             </div>
             <div class="checkout">
                 <a th:href="@{'/checkout'}" class="btn">Оформить заказ</a>
@@ -90,11 +134,58 @@
             var grandTotal = 0;
             var totalElements = document.querySelectorAll('.total-price');
             totalElements.forEach(function (element) {
-                grandTotal += parseInt(element.textContent);
+                grandTotal += parseInt(element.textContent.replace(/\s/g, ''));
             });
-            document.getElementById('grand-total').textContent = grandTotal.toFixed(0);
+            document.getElementById('grand-total').textContent = grandTotal.toLocaleString('ru-RU') + ' ₸';
         }
     });
+
+    function increment(event) {
+        const button = event.target; // Кнопка, на которой был клик
+        const input = button.parentNode.querySelector('.number-text'); // Ищем input внутри того же родителя
+        const value = parseInt(input.value);
+        const max = parseInt(button.parentNode.getAttribute('data-max'));
+        if (value < max) {
+            input.value = value + 1;
+        }
+    }
+
+    function decrement(event) {
+        const button = event.target; // Кнопка, на которой был клик
+        const input = button.parentNode.querySelector('.number-text'); // Ищем input внутри того же родителя
+        const value = parseInt(input.value);
+        const min = parseInt(button.parentNode.getAttribute('data-min'));
+        if (value > min) {
+            input.value = value - 1;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Функция для форматирования чисел с разделением тысяч
+        function formatNumber(value) {
+            return Number(value).toLocaleString('ru-RU');
+        }
+
+        // Форматирование цен на продукты
+        document.querySelectorAll('[data-price]').forEach(function(element) {
+            const value = element.textContent;
+            element.textContent = formatNumber(value) + ' ₸';
+        });
+
+        // Форматирование итоговой стоимости товара
+        document.querySelectorAll('[data-total-price]').forEach(function(element) {
+            const value = element.textContent;
+            element.textContent = formatNumber(value) + ' ₸';
+        });
+
+        // Форматирование общей итоговой цены
+        const finalTotalElement = document.querySelector('[data-final-price]');
+        if (finalTotalElement) {
+            const value = finalTotalElement.textContent;
+            finalTotalElement.textContent = formatNumber(value) + ' ₸';
+        }
+    });
+
 </script>
 </body>
 </html>

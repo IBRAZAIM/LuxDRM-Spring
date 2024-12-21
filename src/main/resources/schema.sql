@@ -31,8 +31,15 @@ CREATE TABLE orders
 (
     id               BIGSERIAL PRIMARY KEY,
     user_id          BIGINT REFERENCES users (id) NOT NULL,
+    serial_number VARCHAR(50),
     status VARCHAR(255),
-    address VARCHAR(255)                 NOT NULL,
+    email            VARCHAR(255),
+    phone            VARCHAR(20),
+    full_name       VARCHAR(100),
+    country          VARCHAR(30),
+    city             VARCHAR(34),
+    address          VARCHAR(255) NOT NULL,
+    postal_code      VARCHAR(20),
     date    TIMESTAMP
 );
 
@@ -87,4 +94,16 @@ CREATE TABLE product_sizes (
                                id BIGSERIAL PRIMARY KEY,
                                product_id BIGINT REFERENCES products(id) NOT NULL,
                                size VARCHAR(50) NOT NULL
+);
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE cards(
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    user_id INT REFERENCES users(id) NOT NULL,
+    card_number VARCHAR(19) NOT NULL,
+    card_holder VARCHAR(40) NOT NULL,
+    card_month VARCHAR(2) NOT NULL,
+    card_year VARCHAR(2) NOT NULL,
+    cvv_code VARCHAR(3) NOT NULL
 );

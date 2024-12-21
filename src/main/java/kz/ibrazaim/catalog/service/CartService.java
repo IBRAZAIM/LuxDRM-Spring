@@ -26,9 +26,23 @@ public class CartService {
         return totalPrice;
     }
 
+    public void updateQuantity(Long cartItemId, int quantity){
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow();
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
+    }
+
     @Transactional
     public void clearCart(User user) {
         cartItemRepository.deleteAllByUser(user);
         System.out.println("Корзина очищена");
+    }
+
+    public int totalPrice(List<CartItem> cartItems){
+        int price = 0;
+        for (CartItem cartItem :cartItems){
+            price += cartItem.getProduct().getPrice() * cartItem.getQuantity();
+        }
+        return price;
     }
 }
