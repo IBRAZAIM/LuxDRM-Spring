@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,7 +22,7 @@ public class OrderService {
     private final OrderProductRepository orderProductRepository;
 
     @Transactional
-    public Order create(User user, String email, String phone, String fullName, String country, String city, String address, String postalCode, List<CartItem> cartItems) {
+    public Order create(User user, String email, String phone, String fullName, String country, String city, String address, String postalCode, List<CartItem> cartItems, int totalPrice) {
         try {
             Order order = new Order();
             order.setUser(user);
@@ -36,7 +35,7 @@ public class OrderService {
             order.setAddress(address);
             order.setPostalCode(postalCode);
             order.setDate(LocalDateTime.now());
-
+            order.setTotalPrice(totalPrice);
             // Генерация уникального серийного номера для заказа
             String serialNumber = generateOrderSerialNumber(user.getId());
             order.setSerialNumber(serialNumber);  // Устанавливаем серийный номер в заказ
@@ -73,6 +72,10 @@ public class OrderService {
         List<Order> orders = orderRepository.findByUser(user);
         calculateTotalPriceForOrders(orders);
         return orderRepository.findByUser(user);
+    }
+
+    public Order getOrderById(long id){
+        return orderRepository.getOrderById(id);
     }
 
     public void updateOrderStatus(Long orderId, String status) {

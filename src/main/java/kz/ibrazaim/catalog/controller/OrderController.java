@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,6 +26,9 @@ public class OrderController {
     @GetMapping("/checkout")
     public String getCheckout(Model model) {
         User user = userService.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("user",user);
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
         model.addAttribute("orderItems", cartItems);
@@ -42,6 +46,7 @@ public class OrderController {
             @RequestParam("city") String city,
             @RequestParam("address") String address,
             @RequestParam("postalCode") String postalCode,
+            @RequestParam("totalPrice") int totalPrice,
             @RequestParam String cardNumber,
             @RequestParam String cardHolderName,
             @RequestParam String expiryMonth,
@@ -50,7 +55,7 @@ public class OrderController {
     ) {
         User user = userService.getUser();
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
-        orderService.create(user, email, phone, fullName, country, city, address, postalCode, cartItems);
+        orderService.create(user, email, phone, fullName, country, city, address, postalCode, cartItems, totalPrice);
         cardService.saveCard(user, cardNumber, cardHolderName, expiryMonth, expiryYear, cvv);
         cartService.clearCart(user);
         return "redirect:/orders";
@@ -59,9 +64,11 @@ public class OrderController {
     @GetMapping("/orders")
     public String showOrders(Model model) {
         User user = userService.getUser();
-
+        int cartItemsCount = cartService.getCartItemsCount(); // Метод для получения количества товаров в корзине
+        model.addAttribute("cartItemsCount", cartItemsCount);
         // Проверка на авторизованного пользователя
         if (user == null) {
+            System.out.println("Пользователь не авторизован, перенаправление на страницу входа.");
             return "redirect:/login";  // Перенаправление на страницу входа, если пользователь не авторизован
         }
 
@@ -93,6 +100,27 @@ public class OrderController {
     ) {
         orderService.updateOrderStatus(orderId, status);
         return "redirect:/orders";
+    }
+
+    @GetMapping("/orders/{id}")
+    public String viewOrder(Model model, @PathVariable long id) {
+        User user = userService.getUser();
+
+        // Проверка на авторизованного пользователя
+        if (user == null) {
+            return "redirect:/login";  // Перенаправление на страницу входа, если пользователь не авторизован
+        }
+
+        Order order = orderService.getOrderById(id);//Находим order;
+
+        if (order == null || order.getUser().getId() != user.getId()) {
+            return "redirect:/orders";  // Перенаправление на список заказов
+        }
+
+        model.addAttribute("order", order);
+        int cartItemsCount = cartService.getCartItemsCount(); // Метод для получения количества товаров в корзине
+        model.addAttribute("cartItemsCount", cartItemsCount);
+        return "orderPage";
     }
 }
 

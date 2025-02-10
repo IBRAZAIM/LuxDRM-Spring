@@ -1,3 +1,9 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+:root {
+    --product-card-width: calc(100% - 20px); /* Дефолтное значение: 1 колонка */
+}
+
 * {
     box-sizing: border-box;
     font-family: "Montserrat", sans-serif;
@@ -11,7 +17,8 @@ body {
 }
 
 .catalog-body {
-    margin-top: 120px;
+    margin-top: 70px;
+    height: 100%;
     display: flex;
 }
 
@@ -23,15 +30,40 @@ body {
 }
 
 .product-container {
-    width: 80%;
-    margin: 20px;
+    width: 78%;
+    margin-left: 20px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
 }
 
+.grid-size-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.grid-size-controls button svg{
+    fill: #9A073D;
+}
+.grid-size-controls button {
+    border: none;
+    color: #9A073D;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.grid-size-controls button:hover {
+    background-color: #0c0c3d;
+    color: white;
+}
+
 .product-card {
-    width: calc(25% - 20px);
+    width: var(--product-card-width);
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
@@ -63,7 +95,7 @@ body {
 }
 
 .product-card .price {
-    color: #e91e63;
+    color: #9A073D;
     font-weight: bold;
     margin-top: auto;
 }
@@ -83,39 +115,144 @@ body {
     margin-right: 10px;
 }
 
+/* Упрощение формы и её элементов */
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+    margin: 0 auto;
 }
 
 label {
     opacity: 0.7;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 input[type="number"],
 select {
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .filter-btn {
-    padding: 10px 20px;
+    width: 100%;
+    padding: 12px;
     border: none;
     background-color: #0c0c3d;
     color: white;
     font-weight: bold;
     cursor: pointer;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease;
 }
 
 .filter-btn:hover {
-    background-color: #333;
+    background-color: #050528;
 }
 
 .category-label {
     margin-right: 10px;
 }
 
-button:hover {
-    background-color: #333;
+.error-message {
+    grid-column: 1 / -1; /* Сообщения об ошибках занимают всю ширину */
+    color: #f44336;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* UX: Hover и фокус на инпутах */
+input[type="number"]:focus,
+select:focus {
+    border-color: #0c0c3d;
+    outline: none;
+    box-shadow: 0 0 5px rgba(12, 12, 61, 0.5);
+}
+
+.filter-container {
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Анимация появления ошибки */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Адаптивность */
+/* Динамическое изменение количества колонок */
+@media (max-width: 600px) {
+    :root { --product-card-width: calc(100% - 20px); } /* 1 колонка */
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+    :root { --product-card-width: calc(50% - 20px); } /* 2 колонки */
+}
+
+@media (min-width: 901px) {
+    :root { --product-card-width: calc(25% - 20px); } /* 4 колонки */
+}
+
+@media (max-width: 768px) {
+    :root {
+        --product-card-width: 70%;
+    }
+
+    .catalog-body {
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .filter-container {
+        width: 100%;
+    }
+
+    .product-container {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0;
+        gap: 15px;
+    }
+
+    .product-card {
+    }
+
+    .product-card img {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .filter-container {
+        width: 25%;
+    }
+
+    .product-container {
+        width: 70%;
+    }
+    :root {
+        --product-card-width: calc(50% - 15px);
+    }
+    .product-card {
+        /*width: calc(50% - 15px);*/
+    }
 }

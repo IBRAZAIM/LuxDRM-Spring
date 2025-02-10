@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuxDRM</title>
     <link rel="stylesheet" th:href="@{/LUXDRM.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
-<!--    <link rel="stylesheet" th:href="@{/userPanel.css}">-->
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -20,42 +20,81 @@
 </div>
 <main class="welcome-main">
     <div class="welcome-content">
-        <h1>Добро пожаловать в LUXDRM!</h1>
-        <p>Мы рады приветствовать вас. Ознакомьтесь с нашими новинками и акциями ниже.</p>
         <a th:href="@{'/products'}" class="btn">Начать покупки</a>
     </div>
 </main>
 <main class="products">
     <section id="product-section">
         <h2 class="topic">Новинки</h2>
-        <div class="product-container">
-            <div th:each="product : ${products}" class="product-card">
-                <a th:href="@{'/products/' + ${product.getId()}}" class="product">
-                    <img th:src="${product.getImages().get(0).image}" alt="product-img">
-                    <div class="price-wrapper">
-                        <p class="price" th:text="${product.getPrice()} + ' тг'"></p>
-                    </div>
-                    <div class="product-info">
-                        <p class="product-name" th:text="${product.getName()}"></p>
+        <div class="products-section-container">
+            <div th:each="product : ${products}" class="products-section-card">
+                <a th:href="@{'/products/' + ${product.getId()}}" class="products-section-link">
+                    <!-- Скидка сверху -->
+                    <div class="discount-znak" th:text="${product.discount != null ? product.discount + '%' : ''}" th:if="${product.discount != null && product.discount > 0}"></div>
+                    <img th:src="${product.getImages().get(0).image}" alt="product-img" class="products-section-img">
+                    <div class="products-section-info">
+                        <p class="products-section-name" th:text="${product.getName()}"></p>
+                        <p class="products-section-price" th:text="${product.getPrice()} + ' тг'"></p>
                     </div>
                 </a>
             </div>
         </div>
     </section>
 </main>
-<!--<div th:if="${#authorization.expression('isAuthenticated()')}">-->
-<!--    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>-->
-<!--</div>-->
+<div class="back-to-top" id="backToTop">
+    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="fff" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
+        <path d="M12 6V18M12 6L7 11M12 6L17 11" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+</div>
 <div th:insert="footer :: footer-code"></div>
-<script>
-    function togglePanel() {
-        document.querySelector('.slide').classList.toggle('visible');
-        document.querySelector('.open-icon').classList.toggle('hide');
-    }
-
-    document.querySelector('.close-icon').addEventListener('click', function() {
-        togglePanel();
-    });
-</script>
 </body>
+<script>
+    // Функция для открытия/закрытия боковой панели
+    function togglePanel() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('overlay');
+
+        sidebar.classList.toggle('open');  // Открыть или закрыть панель
+        overlay.classList.toggle('show');  // Показать или скрыть фон
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const backToTop = document.getElementById("backToTop");
+
+        // Флаг для предотвращения конфликтов во время скролла
+        let isScrolling = false;
+
+        // Отслеживание скролла для показа/скрытия кнопки
+        window.addEventListener("scroll", () => {
+            if (!isScrolling) {
+                if (window.scrollY > 200) {
+                    backToTop.classList.add("show");
+                } else {
+                    backToTop.classList.remove("show");
+                }
+            }
+        });
+
+        // Обработка клика на кнопку
+        backToTop.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            // Устанавливаем флаг, чтобы избежать конфликтов
+            isScrolling = true;
+
+            // Прокрутка наверх
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+            // Снимаем флаг через небольшой интервал
+            setTimeout(() => {
+                isScrolling = false;
+            }, 1000); // Длительность плавной прокрутки
+        });
+    });
+
+</script>
 </html>

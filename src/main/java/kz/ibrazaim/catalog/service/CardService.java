@@ -27,4 +27,8 @@ public class CardService {
             throw new RuntimeException("An error occurred while saving card details.", e);
         }
     }
+
+    public Card findByUser(User user){
+        return cardRepository.findByUser(user);
+    }
 }

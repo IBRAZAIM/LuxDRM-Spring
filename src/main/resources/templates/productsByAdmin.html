@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/productList.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
-    <link rel="stylesheet" th:href="@{/userPanel.css}">
     <title>Каталог</title>
 </head>
 <body>
@@ -37,19 +36,16 @@
         <a th:href="@{'/products/create/chooseCategory'}" class="add-product-btn"><i class="fas fa-plus"></i></a>
     </div>
 </main>
-<div th:if="${#authorization.expression('isAuthenticated()')}">
-    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>
-</div>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 <script>
+    // Функция для открытия/закрытия боковой панели
     function togglePanel() {
-        document.querySelector('.slide').classList.toggle('visible');
-        document.querySelector('.open-icon').classList.toggle('hide');
-    }
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('overlay');
 
-    document.querySelector('.close-icon').addEventListener('click', function() {
-        togglePanel();
-    });
+        sidebar.classList.toggle('open');  // Открыть или закрыть панель
+        overlay.classList.toggle('show');  // Показать или скрыть фон
+    }
 </script>
 </body>
 </html>

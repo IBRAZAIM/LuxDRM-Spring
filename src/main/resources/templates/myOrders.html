@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои Заказы</title>
     <link rel="stylesheet" th:href="@{/myOrders.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Роскошные шрифты -->
 </head>
 <body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
 <div class="container">
     <h1 class="title">Мои Заказы</h1>
 
     <div class="filters">
         <div>
-            <label for="order-filter">Фильтровать:</label>
             <select id="order-filter" title="Выберите статус заказа">
                 <option value="all">Все</option>
                 <option value="completed">Завершенные</option>
@@ -21,8 +22,8 @@
                 <option value="cancelled">Отмененные</option>
             </select>
         </div>
-        <button class="download-invoice" title="Скачать счет для этого заказа">
-            Скачать счет
+        <button class="download-invoice">
+            Фильтр
         </button>
     </div>
 
@@ -30,33 +31,32 @@
         <table>
             <thead>
             <tr class="orders-param">
-                <th class="param">Продукт</th>
+                <th class="param">Номер заказа</th>
                 <th class="param">Статус</th>
                 <th class="param">Дата оформления</th>
                 <th class="param">Сумма</th>
+                <th class="param"></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="order : ${orders}" class="order-item">
-                <a th:href="@{/orderы/{id}(id=${order.id})}" style="display: contents; text-decoration: none; color: inherit;">
-                    <td>
-                        <ul class="product-list">
-                            <li th:each="orderProduct : ${order.orderProducts}" class="product-item">
-                                <img th:src="${orderProduct.product.getImages().get(0).image}" class="product-image" alt="product image">
-                                <span th:text="${orderProduct.product.name + ' x' + orderProduct.quantity}" class="product-name"></span>
-                            </li>
-                        </ul>
-                    </td>
-                    <td class="status" th:text="${order.status}"></td>
-                    <td class="date" th:text="${order.date}"></td>
-                    <td class="total" th:text="${order.totalPrice} + ' ₸'"></td>
-                </a>
+                <td class="order-number" th:text="'№ 00' + ${order.id}"></td> <!-- Серийный номер заказа -->
+                <td class="status" th:text="${order.status}" th:attr="data-status=${order.status}"></td>
+                <td class="date" th:text="${order.date}"></td>
+                <td class="total" th:text="${order.totalPrice} + ' ₸'"></td>
+                <td class="order-detail">
+                    <a th:href="@{/orders/{id}(id=${order.id})}" class="view-order-btn">Посмотреть заказ</a>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
+    <div class="actions">
+        <a th:href="@{'/main'}" class="continue-btn">Продолжить покупки</a>
+    </div>
 </div>
 </body>
+<script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const dateElements = document.querySelectorAll('.date');
@@ -73,10 +73,20 @@
                 const hours = ("0" + date.getHours()).slice(-2);
                 const minutes = ("0" + date.getMinutes()).slice(-2);
 
-                const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+                const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
                 dateElement.textContent = formattedDate;
             }
         });
     });
+</script>
+<script>
+    // Функция для открытия/закрытия боковой панели
+    function togglePanel() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('overlay');
+
+        sidebar.classList.toggle('open');  // Открыть или закрыть панель
+        overlay.classList.toggle('show');  // Показать или скрыть фон
+    }
 </script>
 </html>

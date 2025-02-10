@@ -1,7 +1,11 @@
+body{
+    user-select: none;
+}
+
 .container {
     width: 90%;
-    margin: 40px auto;
     padding: 50px;
+    justify-self: center;
 }
 
 .title {
@@ -9,12 +13,11 @@
     color: #0c0c3d;
     font-family: 'Playfair Display', serif;
     font-weight: 700;
-    margin-bottom: 40px;
 }
 
 .filters {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: 30px;
 }
@@ -40,14 +43,16 @@
 }
 
 .filters .download-invoice {
+    font-family: Montserrat, sans-serif;
+    font-weight: bold;
     background-color: #9A073D;
     color: #fff;
-    font-weight: 600;
     padding: 12px 30px;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     border: none;
+    margin-left: 20px;
 }
 
 .filters .download-invoice:hover {
@@ -79,53 +84,39 @@ td {
     font-family: 'Poppins', sans-serif;
 }
 
-.product-list {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    list-style-type: none;
+.order-number {
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0c0c3d;
+    text-align: center;
+    padding: 10px;
 }
 
-.product-item {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-left: 30px;
+.status {
+    text-align: center;
+    text-transform: uppercase; /* Добавляет солидность */
 }
-
-.product-name{
-    font-family: Montserrat, sans-serif;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-}
-
-.product-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-
 
 .status[data-status="Подтверждено"] {
-    color: #4CAF50;
+    color: #2E7D32;
 }
 
 .status[data-status="Оформлено"] {
-    color: #FF9800;
+    color: #EF6C00; /* Темно-оранжевый текст */
 }
 
 .status[data-status="Отменено"] {
-    color: #F44336;
+    color: #C62828; /* Бордовый текст */
 }
 
+.total{
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    color: #4CAF50;
+}
 
-
-.total, .date, .status {
+.date, .status {
     font-family: "Montserrat", sans-serif;
     font-size: 16px;
 }
@@ -135,6 +126,51 @@ td {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transform: translateY(-2px);
+}
+
+.view-order-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #0c0c3d; /* Ваш основной цвет */
+    color: #FFFFFF; /* Цвет текста */
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.view-order-btn:hover {
+    border: 1px #0c0c3d;
+    background-color: #FFFFFF;
+    color: #0c0c3d;
+    cursor: pointer;
+}
+
+.actions {
+    width: 50%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.continue-btn {
+    background-color: #0c0c3d;
+    color: white;
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-style: italic;
+    font-size: 16px;
+    border: none;
+    padding: 15px 32px 15px 32px;
+    margin: 35px 0 0 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.continue-btn:hover {
+    background-color: #0a0a33;
 }
 
 @media (max-width: 768px) {

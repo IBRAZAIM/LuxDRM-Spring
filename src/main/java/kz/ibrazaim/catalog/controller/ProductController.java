@@ -23,6 +23,7 @@ public class ProductController {
     private final UserService userService;
     private final ProductImageService productImageService;
     private final ProductSizeService productSizeService;
+    private final CartService cartService;
 
     @GetMapping
     public String findAll(
@@ -41,6 +42,7 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("cartItemsCount", cartService.getCartItemsCount());
         if (user != null && user.getRole().equals(Role.ADMIN.getServiceName())) {
             return "productsByAdmin";
         }
@@ -92,6 +94,8 @@ public class ProductController {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
+        int cartItemsCount = cartService.getCartItemsCount(); // Метод для получения количества товаров в корзине
+        model.addAttribute("cartItemsCount", cartItemsCount);
         return "update-product";
     }
 
@@ -133,8 +137,9 @@ public class ProductController {
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
         model.addAttribute("imageUrls", productImageService.findAllByProduct(product));
+        model.addAttribute("cartItemsCount", cartService.getCartItemsCount());
         List<ProductSize> sizes = productSizeService.findByProduct(product);
-        model.addAttribute("sizes", sizes);  // Add the sizes to the model
+        model.addAttribute("sizes", sizes);
 
         User user = userService.getUser();
         if (user != null) {

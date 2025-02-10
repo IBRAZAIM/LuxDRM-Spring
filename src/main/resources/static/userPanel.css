@@ -9,9 +9,9 @@
     height: 100vh;
     background-color: #fff;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-    position: fixed;
+    position: absolute;
     top: 0;
-    right: -300px;
+    left: -1000px;
     transition: right 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
@@ -58,7 +58,7 @@
     background-color: #f4f4f4;
 }
 
-footer {
+.sidebar-footer {
     text-align: center;
     padding: 15px;
     background-color: #0c0c3d;
@@ -67,7 +67,7 @@ footer {
     justify-content: center;
 }
 
-footer a {
+.sidebar-footer a {
     color: #fff;
     text-decoration: none;
     display: flex;
@@ -75,11 +75,11 @@ footer a {
     justify-content: center;
 }
 
-footer a i {
+.sidebar-footer a i {
     margin-right: 10px;
 }
 
-footer a:hover {
+.sidebar-footer a:hover {
     color: #f4f4f4;
 }
 

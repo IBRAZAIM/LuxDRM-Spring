@@ -1,10 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/orderPage.css}">
 </head>
 <body>
-
+<div th:insert="~{navbar :: navigation-panel}"></div>
+<div class="order-title">
+    <label th:text=" 'Заказ 00' + ${order.getId()}"></label>
+    <div class="icon">
+        <svg fill="#4CAF50" height="40px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 492.308 492.308" xml:space="preserve">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+                <g> <g>
+                <polygon points="379.077,145.933 199.519,325.49 113.221,239.192 99.298,253.115 199.519,353.337 393,159.856 "></polygon>
+                </g> </g> <g> <g>
+                <path d="M246.154,0C110.423,0,0,110.423,0,246.154s110.423,246.154,246.154,246.154s246.154-110.423,246.154-246.154 S381.885,0,246.154,0z M246.154,472.615c-124.875,0-226.462-101.587-226.462-226.462S121.279,19.692,246.154,19.692 s226.462,101.587,226.462,226.462S371.029,472.615,246.154,472.615z"></path>
+            </g>
+            </g>
+            </g>
+        </svg>
+    </div>
+</div>
+<main>
+    <div class="left">
+        <div th:each="orderProduct : ${order.orderProducts}" class="products-list">
+            <!-- Проход по всем продуктам в заказе -->
+            <div class="product-item">
+                <div class="product">
+                    <!-- Изображение продукта -->
+                    <img th:src="${orderProduct.product.images[0].image}" alt="Product Image" class="product-image">
+                    <!-- Название и количество -->
+                    <span class="product-name" th:text="${orderProduct.product.name}"></span>
+                    <span class="product-quantity" th:text="'x ' + ${orderProduct.quantity}"></span>
+                    <span class="product-price" th:text="${orderProduct.product.price} + ' ₸'"></span>
+                </div>
+            </div>
+        </div>
+        <div class="total-price">
+            <span th:text="'Итого: ' + ${order.totalPrice} + ' ₸'"></span>
+        </div>
+        <div class="actions">
+            <a th:href="@{'/main'}" class="continue">Продолжить покупки</a>
+        </div>
+    </div>
+    <div class="right">
+        <div class="info-block">
+            <div class="pole">
+                <div class="full-name">
+                    <span class="option">ФИО:</span>
+                    <span class="value" th:text="${order.fullName}"></span>
+                </div>
+                <div class="address">
+                    <span class="option">Адрес:</span>
+                    <span class="value" th:text="${order.country} + ' ' +  ${order.city} + ' ' + ${order.address}"></span>
+                </div>
+                <div class="phone">
+                    <span class="option">Телефон:</span>
+                    <span class="value" th:text="${order.phone}"></span>
+                </div>
+                <div class="email">
+                    <span class="option">Email:</span>
+                    <span class="value" th:text="${order.email}"></span>
+                </div>
+                <div class="date">
+                    <span class="option">Дата оформления:</span>
+                    <span class="value" id="date" th:text="${order.date}"></span>
+                </div>
+                <div class="order-serial">
+                    <span class="option">Серийный номер заказа:</span>
+                    <span class="value" th:text="${order.serialNumber}"></span>
+                </div>
+                <div class="status">
+                    <span class="option">Статус:</span>
+                    <span class="value" th:text="${order.status}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateElements = document.querySelectorAll("#date");
+
+        dateElements.forEach(function(dateElement) {
+            const dateStr = dateElement.textContent.trim();
+
+            if (dateStr) {
+                const date = new Date(dateStr);
+
+                const day = ("0" + date.getDate()).slice(-2);
+                const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                const year = date.getFullYear();
+                const hours = ("0" + date.getHours()).slice(-2);
+                const minutes = ("0" + date.getMinutes()).slice(-2);
+
+                const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+                dateElement.textContent = formattedDate;
+            }
+        });
+    });
+</script>
+<script>
+    // Функция для открытия/закрытия боковой панели
+    function togglePanel() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('overlay');
+
+        sidebar.classList.toggle('open');  // Открыть или закрыть панель
+        overlay.classList.toggle('show');  // Показать или скрыть фон
+    }
+</script>
 </html>

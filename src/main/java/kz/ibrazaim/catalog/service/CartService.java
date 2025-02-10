@@ -45,4 +45,8 @@ public class CartService {
         }
         return price;
     }
+
+    public int getCartItemsCount() {
+        return cartItemRepository.findAll().size();
+    }
 }

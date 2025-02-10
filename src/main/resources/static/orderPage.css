@@ -1,0 +1,154 @@
+body{
+    user-select: none;
+}
+
+.order-title{
+    display: flex;
+    gap: 6px;
+    margin: 29px 0 69px 71px;
+}
+
+.order-title label{
+    font-family: Montserrat Medium, sans-serif;
+    font-size: 35px;
+    color: #0c0c3d;
+}
+
+main{
+    display: flex;
+}
+
+.left{
+    width: 50%;
+}
+
+.products-list {
+    font-family: Montserrat, sans-serif;
+    width: 620px;
+    list-style: none;
+    margin-left: 71px;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+}
+
+.product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 17px;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+    margin-right: 21px;
+}
+
+.product-quantity {
+    font-size: 17px;
+    color: #000000;
+    margin-right: 56px;
+}
+
+.product-price{
+    font-family: "Montserrat Light", sans-serif;
+    font-size: 18px;
+}
+
+.total-price{
+    text-align: right;
+    margin: 20px 0 0 71px;
+    font-family: Montserrat, sans-serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #0c0c3d;
+}
+
+.right{
+    width: 50%;
+}
+
+.info-block{
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 100px 30px 0 0;
+    width: 580px;
+    height: 400px;
+    background-color: #0c0c3d;
+
+}
+
+.info-block div span {
+    display: flex;
+}
+
+.pole{
+    padding: 39px 0 0 32px;
+    font-family: Montserrat Light, sans-serif;
+    font-style: italic;
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+.pole div{
+    display: flex;
+}
+
+.full-name, .address, .phone{
+    margin-bottom: 16px;
+}
+
+.date{
+    margin-bottom: 7px;
+}
+
+.info-block .option{
+    margin-right: 22px;
+}
+
+.info-block .value{
+    text-decoration: underline 1px #FFFFFF;
+    padding-bottom: 2px;
+}
+
+.email, .order-serial{
+    margin-bottom: 37px;
+}
+
+.actions {
+    margin-left: 71px;
+    width: 50%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.continue {
+    background-color: #0c0c3d;
+    color: white;
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-style: italic;
+    font-size: 16px;
+    border: none;
+    padding: 15px 32px 15px 32px;
+    margin: 35px 0 0 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.continue:hover {
+    background-color: #0a0a33;
+}

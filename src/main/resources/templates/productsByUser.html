@@ -2,14 +2,29 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/productsByUser.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
-    <link rel="stylesheet" th:href="@{/userPanel.css}">
     <title>Каталог</title>
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
-<main class="catalog-body">
+<div class="grid-size-controls">
+    <button onclick="increaseColumns()" title="Увеличить количество колонок">
+        <svg width="45" height="45" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
+            <rect width="22" height="22"></rect>
+            <rect x="23" width="22" height="22"></rect>
+            <rect y="23" width="22" height="22"></rect>
+            <rect x="23" y="23" width="22" height="22"></rect>
+        </svg>
+    </button>
+    <button onclick="decreaseColumns()" title="Уменьшить количество колонок">
+        <svg width="45" height="45" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
+            <rect width="45" height="45"></rect>
+        </svg>
+    </button>
+</div>
+<div class="catalog-body">
     <div class="filter-container" th:insert="~{filter :: filter-div}"></div>
     <div class="product-container">
         <div th:each="product : ${products}" class="product-card">
@@ -21,20 +36,81 @@
             </a>
         </div>
     </div>
-</main>
-<div th:if="${#authorization.expression('isAuthenticated()')}">
-    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>
 </div>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 <script>
-    function togglePanel() {
-        document.querySelector('.slide').classList.toggle('visible');
-        document.querySelector('.open-icon').classList.toggle('hide');
+    function increaseColumns() {
+        let width;
+        if (window.innerWidth <= 600) {
+            width = "50%"; // 2 колонки
+        } else if (window.innerWidth <= 900) {
+            width = "33.33%"; // 3 колонки
+        } else {
+            width = "33.33%"; // 3 колонки
+        }
+        document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
     }
 
-    document.querySelector('.close-icon').addEventListener('click', function() {
-        togglePanel();
-    });
+    function decreaseColumns() {
+        let width;
+        if (window.innerWidth <= 600) {
+            width = "100%"; // 1 колонка
+        } else if (window.innerWidth <= 900) {
+            width = "50%"; // 2 колонки
+        } else {
+            width = "25%"; // 4 колонки
+        }
+        document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
+    }
+</script>
+<script>
+    // Функция для открытия/закрытия боковой панели
+    function togglePanel() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('overlay');
+
+        sidebar.classList.toggle('open');  // Открыть или закрыть панель
+        overlay.classList.toggle('show');  // Показать или скрыть фон
+    }
+</script>
+<script>
+    function validateFilterForm(event) {
+        const minPriceInput = document.getElementById("minPrice");
+        const maxPriceInput = document.getElementById("maxPrice");
+        const minPriceError = document.getElementById("minPriceError");
+        const maxPriceError = document.getElementById("maxPriceError");
+
+        // Получаем значения
+        const minPrice = parseFloat(minPriceInput.value) || 0;
+        const maxPrice = parseFloat(maxPriceInput.value) || 0;
+
+        let isValid = true;
+
+        // Проверка минимальной и максимальной цены
+        if (minPrice < 0) {
+            minPriceError.textContent = "Минимальная цена не может быть отрицательной.";
+            minPriceError.classList.add("show");
+            isValid = false;
+        } else {
+            minPriceError.classList.remove("show");
+        }
+
+        if (maxPrice < 0) {
+            maxPriceError.textContent = "Максимальная цена не может быть отрицательной.";
+            maxPriceError.classList.add("show");
+            isValid = false;
+        } else {
+            maxPriceError.classList.remove("show");
+        }
+
+        if (maxPrice > 0 && minPrice > maxPrice) {
+            maxPriceError.textContent = "Максимальная цена не может быть меньше минимальной.";
+            maxPriceError.classList.add("show");
+            isValid = false;
+        }
+
+        return isValid; // Отменить отправку формы, если есть ошибки
+    }
 </script>
 </body>
 </html>
