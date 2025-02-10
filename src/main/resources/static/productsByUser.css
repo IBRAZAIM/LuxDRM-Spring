@@ -9,6 +9,17 @@
     font-family: "Montserrat", sans-serif;
 }
 
+select {
+    -webkit-appearance: none; /* Убирает стандартный стиль Safari */
+    -moz-appearance: none; /* Убирает стиль в Firefox */
+    appearance: none; /* Универсальное свойство */
+    content: '▼';
+    background: #FFFFFF;
+    font-family: Montserrat, sans-serif;
+    border-radius: 5px;
+    color: #545454;
+}
+
 body {
     background-color: #f9f8f8;
     color: #333;
@@ -17,7 +28,6 @@ body {
 }
 
 .catalog-body {
-    margin-top: 70px;
     height: 100%;
     display: flex;
 }
@@ -38,28 +48,25 @@ body {
 }
 
 .grid-size-controls {
+    margin-top: 70px;
     display: flex;
     gap: 10px;
-    justify-content: center;
+    justify-content: right;
+    padding-right: 40px;
+    margin-bottom: 10px;
 }
 
 .grid-size-controls button svg{
-    fill: #9A073D;
+    fill: #0c0c3d;
 }
 .grid-size-controls button {
+    justify-content: right;
     border: none;
-    color: #9A073D;
     cursor: pointer;
     padding: 0;
     display: inline-flex;
-    justify-content: center;
     align-items: center;
     transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.grid-size-controls button:hover {
-    background-color: #0c0c3d;
-    color: white;
 }
 
 .product-card {
@@ -254,5 +261,15 @@ select:focus {
     }
     .product-card {
         /*width: calc(50% - 15px);*/
+    }
+}
+
+@media (max-width: 450px){
+    .grid-size-controls{
+        display: none;
+    }
+
+    .filter-container{
+        margin-top: 10px;
     }
 }

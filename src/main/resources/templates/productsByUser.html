@@ -39,29 +39,52 @@
 </div>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 <script>
-    function increaseColumns() {
+    // Устанавливаем начальное значение колонок
+        function setInitialColumns() {
         let width;
-        if (window.innerWidth <= 600) {
+        if (window.innerWidth > 1200) {
+            width = "25%"; // 4 колонки для больших экранов
+        } else if (window.innerWidth > 900) {
+            width = "33.33%"; // 3 колонки
+        } else if (window.innerWidth > 600) {
             width = "50%"; // 2 колонки
-        } else if (window.innerWidth <= 900) {
-            width = "33.33%"; // 3 колонки
         } else {
-            width = "33.33%"; // 3 колонки
+            width = "100%"; // 1 колонка
         }
         document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
     }
 
     function decreaseColumns() {
         let width;
-        if (window.innerWidth <= 600) {
-            width = "100%"; // 1 колонка
-        } else if (window.innerWidth <= 900) {
-            width = "50%"; // 2 колонки
+        if (window.innerWidth > 1200) {
+            width = "33.33%"; // 3 колонки вместо 4
+        } else if (window.innerWidth > 900) {
+            width = "50%"; // 2 колонки вместо 3
+        } else if (window.innerWidth > 600) {
+            width = "100%"; // 1 колонка вместо 2
         } else {
-            width = "25%"; // 4 колонки
+            width = "100%"; // Остается 1 колонка
         }
         document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
     }
+
+    function increaseColumns() {
+        let width;
+        if (window.innerWidth > 1200) {
+            width = "25%"; // 4 колонки для больших экранов
+        } else if (window.innerWidth > 900) {
+            width = "33.33%"; // 3 колонки
+        } else if (window.innerWidth > 600) {
+            width = "50%"; // 2 колонки
+        } else {
+            width = "100%"; // 1 колонка
+        }
+        document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
+    }
+
+    // Устанавливаем начальное значение при загрузке страницы
+    window.addEventListener('load', setInitialColumns);
+    window.addEventListener('resize', setInitialColumns);
 </script>
 <script>
     // Функция для открытия/закрытия боковой панели
