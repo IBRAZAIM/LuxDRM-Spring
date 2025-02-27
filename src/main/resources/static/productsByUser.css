@@ -94,32 +94,44 @@ body {
     margin-bottom: 10px;
 }
 
-.product-card a {
-    text-decoration: none;
+.product-card .product-name{
     color: #0c0c3d;
     font-weight: bold;
+    margin: 0;
+}
+.product-card a {
+    text-decoration: none;
     display: block;
 }
 
-.product-card .price {
+.product-card .price-container{
+    text-align: center;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+.product-card .discount-price {
     color: #9A073D;
     font-weight: bold;
+    font-size: 16px;
     margin-top: auto;
+}
+
+.product-card .price{
+    font-size: 16px;
+    text-decoration: line-through;
+    color: #aaa;
 }
 
 .product-card .category {
     position: absolute;
     top: 10px;
     left: 10px;
-    padding: 5px 10px;
+    padding: 5px 5px;
     font-size: 0.9em;
     opacity: 0.7;
     color: #333;
-}
-
-.product-card .product-name {
-    flex: 1;
-    margin-right: 10px;
 }
 
 /* Упрощение формы и её элементов */
@@ -204,7 +216,7 @@ select:focus {
 /* Адаптивность */
 /* Динамическое изменение количества колонок */
 @media (max-width: 600px) {
-    :root { --product-card-width: calc(100% - 20px); } /* 1 колонка */
+    :root { --product-card-width: calc(50% - 20px); } /* 2 колонка */
 }
 
 @media (min-width: 601px) and (max-width: 900px) {
@@ -242,10 +254,12 @@ select:focus {
     .product-card {
     }
 
-    .product-card img {
-        width: 180px;
-        height: 180px;
+    .product-container .product-card .product-img {
+        width: 100%; /* Заполняет всю ширину карточки */
+        height: auto; /* Автоматическая высота для сохранения пропорций */
+        object-fit: cover; /* Обрезает изображение, если оно выходит за границы */
     }
+
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -267,6 +281,16 @@ select:focus {
 @media (max-width: 450px){
     .grid-size-controls{
         display: none;
+    }
+
+    .product-container {
+        width: 100%;
+    }
+
+    .product-container .product-card .product-img {
+        width: 100%; /* Заполняет всю ширину карточки */
+        height: auto; /* Автоматическая высота для сохранения пропорций */
+        object-fit: cover; /* Обрезает изображение, если оно выходит за границы */
     }
 
     .filter-container{

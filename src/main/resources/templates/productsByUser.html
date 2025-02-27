@@ -32,7 +32,10 @@
                 <p class="category" th:text="${product.category.getName()}"></p>
                 <img th:src="${product.getImages().get(0).image}" alt="product-img">
                 <p class="product-name" th:text="${product.getName()}"></p>
-                <p class="price" th:text="${product.getPrice()} + ' тг'"></p>
+                <div class="price-container">
+                    <p class="discount-price" th:text="${product.price - product.price * product.discount / 100} + ' тг'"  id="formattedDiscountPrice"></p>
+                    <p class="price" th:text="${product.getPrice()} + ' тг'"></p>
+                </div>
             </a>
         </div>
     </div>
@@ -48,8 +51,8 @@
             width = "33.33%"; // 3 колонки
         } else if (window.innerWidth > 600) {
             width = "50%"; // 2 колонки
-        } else {
-            width = "100%"; // 1 колонка
+        }else if (window.innerWidth < 600 && window.innerWidth > 260) {
+            width = "50%"; // 2 колонки
         }
         document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
     }
@@ -61,9 +64,7 @@
         } else if (window.innerWidth > 900) {
             width = "50%"; // 2 колонки вместо 3
         } else if (window.innerWidth > 600) {
-            width = "100%"; // 1 колонка вместо 2
-        } else {
-            width = "100%"; // Остается 1 колонка
+            width = "50%"; // 1 колонка вместо 2
         }
         document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
     }
@@ -76,8 +77,6 @@
             width = "33.33%"; // 3 колонки
         } else if (window.innerWidth > 600) {
             width = "50%"; // 2 колонки
-        } else {
-            width = "100%"; // 1 колонка
         }
         document.documentElement.style.setProperty('--product-card-width', `calc(${width} - 20px)`);
     }
