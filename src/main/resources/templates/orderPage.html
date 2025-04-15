@@ -5,6 +5,7 @@
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/orderPage.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}"></div>
@@ -82,6 +83,7 @@
         </div>
     </div>
 </main>
+<div th:insert="~{footer :: footer-code}"></div>
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function() {

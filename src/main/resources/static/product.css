@@ -2,6 +2,7 @@ body {
     font-family: Montserrat, sans-serif;
     margin: 0;
     padding: 0;
+    user-select: none;
 }
 
 main {
@@ -712,6 +713,7 @@ main {
     color: #fff; /* Белый текст */
     border-color: #9a073d; /* Красная граница */
 }
+
 /* Основной стиль секции продуктов */
 .products-section {
     margin: 60px auto;
@@ -836,3 +838,120 @@ main {
     margin-right: 10px;
 }
 
+@media (max-width: 430px) {
+    .product-container {
+        flex-direction: column;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    .product-top{
+        order: 1;
+    }
+
+    .product-mobile-image{
+        width: 100%;
+        order: 2;
+    }
+
+    .product-bottom{
+        order: 3;
+    }
+
+    .product-gallery {
+        width: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        padding: 0;
+        margin: 0;
+    }
+
+
+    .thumbnail-column {
+        width: 95%;
+        display: flex;
+        justify-content: space-around; /* Равномерное распределение */
+        margin-left: 0;
+    }
+
+    .thumbnail-column ul {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .main-image {
+        width: 95%;
+        display: flex;
+        justify-content: center;
+        margin-left: 0;
+    }
+
+    .large-img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .description-zone {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .right-column{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .right-column h1,
+    .right-column .product-rating,
+    .right-column .discount{
+        text-align: center;
+    }
+
+    .right-column .category{
+        display: none;
+    }
+
+
+    .product-name {
+        font-size: 24px;
+    }
+
+    .size-selector,
+    .sizes-options {
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .cart-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .quantity-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .add-to-cart {
+        width: 90%;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        margin-left: 0;
+    }
+}
