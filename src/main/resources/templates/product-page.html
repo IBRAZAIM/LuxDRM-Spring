@@ -21,14 +21,21 @@
     <div class="product-gallery">
         <div class="thumbnail-column">
             <ul>
+                <!-- Генерируем миниатюры для всех изображений -->
                 <li th:each="image, iterStat : ${product.images}"
-                    onclick="changeMainImage(this)">
-                    <img th:src="${image.image}" alt="Product Thumbnail" class="thumbnail-img">
+                    onclick="showImageByIndex(this, [[${iterStat.index}]])">
+                    <img th:src="@{${image.image}}" alt="Product Thumbnail" class="thumbnail-img">
                 </li>
             </ul>
         </div>
-        <div class="main-image">
-            <img id="mainImage" th:src="${product.images[0].image}" alt="Main Product Image" class="large-img">
+        <div class="main-image-container" id="mainImageContainer">
+            <div class="images-wrapper" id="imagesWrapper">
+                <!-- Использование Thymeleaf для динамического добавления изображений -->
+                <img th:each="image : ${product.images}"
+                     th:src="@{${image.image}}"
+                     alt="Main Product Image"
+                     class="large-img">
+            </div>
         </div>
     </div>
 
@@ -98,7 +105,9 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="add-to-cart">Добавить в корзину</button>
+                    <div class="add-cart-div">
+                        <button type="submit" class="add-to-cart">Добавить в корзину</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -291,21 +300,23 @@
     document.addEventListener("DOMContentLoaded", () => {
         const buttons = document.querySelectorAll(".tab-button");
         const sections = document.querySelectorAll(".tab-section");
-
+        // Скрываем все секции при загрузке
+        sections.forEach(section => section.classList.remove("active"));
+        // Показываем секцию, соответствующую первой активной кнопке
+        document.getElementById("description-section").classList.add("active");
         buttons.forEach(button => {
             button.addEventListener("click", () => {
-                // Удаляем класс active у всех кнопок и секций
-                buttons.forEach(btn => btn.classList.remove("active"));
-                sections.forEach(section => section.classList.remove("active"));
-
-                // Добавляем класс active к текущей кнопке и соответствующей секции
-                button.classList.add("active");
                 const tabId = button.getAttribute("data-tab");
+                // Скрываем все секции
+                sections.forEach(section => section.classList.remove("active"));
+                // Отображаем только нужную секцию
                 document.getElementById(`${tabId}-section`).classList.add("active");
+                // Меняем активный класс у кнопок
+                buttons.forEach(btn => btn.classList.remove("active"));
+                button.classList.add("active");
             });
         });
     });
-
     function selectSize(element) {
         // Проверяем, был ли уже выбран этот размер
         if (element.classList.contains('selected')) {
@@ -326,23 +337,58 @@
     }
 
 
-    function changeMainImage(thumbnail) {
-        // Получаем источник изображения из миниатюры
-        var newImageSrc = thumbnail.querySelector('img').getAttribute('src');
 
-        // Изменяем источник основного изображения
-        document.getElementById('mainImage').setAttribute('src', newImageSrc);
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const wrapper = document.getElementById('imagesWrapper');
+        const thumbnails = document.querySelectorAll('.thumbnail-column li');
+        let currentIndex = 0;
+        const total = thumbnails.length;
 
-        // Убираем активное состояние со всех миниатюр
-        var allThumbnails = document.querySelectorAll('.thumbnail-column li');
-        allThumbnails.forEach(function(item) {
-            item.classList.remove('active');
+        function showImage(index) {
+            if (index < 0) index = 0;
+            if (index >= total) index = total - 1;
+
+            currentIndex = index;
+
+            wrapper.style.transform = `translateX(-${index * 100}%)`;
+
+            thumbnails.forEach(t => t.classList.remove('active'));
+            thumbnails[index].classList.add('active');
+        }
+
+        // Увеличенная зона клика
+        thumbnails.forEach((thumb, index) => {
+            thumb.addEventListener('click', () => showImage(index));
         });
 
-        // Добавляем активное состояние на выбранную миниатюру
-        thumbnail.classList.add('active');
-    }
+        // Свайп для мобильных
+        let startX = 0;
+        const container = document.getElementById('mainImageContainer');
+
+        container.addEventListener('touchstart', e => {
+            startX = e.touches[0].clientX;
+        });
+
+        container.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+
+            if (endX < startX - 50 && currentIndex < total - 1) showImage(currentIndex + 1);
+            if (endX > startX + 50 && currentIndex > 0) showImage(currentIndex - 1);
+        });
+
+        // Стрелки на клавиатуре
+        document.addEventListener('keydown', e => {
+            if (e.key === "ArrowRight") showImage(currentIndex + 1);
+            if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+        });
+
+        // Инициализация
+        showImage(0);
+    });
 </script>
+
 <script>
     // Функция для открытия/закрытия боковой панели
     function togglePanel() {
@@ -365,7 +411,6 @@
         }
     });
 </script>
+
 </body>
 </html>
-
-
