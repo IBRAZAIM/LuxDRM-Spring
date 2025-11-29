@@ -10,6 +10,7 @@
 <!--    <link rel="stylesheet" th:href="@{/userPanel.css}">-->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
 </head>
 <body>
 <header>
@@ -48,7 +49,8 @@
                         <!-- Знак верификации качества -->
                         <div class="quality-verification">
                             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
-                                <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
+                                <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon>
+                                <polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
                             </svg>
                         </div>
                         <h1 th:text="${product.name}" class="product-name">Название товара</h1>
@@ -95,18 +97,20 @@
                         </div>
                         <input type="hidden" name="size" id="selected-size">
                     </div>
-                    <div class="cart-container">
-                        <div class="quantity-block">
-                            <label class="quantity">Кол-во</label>
-                            <div class="number" data-step="1" data-min="1" data-max="20">
-                                <a class="number-minus" onclick="decrement()">−</a>
-                                <input class="number-text" type="text" name="quantity" value="1">
-                                <a class="number-plus" onclick="increment()">+</a>
+                    <div class="mobile-add-to-cart">
+                        <div class="cart-container">
+                            <div class="quantity-block">
+                                <label class="quantity">Кол-во</label>
+                                <div class="number" data-step="1" data-min="1" data-max="20">
+                                    <a class="number-minus" onclick="decrement()">−</a>
+                                    <input class="number-text" type="text" name="quantity" value="1">
+                                    <a class="number-plus" onclick="increment()">+</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="add-cart-div">
-                        <button type="submit" class="add-to-cart">Добавить в корзину</button>
+                        <div class="add-cart-div">
+                            <button type="submit" class="add-to-cart">Добавить в корзину</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -401,7 +405,7 @@
 </script>
 <script>
     window.addEventListener("DOMContentLoaded", () => {
-        if (window.innerWidth <= 430) {
+        if (window.innerWidth <= 780) {
             const gallery = document.querySelector('.product-gallery');
             const rightColumn = document.querySelector('.product-mobile-image');
             if (gallery && rightColumn) {

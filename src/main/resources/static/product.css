@@ -24,22 +24,27 @@ main {
 /* Галерея */
 .product-gallery {
     display: flex;
+    transition: left;
     width: 60%;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 /* Левая колонка миниатюр */
 .thumbnail-column {
-    width: 70vh; /* ширина колонки */
+    width: 15%; /* Задаем относительную ширину */
+    max-width: 90px; /* Ограничиваем максимальную ширину для больших экранов */
     height: auto;
     padding: 0;
 }
 
 .thumbnail-column ul {
-    width: 70%;
+    width: 100%;
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding: 0;
 }
 
 /* КОНТЕЙНЕР ДЛЯ МИНИАТЮРЫ — КВАДРАТ */
@@ -83,13 +88,13 @@ main {
 /* Основное изображение */
 .main-image-container {
     flex-grow: 1;
-    max-width: 650px;
+    max-width: 550px;
     height: 550px;
     overflow: hidden;
     cursor: crosshair;
     position: relative;
     margin: 0;
-    align-items: center;       /* по вертикали */
+    align-items: center;
 }
 
 /* Обёртка изображений */
@@ -99,6 +104,7 @@ main {
     will-change: transform;
     height: auto;
     max-height: 100%;
+    gap: 0;
 }
 
 /* Большое изображение */
@@ -109,7 +115,10 @@ main {
     flex-shrink: 0;
     pointer-events: none; /* чтобы клик по миниатюре работал без проблем */
     overflow: hidden;
+    box-sizing: border-box;
+    padding: 0;
 }
+
 /*...............................................................................................*/
 
 .right-column {
@@ -868,13 +877,361 @@ main {
     margin-top: 21px;
 }
 
-.verification-icon {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
+@media (max-width: 1300px){
+    .product-gallery{
+        width: 55%;
+        display: flex;
+        align-items: center;
+    }
+
+    .thumbnail-column{
+        width: 40%; /* Даем миниатюрам больше относительной ширины */
+        max-width: 80px;
+    }
+
+    .thumbnail-column ul{
+        width: 5vw;
+    }
+
+    .main-image-container{
+        width: 35vw;
+        max-width: 450px;
+        height: 450px;
+    }
+
+    .right-column {
+        width: 45%; /* Чуть больше места для текста */
+        margin-right: 0;
+        margin-top: 30px; /* Уменьшаем отступ сверху */
+        display: flex;
+        justify-content: center;
+    }
+
+    .description-zone{
+        width: 90%;
+    }
+
 }
 
-@media (max-width: 430px) {
+@media (max-width: 1060px){
+    .product-name{
+        font-size: 24px;
+    }
+
+    .discount-percentage {
+        font-size: 14px;
+        font-weight: 550;
+        padding: 4px 8px;
+        border-radius: 4px;
+        letter-spacing: 0.8px;
+        margin-left: 8px; /* Отступ от названия */
+    }
+
+    .product-rating {
+        gap: 4.5px;
+    }
+
+    .star {
+        font-size: 22px; /* Размер звезды */
+    }
+
+    .rating-value {
+        font-size: 16px; /* Размер текста рейтинга */
+        margin-left: 8px; /* Отступ между звездами и числовым значением */
+    }
+
+    /*Цена*/
+    .price {
+        font-size: 25px;
+        margin-bottom: 18px;
+    }
+
+    .discount {
+        margin-top: 8px;
+    }
+
+    .original-price{
+        margin-right: 10px;
+    }
+
+}
+
+@media (max-width: 960px){
+    .product-name{
+        font-size: 22px;
+    }
+
+    .discount-percentage {
+        font-size: 13px;
+        font-weight: 500;
+        padding: 4px 7px;
+    }
+
+    .star {
+        font-size: 20px; /* Размер звезды */
+    }
+
+    .rating-value {
+        font-size: 14px; /* Размер текста рейтинга */
+        margin-left: 7px; /* Отступ между звездами и числовым значением */
+    }
+
+    /*Цена*/
+    .price {
+        font-size: 23px;
+        margin-bottom: 18px;
+    }
+
+    .original-price{
+        margin-right: 9px;
+    }
+
+    .quantity{
+        display: none;
+    }
+
+    /* Убираем отступы для мобильной версии */
+    .cart-container,
+    .add-cart-div,
+    .quantity-block {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Общая высота элементов */
+    .mobile-add-to-cart,
+    .add-cart-div,
+    .cart-container,
+    .add-to-cart,
+    .number {
+        height: 50px;
+        display: flex;
+        align-items: center;
+    }
+
+    .mobile-add-to-cart{
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        gap: 0;
+    }
+
+    .add-cart-div{
+        width: 65%;
+        border: 2px solid #0c0c3d;
+        justify-content: center;
+    }
+
+    .add-to-cart{
+        border: none;
+        font-size: 0.8em;
+        margin: 0;
+        justify-content: center;
+    }
+
+    .cart-container{
+        width: 35%;
+        max-height: 50px;
+    }
+
+    .quantity-block{
+        border: none;
+        width: 100%;
+    }
+
+    .number{
+        height: 50px;
+        border: 2px solid #0c0c3d;
+        border-left: none;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 780px) {
+    .product-container{
+        width: 100%;
+    }
+
+    .right-column{
+        width: 100%;
+    }
+
+    .product-gallery {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        width: 100%;
+        gap: 10px;
+    }
+
+    /* Колонка миниатюр */
+    .thumbnail-column {
+
+        flex: 0 0 22%; /* фиксированная доля ширины, но адаптивная */
+        max-width: 22%;
+    }
+
+    .thumbnail-column ul {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .thumbnail-column img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    /* Главное изображение */
+    .main-image-container {
+        flex: 1; /* автоматически занимает всё оставшееся пространство */
+        max-width: 78%;
+    }
+
+    .images-wrapper {
+        width: 100%;
+    }
+
+    .large-img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    /*................................................................................*/
+    /* Общая высота элементов */
+    .mobile-add-to-cart,
+    .add-cart-div,
+    .cart-container,
+    .add-to-cart,
+    .number {
+        height: 55px !important;
+    }
+
+    /* Фиксированная панель внизу экрана */
+    .mobile-add-to-cart {
+        position: fixed;
+        bottom: 0;
+        width: 90%;
+        left: 50%; /* центрируем по горизонтали */
+        transform: translateX(-50%); /* смещаем влево на 50% ширины */
+        flex-direction: row-reverse;
+        box-sizing: border-box;
+        z-index: 9999;
+        margin: 0;
+        padding-bottom: 25px;
+    }
+
+    /* Кнопка "Добавить в корзину" */
+    .add-cart-div {
+        flex: 7; /* 70% */
+        display: flex;
+        border: 1.5px solid #0c0c3d;
+    }
+
+    .add-to-cart {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white;
+        color: #0c0c3d;
+        font-size: 16px;
+        font-weight: 600;
+        flex: 1; /* занимает всю ширину блока */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 0;
+        box-sizing: border-box;
+        margin: 0;
+    }
+
+    /* Блок количества */
+    .cart-container {
+        flex: 3;
+        display: flex;
+    }
+
+    .quantity{
+        display: none;
+    }
+
+    .quantity-block {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+    }
+
+    .number {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        border: 1.5px solid #0c0c3d;
+        border-left: none;
+        border-radius: 0;
+        background: white;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    .number a {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 22px;
+        color: #0c0c3d;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .number-text {
+        width: 40px;
+        border: none;
+        font-size: 18px;
+        text-align: center;
+        color: #0c0c3d;
+        background: white;
+        -moz-appearance: textfield;
+    }
+
+    .number-text::-webkit-inner-spin-button,
+    .number-text::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /*................................................................................*/
+    .sizes-container {
+        width: 90%;
+        display: flex;
+        flex-wrap: wrap; /* перенос кнопок на новую строку */
+        justify-content: center;
+        gap: 8px; /* расстояние между кнопками */
+        margin: 0 auto; /* центрирование всего контейнера */
+        margin-bottom: 40px;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .sizes-options{
+        gap: 8px;
+        display: flex;
+        justify-content: space-evenly;
+    }
+    .size-label-btn{
+        padding: 18px 28px;
+        font-size: 16px;
+    }
+
+    /*................................................................................*/
+}
+
+@media (max-width: 550px) {
     .product-container {
         flex-direction: column;
         box-sizing: border-box;
@@ -884,6 +1241,8 @@ main {
 
     .product-top{
         order: 1;
+        width: 100%;
+        justify-content: space-between;
     }
 
     .product-mobile-image{
@@ -906,25 +1265,20 @@ main {
         margin: 0;
     }
 
-
-    .thumbnail-column {
-        width: 95%;
-        display: flex;
-        justify-content: space-around; /* Равномерное распределение */
-        margin-left: 0;
+    .main-image-container {
+        width: 100%;
+        max-width: 600px;
+        height: 400px;
+        overflow: hidden;
+        position: relative;
+        touch-action: pan-y; /* Запрещаем дефолтное поведение для сенсорных экранов */
     }
 
-    .thumbnail-img {
-        object-fit: cover;
-        margin-bottom: 12px;
-        cursor: pointer;
-        opacity: 0.7;
-        transition: 0.3s;
-    }
-    .thumbnail-column ul {
-        display: flex;
-        gap: 5px;
-        justify-content: center;
+    /* 2. Оболочка слайдов: Делает все изображения горизонтальными */
+    .images-wrapper {
+        display: flex; /* Ключевой момент: располагает дочерние элементы горизонтально */
+        width: 100%; /* Должна быть шире, чтобы вместить все изображения */
+        transition: transform 0.3s ease-in-out;
     }
 
     .main-image {
@@ -940,6 +1294,49 @@ main {
         display: block;
         transition: transform 0.3s ease, opacity 0.3s ease;
     }
+
+    .thumbnail-column {
+        width: 50vh;
+        display: flex;
+        justify-content: space-around; /* Равномерное распределение */
+        margin-left: 0;
+    }
+
+    .thumbnail-img {
+        object-fit: cover;
+        margin-bottom: 12px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: 0.3s;
+    }
+
+    .thumbnail-column ul {
+        width: 100%;
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .thumbnail-column li {
+        width: 20%;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.3s;
+    }
+
+    .thumbnail-column li:hover {
+        opacity: 1;
+    }
+
+    .thumbnail-column li.active {
+        opacity: 1;
+    }
+
+/*...............................................................*/
+
 
     .description-zone {
         width: 100%;
@@ -971,36 +1368,27 @@ main {
         font-size: 24px;
     }
 
-    .size-selector,
-    .sizes-options {
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .cart-container {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
+/*................................................................................*/
+    /* Убираем отступы для мобильной версии */
+    .cart-container,
+    .add-cart-div,
     .quantity-block {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    .add-cart-div{
-        width: 90%;
+    /* Общая высота элементов */
+    .mobile-add-to-cart,
+    .add-cart-div,
+    .cart-container,
+    .add-to-cart,
+    .number {
+        height: 55px !important;
+        display: flex !important;
+        align-items: center !important;
     }
 
-    .add-to-cart {
-        width: 90%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
+/*................................................................................*/
     .tabs-container {
         font-size: 16px;
         justify-content: space-between;
@@ -1062,51 +1450,6 @@ main {
         background-color: #666666; /* Цвет линии */
     }
 
-    .main-image-container {
-        width: 100%;
-        max-width: 600px;
-        height: 400px;
-        overflow: hidden;
-        position: relative;
-        touch-action: pan-y; /* Запрещаем дефолтное поведение для сенсорных экранов */
-    }
-
-    /* 2. Оболочка слайдов: Делает все изображения горизонтальными */
-    .images-wrapper {
-        display: flex; /* Ключевой момент: располагает дочерние элементы горизонтально */
-        width: 100%; /* Должна быть шире, чтобы вместить все изображения */
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .thumbnail-column {
-        width: 70vh;
-        display: flex;
-        justify-content: center;
-        margin-top: 10px;
-    }
-
-    .thumbnail-column ul {
-        list-style: none;
-        padding: 0;
-        display: flex;
-        flex-direction: row;
-        gap: 10px;
-    }
-
-    .thumbnail-column li {
-        width: 20%;
-        cursor: pointer;
-        opacity: 0.6;
-        transition: opacity 0.3s;
-    }
-
-    .thumbnail-column li:hover {
-        opacity: 1;
-    }
-
-    .thumbnail-column li.active {
-        opacity: 1;
-    }
 
 
 }
