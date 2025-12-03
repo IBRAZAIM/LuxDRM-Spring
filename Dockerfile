@@ -7,7 +7,6 @@ COPY pom.xml .
 RUN mvn -B dependency:go-offline
 
 COPY src /app/src
-
 RUN mvn clean package -DskipTests -Dmaven.deploy.skip=true
 
 # ================= 2) Runtime =================
@@ -18,4 +17,5 @@ COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
 
