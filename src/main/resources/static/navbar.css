@@ -123,6 +123,7 @@ body {
 #sidebar.open {
     left: 0;
     opacity: 1;
+    z-index: 100000000000000;
 }
 
 /* Логотип */

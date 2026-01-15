@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
     user-select: none;
+    box-sizing: border-box;
 }
 
 main {
@@ -24,48 +25,75 @@ main {
 /* Галерея */
 .product-gallery {
     display: flex;
-    transition: left;
+    flex-direction: row-reverse;
+    align-items: center;  /* одна ось */
+    justify-content: center;
     width: 60%;
-    justify-content: space-evenly;
-    align-items: center;
+    gap: 15px;
 }
 
-/* Левая колонка миниатюр */
-.thumbnail-column {
-    width: 15%; /* Задаем относительную ширину */
-    max-width: 90px; /* Ограничиваем максимальную ширину для больших экранов */
-    height: auto;
-    padding: 0;
-}
-
-.thumbnail-column ul {
-    width: 100%;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 0;
-}
-
-/* КОНТЕЙНЕР ДЛЯ МИНИАТЮРЫ — КВАДРАТ */
-/* Контейнер миниатюры */
-.thumbnail-column li {
-    width: 100%;
-    aspect-ratio: 1/1;
+/* ===== MAIN IMAGE ===== */
+.main-image-container {
+    width: 80%;
     overflow: hidden;
     cursor: crosshair;
-    border: none;            /* важно */
-    padding: 0;
-    box-sizing: border-box;      /* чтобы padding не ломал размер */
+    position: relative;
+    max-width: 620px;
+    display: flex;
 }
 
-/* Миниатюры */
+.images-wrapper {
+    width: 100%;
+    display: flex;
+    transition: transform 0.6s cubic-bezier(.25,.8,.25,1);
+    height: auto;
+    will-change: transform;
+    gap: 0;
+}
+
+.large-img {
+    width: 100%;
+    flex: 0 0 100%;
+    height: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: block;
+    pointer-events: none; /* чтобы клик по миниатюре работал без проблем */
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+/* ===== THUMBNAILS ===== */
+.thumbnail-column {
+    width: 14%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+}
+.thumbnail-column ul {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    gap: 12px;
+}
+
+.thumbnail-column li {
+    flex: 1;                   /* равные миниатюры */
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    cursor: pointer;
+}
 
 .thumbnail-img {
     width: 100%;
-    height: auto;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.3s;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
 }
 
 .thumbnail-img:hover {
@@ -84,41 +112,6 @@ main {
     pointer-events: none;
 
 }
-
-/* Основное изображение */
-.main-image-container {
-    flex-grow: 1;
-    max-width: 550px;
-    height: 550px;
-    overflow: hidden;
-    cursor: crosshair;
-    position: relative;
-    margin: 0;
-    align-items: center;
-}
-
-/* Обёртка изображений */
-.images-wrapper {
-    display: flex;
-    transition: transform 0.6s cubic-bezier(.25,.8,.25,1);
-    will-change: transform;
-    height: auto;
-    max-height: 100%;
-    gap: 0;
-}
-
-/* Большое изображение */
-.large-img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    flex-shrink: 0;
-    pointer-events: none; /* чтобы клик по миниатюре работал без проблем */
-    overflow: hidden;
-    box-sizing: border-box;
-    padding: 0;
-}
-
 /*...............................................................................................*/
 
 .right-column {
@@ -881,22 +874,13 @@ main {
     .product-gallery{
         width: 55%;
         display: flex;
-        align-items: center;
     }
 
     .thumbnail-column{
-        width: 40%; /* Даем миниатюрам больше относительной ширины */
-        max-width: 80px;
+        width: 13%;
     }
-
-    .thumbnail-column ul{
-        width: 5vw;
-    }
-
     .main-image-container{
-        width: 35vw;
         max-width: 450px;
-        height: 450px;
     }
 
     .right-column {
@@ -1046,8 +1030,33 @@ main {
         border-radius: 0;
     }
 }
-
+@media (max-width: 825px){
+    .product-name{
+        font-size: 20px;
+    }
+}
+@media (max-width: 856px) and (min-width: 781px){
+    .mobile-add-to-cart{
+        margin-bottom: 30px;
+    }
+}
 @media (max-width: 780px) {
+    .product-top{
+        order: 1;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .product-mobile-image{
+        width: 100%;
+        order: 2;
+    }
+
+    .product-bottom{
+        order: 3;
+    }
+
     .product-container{
         width: 100%;
     }
@@ -1056,10 +1065,68 @@ main {
         width: 100%;
     }
 
-    .product-gallery {
+/*................................................................................*/
+
+    .description-zone {
+        width: 100%;
         display: flex;
-        flex-direction: row;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .right-column{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .right-column h1,
+    .right-column .product-rating,
+    .right-column .discount{
+        text-align: center;
+    }
+
+    .right-column .category{
+        display: none;
+    }
+
+    .product-info{
+        align-items: center;
+    }
+
+    .quality-verification svg{
+        width: 40px;
+        height: 40px;
+    }
+
+    .price{
+        font-size: 32px;
+    }
+
+    .original-price{
+        font-size: 24px;
+    }
+
+    .product-name{
+        font-size: 36px;
+    }
+
+    .discount-percentage{
+        font-size: 24px;
+    }
+
+    .star{
+        font-size: 30px;
+    }
+
+    .rating-value{
+        font-size: 26px;
+    }
+/*................................................................................*/
+
+    .product-gallery {
         width: 100%;
         gap: 10px;
     }
@@ -1067,13 +1134,9 @@ main {
     /* Колонка миниатюр */
     .thumbnail-column {
 
-        flex: 0 0 22%; /* фиксированная доля ширины, но адаптивная */
-        max-width: 22%;
     }
 
     .thumbnail-column ul {
-        display: flex;
-        flex-direction: column;
         gap: 8px;
         width: 100%;
     }
@@ -1221,7 +1284,7 @@ main {
     .sizes-options{
         gap: 8px;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: flex-start;
     }
     .size-label-btn{
         padding: 18px 28px;
@@ -1239,25 +1302,11 @@ main {
         padding: 0;
     }
 
-    .product-top{
-        order: 1;
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .product-mobile-image{
-        width: 100%;
-        order: 2;
-    }
-
-    .product-bottom{
-        order: 3;
-    }
 
     .product-gallery {
         width: 100%;
         display: flex;
-        flex-direction: column-reverse;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: 5px;
@@ -1296,7 +1345,7 @@ main {
     }
 
     .thumbnail-column {
-        width: 50vh;
+        width: 90%;
         display: flex;
         justify-content: space-around; /* Равномерное распределение */
         margin-left: 0;
@@ -1336,38 +1385,13 @@ main {
     }
 
 /*...............................................................*/
-
-
-    .description-zone {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
+    .product-name{
+        font-size: 28px;
     }
 
-    .right-column{
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    .discount-percentage{
+        font-size: 22px;
     }
-    .right-column h1,
-    .right-column .product-rating,
-    .right-column .discount{
-        text-align: center;
-    }
-
-    .right-column .category{
-        display: none;
-    }
-
-
-    .product-name {
-        font-size: 24px;
-    }
-
 /*................................................................................*/
     /* Убираем отступы для мобильной версии */
     .cart-container,
@@ -1449,7 +1473,26 @@ main {
         height: 0.4px; /* Толщина линии */
         background-color: #666666; /* Цвет линии */
     }
+}
 
+@media (max-width: 450px) {
+    .product-name{
+        font-size: 25px;
+    }
 
+    .discount-percentage{
+        font-size: 18px;
+    }
 
+    .price{
+        font-size: 28px;
+    }
+
+    .original-price{
+        font-size: 20px;
+    }
+
+    .rating-value{
+        font-size: 20px;
+    }
 }

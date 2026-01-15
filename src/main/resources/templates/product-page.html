@@ -20,15 +20,6 @@
 
     <!-- Product Images Gallery -->
     <div class="product-gallery">
-        <div class="thumbnail-column">
-            <ul>
-                <!-- Генерируем миниатюры для всех изображений -->
-                <li th:each="image, iterStat : ${product.images}"
-                    onclick="showImageByIndex(this, [[${iterStat.index}]])">
-                    <img th:src="@{${image.image}}" alt="Product Thumbnail" class="thumbnail-img">
-                </li>
-            </ul>
-        </div>
         <div class="main-image-container" id="mainImageContainer">
             <div class="images-wrapper" id="imagesWrapper">
                 <!-- Использование Thymeleaf для динамического добавления изображений -->
@@ -37,6 +28,15 @@
                      alt="Main Product Image"
                      class="large-img">
             </div>
+        </div>
+        <div class="thumbnail-column">
+            <ul>
+                <!-- Генерируем миниатюры для всех изображений -->
+                <li th:each="image, iterStat : ${product.images}"
+                    onclick="showImageByIndex(this, [[${iterStat.index}]])">
+                    <img th:src="@{${image.image}}" alt="Product Thumbnail" class="thumbnail-img">
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -346,28 +346,27 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const wrapper = document.getElementById('imagesWrapper');
+        const slides = wrapper.querySelectorAll('.large-img');
         const thumbnails = document.querySelectorAll('.thumbnail-column li');
+
         let currentIndex = 0;
-        const total = thumbnails.length;
+        const total = slides.length;
 
         function showImage(index) {
             if (index < 0) index = 0;
             if (index >= total) index = total - 1;
 
             currentIndex = index;
-
             wrapper.style.transform = `translateX(-${index * 100}%)`;
 
             thumbnails.forEach(t => t.classList.remove('active'));
-            thumbnails[index].classList.add('active');
+            if (thumbnails[index]) thumbnails[index].classList.add('active');
         }
 
-        // Увеличенная зона клика
         thumbnails.forEach((thumb, index) => {
             thumb.addEventListener('click', () => showImage(index));
         });
 
-        // Свайп для мобильных
         let startX = 0;
         const container = document.getElementById('mainImageContainer');
 
@@ -377,18 +376,15 @@
 
         container.addEventListener('touchend', e => {
             const endX = e.changedTouches[0].clientX;
-
-            if (endX < startX - 50 && currentIndex < total - 1) showImage(currentIndex + 1);
-            if (endX > startX + 50 && currentIndex > 0) showImage(currentIndex - 1);
+            if (endX < startX - 50) showImage(currentIndex + 1);
+            if (endX > startX + 50) showImage(currentIndex - 1);
         });
 
-        // Стрелки на клавиатуре
         document.addEventListener('keydown', e => {
             if (e.key === "ArrowRight") showImage(currentIndex + 1);
             if (e.key === "ArrowLeft") showImage(currentIndex - 1);
         });
 
-        // Инициализация
         showImage(0);
     });
 </script>
