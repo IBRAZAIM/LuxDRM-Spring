@@ -107,3 +107,15 @@ CREATE TABLE cards(
     card_year VARCHAR(2) NOT NULL,
     cvv_code VARCHAR(3) NOT NULL
 );
+
+-- Синхронизация счетчика для характеристик
+SELECT setval(pg_get_serial_sequence('values', 'id'), (SELECT MAX(id) FROM "values"));
+
+-- Синхронизация счетчика для товаров
+SELECT setval(pg_get_serial_sequence('products', 'id'), (SELECT MAX(id) FROM products));
+
+SELECT MAX(id) FROM product_images;
+
+SELECT setval('product_images_id_seq', (SELECT MAX(id) FROM product_images));
+
+

@@ -48,32 +48,46 @@ public class ProductService implements AbstractService<Product> {
         deleteById(productId);
     }
 
-
+    @Transactional
     public void create(Product product, List<String> values, List<Long> optionsIds, Long categoryId, List<String> imageUrls, List<String> sizes) {
-        // Получаем категорию из репозитория для установки связи с продуктом
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
+
         product.setCategory(category);
-        productRepository.save(product);
-        // Создаем значения продукта
-        createValues(product, values, optionsIds);
-        // Создаем изображение продукта
-        productImageService.create(product, imageUrls);
-        //Создаем линейку размеров
-        productSizeService.saveSizes(product, sizes);
+
+        // Устанавливаем рейтинг и скидку по умолчанию
+        product.setRating(5.0);      // рейтинг как double
+        product.setDiscount(0);    // скидка в процентах, например 10% = 10.0
+
+        // Сохраняем продукт, чтобы получить ID
+        Product savedProduct = productRepository.save(product);
+
+        // Создаем характеристики
+        if (!optionsIds.isEmpty()) {
+            createValues(savedProduct, values, optionsIds);
+        }
+
+        // Создаем изображения
+        if (!imageUrls.isEmpty()) {
+            productImageService.create(savedProduct, imageUrls);
+        }
+
+        // Создаем размеры
+        if (sizes != null && !sizes.isEmpty()) {
+            productSizeService.saveSizes(savedProduct, sizes);
+        }
     }
 
+
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
-        if (optionsIds == null || optionsIds.isEmpty()) {
-            throw new IllegalArgumentException("Options IDs must not be null or empty");
-        }
         List<Option> options = optionRepository.findAllById(optionsIds);
-        if (values.size() != options.size()) {
-            throw new IllegalArgumentException("Values and options size mismatch");
-        }
 
         for (int i = 0; i < options.size(); i++) {
+            // Проверка, чтобы индекс values не вышел за границы, если юзер что-то не ввел
+            String valueText = (i < values.size()) ? values.get(i) : "";
+
             Value value = new Value();
-            value.setName(values.get(i));
+            value.setName(valueText);
             value.setProduct(product);
             value.setOption(options.get(i));
             valueRepository.save(value);

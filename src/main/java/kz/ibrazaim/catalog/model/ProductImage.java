@@ -17,7 +17,7 @@ public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private Long id; // ✅ теперь PostgreSQL сам ставит уникальный id
 
     @ManyToOne
     @JoinColumn(name = "product_id")

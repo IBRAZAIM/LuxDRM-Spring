@@ -1,5 +1,6 @@
 package kz.ibrazaim.catalog.controller;
 
+import kz.ibrazaim.catalog.exception.ProductCreateException;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.ProductSize;
 import kz.ibrazaim.catalog.model.Role;
@@ -9,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -62,23 +63,32 @@ public class ProductController {
     @PostMapping("/create")
     public String createProduct(
             @ModelAttribute("product") Product product,
-            @RequestParam(required = false) List<String> values,
-            @RequestParam("optionsIds[]") List<Long> optionsIds,
-            @RequestParam(defaultValue = "-1") Long categoryId,
-            @RequestParam("imageUrls[]") List<String> imageUrls,
-            @RequestParam("sizes") List<String> sizes
+            @RequestParam(value = "values", required = false) List<String> values,
+            @RequestParam(value = "optionsIds[]", required = false) List<Long> optionsIds,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam(value = "imageUrls[]", required = false) List<String> imageUrls,
+            @RequestParam(value = "sizes[]", required = false) List<String> sizes,
+            RedirectAttributes redirectAttributes
     ) {
-        if (categoryId == -1) {
-            return "redirect:/products/create/chooseCategory";
+        try {
+            productService.create(
+                    product,
+                    values != null ? values : List.of(),
+                    optionsIds != null ? optionsIds : List.of(),
+                    categoryId,
+                    imageUrls != null ? imageUrls : List.of(),
+                    sizes != null ? sizes : List.of()
+            );
+            return "redirect:/products";
+        } catch (Exception e) {
+            // Логируем ошибку, чтобы видеть её в консоли
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Ошибка при создании: " + e.getMessage());
+            return "redirect:/products/create?categoryId=" + categoryId;
         }
-//        System.out.println("optionsIds: " + optionsIds);
-//        for (String size : sizes){
-//            System.out.println("size: " + size);
-//        }
-//        System.out.println("Image URLs: " + imageUrls);
-        productService.create(product, values, optionsIds, categoryId, imageUrls, sizes);
-        return "redirect:/products";
     }
+
+
 
     @GetMapping("create/chooseCategory")
     public String chooseCategory(Model model) {
