@@ -1,46 +1,108 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" th:href="@{/updateForm.css}">
-        <title>Create Category</title>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Создание категории</h1>
-            <form action="/categories/create" th:object="${category}" method="post" class="createForm" onsubmit="return validateForm()">
-                <label for="name">Название категории:</label>
-                <input type="text" id="name" th:field="*{name}" required>
-                <label for="name">Добавление Характеристик</label>
-                <div id="characterContainer">
-                    <script th:inline="javascript">
-                        function addCharacter() {
-                            var characterInput = document.createElement("input");
-                            characterInput.type = "text";
-                            characterInput.name = "character";
-                            characterInput.required = true;
-                            characterInput.setAttribute("name", "optionNames");
-                            document.getElementById("characterContainer").appendChild(characterInput);
-                        }
-                    </script>
-                </div>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание категории</title>
+    <link rel="stylesheet" th:href="@{/updateForm.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Создание категории</h1>
+    <p class="subtitle">Категория определяет набор характеристик товара</p>
 
-                <button type="button" onclick="addCharacter()">Добавить</button>
-<!--                <input type="hidden" name="optionNames">-->
+    <form th:action="@{/categories/create}" th:object="${category}" method="post" id="categoryForm">
 
-
-                <p><input type="submit" value="Создать"></p>
-            </form>
+        <!-- Название -->
+        <div class="form-group">
+            <label for="name">Название категории</label>
+            <input id="name" type="text" th:field="*{name}" placeholder="Например: Премиальные стейки">
+            <span class="error" id="nameError"></span>
         </div>
-        <script th:inline="javascript">
-            function validateForm() {
-                var categoryName = document.getElementById("name").value;
-                if (categoryName.trim() === '') {
-                    alert("Пожалуйста, введите название категории.");
-                    return false;
-                }
-                return true;
+
+        <!-- Характеристики -->
+        <div class="form-section">
+            <div class="section-header">
+                <label>Характеристики</label>
+                <span class="hint">Будут доступны при создании товара</span>
+            </div>
+
+            <div id="characterContainer" class="options-list empty">
+                <span class="empty-text">Характеристики не добавлены</span>
+            </div>
+
+            <button type="button" class="add-product-btn" onclick="addCharacter()" aria-label="Добавить характеристику">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        <!-- Действие -->
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Создать категорию</button>
+        </div>
+    </form>
+</div>
+<script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+<script>
+    function addCharacter() {
+        const container = document.getElementById("characterContainer");
+        container.classList.remove("empty");
+        container.querySelector(".empty-text")?.remove();
+
+        const row = document.createElement("div");
+        row.className = "option-row";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.name = "optionNames";
+        input.placeholder = "Например: Вес, Степень прожарки";
+        input.required = true;
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "remove-btn";
+        remove.innerHTML = '<i class="fas fa-times"></i>';
+        remove.setAttribute("aria-label", "Удалить характеристику");
+
+        // Исправлено: после удаления проверяем, пуст ли контейнер
+        remove.onclick = () => {
+            row.remove();
+            if (container.querySelectorAll('.option-row').length === 0) {
+                container.classList.add("empty");
+                const emptyText = document.createElement("span");
+                emptyText.className = "empty-text";
+                emptyText.textContent = "Характеристики не добавлены";
+                container.appendChild(emptyText);
             }
-        </script>
-    </body>
+        };
+
+        row.append(input, remove);
+        container.appendChild(row);
+        input.focus();
+    }
+
+
+    document.getElementById("categoryForm").addEventListener("submit", e => {
+        const name = document.getElementById("name");
+        const error = document.getElementById("nameError");
+        const options = document.querySelectorAll('input[name="optionNames"]');
+
+        if (!name.value.trim()) {
+            e.preventDefault();
+            error.textContent = "Название категории обязательно";
+            name.focus();
+            return;
+        }
+
+        let hasEmpty = false;
+        options.forEach(opt => {
+            if (!opt.value.trim()) hasEmpty = true;
+        });
+
+        if (hasEmpty) {
+            e.preventDefault();
+            alert("Все добавленные характеристики должны быть заполнены");
+        }
+    });
+</script>
+</body>
 </html>

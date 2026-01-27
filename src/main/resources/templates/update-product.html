@@ -1,31 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
+    <title>Обновление товара</title>
     <link rel="stylesheet" th:href="@{/updateForm.css}">
-    <title>Update Product</title>
 </head>
 <body>
-    <div class="container">
-        <h2>Обновление товара</h2>
-        <form th:action="@{|${product.getId()}|}" th:object="${product}" method="post" class="form">
-            <input type="hidden" th:field="*{id}">
-            <label>Название:</label>
-            <input type="text" th:field="*{name}">
-            <br>
-            <label>Цена:</label>
-            <input type="text" th:field="*{price}">
-            <br>
-            <label>Характеристики:</label>
-            <table>
-                <tr th:each="entry : ${options}" class="options">
-                    <input type="hidden" name="optionIds" th:value="${entry.getKey().id}">
-                    <td><label th:text="${entry.getKey().getName()}"></label></td>
-                    <td><input type="text" th:value="${entry.getValue().isPresent() ? entry.getValue().get().name : ''}" name="values"></td>
-                </tr>
-            </table>
-            <input type="submit" value="Обновить">
-        </form>
-    </div>
+<div class="container">
+    <h1>Обновление товара</h1>
+    <p class="subtitle">Изменения сохраняются сразу после отправки</p>
+
+    <form th:action="@{/products/update/{id}(id=${product.id})}" th:object="${product}" method="post">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-section">
+            <div class="form-group">
+                <label>Название товара</label>
+                <input type="text" th:field="*{name}" placeholder="Название товара">
+            </div>
+
+            <div class="form-group">
+                <label>Цена</label>
+                <input type="text" th:field="*{price}" placeholder="₸">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <label>Характеристики</label>
+            <div class="options-list">
+                <div class="option-row" th:each="entry : ${options}">
+                    <input type="hidden" name="optionIds" th:value="${entry.key.id}">
+                    <span class="option-name" th:text="${entry.key.name}"></span>
+                    <input type="text" name="values"
+                           th:value="${entry.value.isPresent() ? entry.value.get().name : ''}"
+                           placeholder="Введите значение">
+                </div>
+
+                <div th:if="${#lists.isEmpty(options)}" class="empty-text">
+                    Характеристики отсутствуют
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions sticky">
+            <button class="btn-primary" type="submit">Сохранить изменения</button>
+        </div>
+    </form>
+</div>
 </body>
 </html>
+
+

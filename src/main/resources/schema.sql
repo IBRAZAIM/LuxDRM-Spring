@@ -1,14 +1,15 @@
+CREATE DATABASE uxd;
+
+CREATE TABLE categories
+(
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
+
 CREATE TABLE options(
                         id SERIAL PRIMARY KEY,
                         name VARCHAR(255),
                         category_id INT REFERENCES categories(id)
-);
-
-CREATE TABLE values(
-                       id SERIAL PRIMARY KEY,
-                       name VARCHAR(255),
-                       product_id INT REFERENCES products(id),
-                       options_id INT REFERENCES options(id)
 );
 
 CREATE TABLE products
@@ -19,28 +20,17 @@ CREATE TABLE products
     description TEXT CHECK (char_length(description) <= 5000),
     category_id INT REFERENCES categories(id)
 );
+
 ALTER TABLE products ADD COLUMN description TEXT CHECK (char_length(description) <= 5000);
+ALTER TABLE products ADD COLUMN url_image VARCHAR(255);
+ALTER TABLE products DROP COLUMN url_image;
 
-CREATE TABLE categories
-(
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL
-);
 
-CREATE TABLE orders
-(
-    id               BIGSERIAL PRIMARY KEY,
-    user_id          BIGINT REFERENCES users (id) NOT NULL,
-    serial_number VARCHAR(50),
-    status VARCHAR(255),
-    email            VARCHAR(255),
-    phone            VARCHAR(20),
-    full_name       VARCHAR(100),
-    country          VARCHAR(30),
-    city             VARCHAR(34),
-    address          VARCHAR(255) NOT NULL,
-    postal_code      VARCHAR(20),
-    date    TIMESTAMP
+CREATE TABLE values(
+                       id SERIAL PRIMARY KEY,
+                       name VARCHAR(255),
+                       product_id INT REFERENCES products(id),
+                       options_id INT REFERENCES options(id)
 );
 
 CREATE TABLE users
@@ -54,6 +44,21 @@ CREATE TABLE users
     registration_date TIMESTAMP
 );
 
+CREATE TABLE orders
+(
+    id               BIGSERIAL PRIMARY KEY,
+    user_id          BIGINT REFERENCES users (id) NOT NULL,
+    serial_number VARCHAR(50),
+    status VARCHAR(20),
+    email            VARCHAR(255),
+    phone            VARCHAR(20),
+    full_name       VARCHAR(100),
+    country          VARCHAR(30),
+    city             VARCHAR(34),
+    address          VARCHAR(255) NOT NULL,
+    postal_code      VARCHAR(20),
+    date    TIMESTAMP
+);
 
 CREATE TABLE reviews
 (
@@ -79,10 +84,6 @@ CREATE TABLE cart (
     product_id INT REFERENCES products(id) NOT NULL,
     quantity INT NOT NULL
 );
-
-ALTER TABLE products ADD COLUMN url_image VARCHAR(255);
-ALTER TABLE products DROP COLUMN url_image;
-
 
 CREATE TABLE product_images(
     id BIGSERIAL PRIMARY KEY,

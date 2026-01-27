@@ -13,30 +13,41 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(AbstractHttpConfigurer::disable)
+
+        // Handler для редиректа после логина
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setDefaultTargetUrl("/main"); // если предыдущей страницы нет
+
+        http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(
-                            "/products/addComment",
-                            "/cart",
-                            "/checkout",
-                            "/orders",
-                            "/reviews").authenticated();
-                    auth.anyRequest().permitAll();
-                })
-                .formLogin(formLogin -> formLogin
+                .authorizeHttpRequests(auth -> auth
+                        // защищённые URL
+                        .requestMatchers(
+                                "/products/addComment",
+                                "/cart",
+                                "/checkout",
+                                "/orders",
+                                "/reviews"
+                        ).authenticated()
+                        // остальные — доступны всем
+                        .anyRequest().permitAll()
+                )
+                .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/main", true)  // Устанавливаем страницу по умолчанию после успешного входа
-                        .successHandler(new SavedRequestAwareAuthenticationSuccessHandler())  // Сохраняем предыдущий запрос
-                        .permitAll())
+                        .successHandler(successHandler) // редирект на предыдущую страницу или /main
+                        .permitAll()
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/main")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                        .permitAll());
+                        .permitAll()
+                );
+
         return http.build();
     }
 

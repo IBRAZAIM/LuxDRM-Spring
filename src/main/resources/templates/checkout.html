@@ -11,6 +11,7 @@
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
+<!--TODO: Сводку заказа-->
 <!--    <div class="order-summary">-->
 <!--        <h2>Сводка заказа</h2>-->
 <!--        <ul class="order-items">-->
@@ -26,6 +27,8 @@
 <!--        </div>-->
 <!--    </div>-->
 <form th:action="@{/checkout}" method="post" class="checkout-container">
+    <!-- Сразу передаем итоговую стоимость-->
+    <input type="hidden" name="totalPrice" th:value="${totalPrice}">
     <div class="left-part">
         <h2>Оформление заказа</h2>
         <div class="input-zone">
@@ -59,15 +62,15 @@
                                 <span class="checkbox-text">Бесплатно</span>
                             </div>
                         </label>
-                        <!--                            <label class="checkbox-option">-->
-                        <!--                                <input type="checkbox" class="checkbox-input delivery-option" id="option2">-->
-                        <!--                                <span class="checkbox-icon"></span>-->
-                        <!--                                <div class="checkbox-details">-->
-                        <!--                                    <span class="checkbox-text">Стандарт+</span>-->
-                        <!--                                    <span class="checkbox-text">3-5 дней</span>-->
-                        <!--                                    <span class="checkbox-text">3500тг</span>-->
-                        <!--                                </div>-->
-                        <!--                            </label>-->
+                        <label class="checkbox-option">
+                            <input type="checkbox" class="checkbox-input delivery-option" id="option2">
+                            <span class="checkbox-icon"></span>
+                            <div class="checkbox-details">
+                                <span class="checkbox-text">Премиум+</span>
+                                <span class="checkbox-text">3-5 дней</span>
+                                <span class="checkbox-text">5600тг</span>
+                            </div>
+                        </label>
                         <label class="checkbox-option">
                             <input type="checkbox" class="checkbox-input" id="option5">
                             <span class="checkbox-icon private-policy"></span>

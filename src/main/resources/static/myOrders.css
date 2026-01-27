@@ -98,16 +98,24 @@ td {
     text-transform: uppercase; /* Добавляет солидность */
 }
 
-.status[data-status="Подтверждено"] {
-    color: #2E7D32;
+.status[data-status="В ожидании"] {
+    color: #EF6C00; /* Темно-оранжевый текст */
 }
 
 .status[data-status="Оформлено"] {
-    color: #EF6C00; /* Темно-оранжевый текст */
+    color: #0f0f6e;
 }
 
 .status[data-status="Отменено"] {
     color: #C62828; /* Бордовый текст */
+}
+
+.status[data-status="Отправлено"] {
+    color: #2E7D32;
+}
+
+.status[data-status="Доставлено"] {
+    color: #119b08;
 }
 
 .total{

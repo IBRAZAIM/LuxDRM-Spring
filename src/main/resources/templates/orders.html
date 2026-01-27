@@ -34,8 +34,8 @@
                     <form th:action="@{/orders/updateStatus}" method="post">
                         <input type="hidden" th:name="orderId" th:value="${order.id}">
                         <select th:name="status">
-                            <option th:selected="${order.status == null || order.status == ''}" value="">Оформлено</option>
-                            <option th:selected="${order.status == 'В ожидании'}" value="В ожидании">В ожидании</option>
+                            <option th:selected="${order.status == null || order.status == ''}" value="">В ожидании</option>
+                            <option th:selected="${order.status == 'В ожидании'}" value="В ожидании">Оформлено</option>
                             <option th:selected="${order.status == 'Отправлено'}" value="Отправлено">Отправлено</option>
                             <option th:selected="${order.status == 'Доставлено'}" value="Доставлено">Доставлено</option>
                             <option th:selected="${order.status == 'Отменено'}" value="Отменено">Отменено</option>

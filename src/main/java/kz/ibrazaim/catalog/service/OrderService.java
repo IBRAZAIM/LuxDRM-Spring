@@ -26,7 +26,7 @@ public class OrderService {
         try {
             Order order = new Order();
             order.setUser(user);
-            order.setStatus("Оформлено");
+            order.setStatus("В ожидании");
             order.setEmail(email);
             order.setPhone(phone);
             order.setFullName(fullName);
