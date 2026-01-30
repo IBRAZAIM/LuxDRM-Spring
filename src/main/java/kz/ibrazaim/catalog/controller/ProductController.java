@@ -64,7 +64,7 @@ public class ProductController {
     public String createProduct(
             @ModelAttribute("product") Product product,
             @RequestParam(value = "values", required = false) List<String> values,
-            @RequestParam(value = "optionsIds[]", required = false) List<Long> optionsIds,
+            @RequestParam(value = "optionsIds", required = false) List<Long> optionsIds,
             @RequestParam("categoryId") Long categoryId,
             @RequestParam(value = "imageUrls[]", required = false) List<String> imageUrls,
             @RequestParam(value = "sizes[]", required = false) List<String> sizes,

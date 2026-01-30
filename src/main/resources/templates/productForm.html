@@ -1,98 +1,141 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" th:href="@{/createForm.css}">
   <title>Создание товара</title>
+  <link rel="stylesheet" th:href="@{/updateForm.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div class="container">
   <h1>Создание товара</h1>
-  <h2 th:text="${category.getName()}"></h2>
-  <form action="/products/create" th:object="${product}" method="post" enctype="multipart/form-data" class="form">
-    <input type="hidden" name="categoryId" th:value="${category.getId()}">
-    <input type="hidden" th:field="*{id}">
+  <p class="subtitle">Заполните информацию о товаре</p>
 
-    <label>Название:</label>
-    <input id="name" name="name" required>
-    <br>
-
-    <label>Цена:</label>
-    <input id="price" name="price" type="number" required>
-    <br>
-
-    <label>Описание:</label>
-    <textarea id="description" name="description" rows="3" required></textarea>
-    <br>
-
-    <label>Характеристики:</label>
-    <table>
-      <tr th:each="option : ${category.getOptionList()}" class="options">
-        <input type="hidden" name="optionsIds[]" th:value="${option.id}" th:if="${option.id != null}">
-        <td><label th:text="${option.name}"></label></td>
-        <td><input name="values" required></td>
-      </tr>
-    </table>
-    <br>
-
-    <label>Линейка размеров:</label>
-    <div id="sizes-container"></div>
-    <button type="button" id="add-size-btn">Добавить размер</button>
-    <br>
-
-    <label>Изображения товара:</label>
-    <div id="images-container"></div>
-    <button type="button" id="add-image-btn">Добавить изображение</button>
-    <br>
-
-    <!-- Для отображения сообщения об ошибке -->
-    <div id="image-error" style="color: red; display: none;">
-      Пожалуйста, добавьте хотя бы одно изображение товара.
+  <form th:action="@{/products/create}" th:object="${product}" method="post">
+    <input type="hidden" name="categoryId" th:value="${category.id}">
+    <!-- Основная информация -->
+    <div class="form-section">
+      <div class="form-group">
+        <label>Название товара</label>
+        <input type="text" name="name" placeholder="Название товара" required>
+      </div>
+      <div class="form-group">
+        <label>Цена (₸)</label>
+        <label>
+          <input type="text" name="price" placeholder="Цена" required>
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Описание</label>
+        <label>
+          <textarea name="description" placeholder="Описание товара"></textarea>
+        </label>
+      </div>
     </div>
 
-    <input type="submit" value="Создать" class="create-btn">
+    <!-- Характеристики -->
+    <div class="form-section">
+      <label>Характеристики</label>
+      <div class="options-list">
+        <div class="option-row" th:each="option : ${category.optionList}">
+          <span class="option-name" th:text="${option.name}"></span>
+          <input type="hidden" name="optionsIds" th:value="${option.id}" th:if="${option.id != null}">
+          <input type="text" name="values" placeholder="Введите значение" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <label>Размеры</label>
+      <div id="sizes" class="items-list" data-empty-text="Пока нет размеров. Нажмите + чтобы добавить.">
+        <span class="empty-text">Пока нет размеров. Нажмите + чтобы добавить.</span>
+      </div>
+      <button type="button" class="add-product-btn" onclick="addItem('sizes', 'Size')">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+
+    <!-- Изображения -->
+    <div class="form-section">
+      <label>Изображения</label>
+      <div id="images" class="items-list" data-empty-text="Изображения не добавлены. Пожалуйста добавьте URL-изображения!">
+        <span class="empty-text">Изображения не добавлены. Пожалуйста добавьте URL-изображения!</span>
+      </div>
+      <button type="button" class="add-product-btn" onclick="addItem('images', 'URL изображения')">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+
+    <!-- Submit -->
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Создать товар</button>
+    </div>
   </form>
 </div>
-
 <script>
-  // Добавление нового поля для размера
-  document.getElementById('add-size-btn').addEventListener('click', function () {
-    const sizesContainer = document.getElementById('sizes-container');
-    const newSizeInput = document.createElement('input');
-    newSizeInput.type = 'text';
-    newSizeInput.name = 'sizes[]';
-    newSizeInput.placeholder = 'Размер';
-    sizesContainer.appendChild(newSizeInput);
-  });
+  function addItem(listId, placeholder) {
+    const list = document.getElementById(listId);
 
-  // Добавление нового поля для изображения
-  document.getElementById('add-image-btn').addEventListener('click', function () {
-    const imagesContainer = document.getElementById('images-container');
-    const newImageInput = document.createElement('input');
-    newImageInput.type = 'text';
-    newImageInput.name = 'imageUrls[]';  // Ensure the name is correct
-    newImageInput.placeholder = 'Введите ссылку на изображение';
-    imagesContainer.appendChild(newImageInput);
-  });
+    // Убираем текст-подсказку
+    const emptyText = list.querySelector('.empty-text');
+    if (emptyText) emptyText.remove();
 
-  // Проверка на наличие хотя бы одного изображения перед отправкой формы
-  document.querySelector('form').addEventListener('submit', function (event) {
-    const imageInputs = document.querySelectorAll('[name="imageUrls[]"]');
-    let isEmpty = true;
+    // Создаем контейнер
+    const container = document.createElement('div');
+    container.className = 'option-row';
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.gap = '6px';
 
-    // Проверяем, что хотя бы одно поле не пустое
-    imageInputs.forEach(input => {
-      if (input.value.trim() !== '') {
-        isEmpty = false;
-      }
-    });
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = placeholder;
+    input.name = listId === 'sizes' ? 'sizes[]' : 'imageUrls[]';
 
-    // Если все поля пустые, показываем ошибку и предотвращаем отправку
-    if (isEmpty) {
-      event.preventDefault();
-      document.getElementById('image-error').style.display = 'block';
+    // Для изображений добавляем превью перед input
+    if (listId === 'images') {
+      const preview = document.createElement('img');
+      preview.style.display = 'none';
+      preview.style.width = '60px';
+      preview.style.height = '60px';
+      preview.style.objectFit = 'cover';
+      preview.style.border = '1px solid #ccc';
+      container.appendChild(preview);
+      container.appendChild(input);
+
+      input.addEventListener('input', () => {
+        const url = input.value.trim();
+        if (!url) return preview.style.display = 'none';
+
+        const imgTest = new Image();
+        imgTest.onload = () => { preview.src = url; preview.style.display = 'inline-block'; };
+        imgTest.onerror = () => preview.style.display = 'none';
+        imgTest.src = url;
+      });
+    } else {
+      container.appendChild(input); // для размеров
     }
-  });
+
+    // Кнопка удаления
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-btn';
+    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    removeBtn.onclick = () => { container.remove(); checkEmpty(list); };
+    container.appendChild(removeBtn);
+
+    list.appendChild(container);
+  }
+
+  // Проверка пустого списка
+  function checkEmpty(list) {
+    if (!list.querySelector('.option-row')) {
+      const empty = document.createElement('span');
+      empty.className = 'empty-text';
+      empty.innerText = list.dataset.emptyText;
+      list.appendChild(empty);
+    }
+  }
 </script>
 </body>
 </html>
