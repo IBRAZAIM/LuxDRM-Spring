@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/categoryList.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
     <title>Categories List</title>
 </head>
 <body>
+<div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
     <div class="container">
-        <h1>Categories List</h1>
+        <h1>Список категорий</h1>
         <table>
             <thead>
             <tr>
@@ -22,6 +25,10 @@
             </tr>
             </tbody>
         </table>
+        <a th:href="@{'/categories/create'}" class="add-product-btn"><i class="fas fa-plus"></i></a>
     </div>
+    <div th:insert="~{footer :: footer-code}"></div>
+    <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+    <script th:src="@{/js/navbar-component.js}" defer></script>
 </body>
 </html>

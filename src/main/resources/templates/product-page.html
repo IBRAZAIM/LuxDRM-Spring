@@ -227,10 +227,7 @@
     </div>
 </div>
 <div th:insert="~{footer :: footer-code}"></div>
-
-<!--<div th:if="${#authorization.expression('isAuthenticated()')}">-->
-<!--    <div th:insert="~{userPanel :: user-panel}" id="userPanel" class="user-panel"></div>-->
-<!--</div>-->
+<script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
     // Modal for adding review
     document.addEventListener("DOMContentLoaded", function() {
@@ -387,17 +384,6 @@
 
         showImage(0);
     });
-</script>
-
-<script>
-    // Функция для открытия/закрытия боковой панели
-    function togglePanel() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('overlay');
-
-        sidebar.classList.toggle('open');  // Открыть или закрыть панель
-        overlay.classList.toggle('show');  // Показать или скрыть фон
-    }
 </script>
 <script>
     window.addEventListener("DOMContentLoaded", () => {

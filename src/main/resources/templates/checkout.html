@@ -192,6 +192,7 @@
     </div>
 </form>
 <div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
 </body>
 <script>
     // Функция для обеспечения выбора только одного чекбокса в группе
@@ -364,16 +365,6 @@
         document.querySelector(".card-div").classList.remove("flipped");
     });
 
-</script>
-<script>
-    // Функция для открытия/закрытия боковой панели
-    function togglePanel() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('overlay');
-
-        sidebar.classList.toggle('open');  // Открыть или закрыть панель
-        overlay.classList.toggle('show');  // Показать или скрыть фон
-    }
 </script>
 </html>
 

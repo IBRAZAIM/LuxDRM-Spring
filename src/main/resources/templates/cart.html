@@ -121,6 +121,7 @@
 </div>
 <div th:insert="~{footer :: footer-code}"></div>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var quantityInputs = document.querySelectorAll('input[type="number"]');
@@ -186,16 +187,6 @@
             finalTotalElement.textContent = formatNumber(value) + ' ₸';
         }
     });
-</script>
-<script>
-    // Функция для открытия/закрытия боковой панели
-    function togglePanel() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('overlay');
-
-        sidebar.classList.toggle('open');  // Открыть или закрыть панель
-        overlay.classList.toggle('show');  // Показать или скрыть фон
-    }
 </script>
 </body>
 </html>

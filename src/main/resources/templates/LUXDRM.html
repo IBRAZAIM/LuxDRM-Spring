@@ -50,53 +50,20 @@
 </div>
 <div th:insert="~{footer :: footer-code}"></div>
 </body>
+<script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
-    // Функция для открытия/закрытия боковой панели
-    function togglePanel() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('overlay');
-
-        sidebar.classList.toggle('open');  // Открыть или закрыть панель
-        overlay.classList.toggle('show');  // Показать или скрыть фон
-    }
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", () => {
         const backToTop = document.getElementById("backToTop");
+        const SHOW_AFTER = 200;
 
-        // Флаг для предотвращения конфликтов во время скролла
-        let isScrolling = false;
-
-        // Отслеживание скролла для показа/скрытия кнопки
         window.addEventListener("scroll", () => {
-            if (!isScrolling) {
-                if (window.scrollY > 200) {
-                    backToTop.classList.add("show");
-                } else {
-                    backToTop.classList.remove("show");
-                }
-            }
-        });
+            backToTop.classList.toggle("show", window.scrollY > SHOW_AFTER);
+        }, { passive: true });
 
-        // Обработка клика на кнопку
         backToTop.addEventListener("click", (e) => {
             e.preventDefault();
-
-            // Устанавливаем флаг, чтобы избежать конфликтов
-            isScrolling = true;
-
-            // Прокрутка наверх
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-            // Снимаем флаг через небольшой интервал
-            setTimeout(() => {
-                isScrolling = false;
-            }, 1000); // Длительность плавной прокрутки
+            window.scrollTo({ top: 0, behavior: "smooth" });
         });
     });
-
 </script>
 </html>

@@ -10,6 +10,14 @@ h1, h2, p {
     font-family: Montserrat, sans-serif;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /*.navigation-panel{*/
 /*    width: 100%;*/
 /*}*/
