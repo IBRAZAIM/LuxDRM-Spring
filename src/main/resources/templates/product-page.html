@@ -109,7 +109,9 @@
                             </div>
                         </div>
                         <div class="add-cart-div">
-                            <button type="submit" class="add-to-cart">Добавить в корзину</button>
+                            <button type="submit" class="add-to-cart" id="add-to-cart-btn" disabled>Добавить в корзину
+                            </button>
+                            <span id="size-error" class="size-error" role="alert">Пожалуйста, выберите размер</span>
                         </div>
                     </div>
                 </form>
@@ -229,117 +231,93 @@
 <div th:insert="~{footer :: footer-code}"></div>
 <script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
-    // Modal for adding review
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", () => {
+        // --- Модальное окно ---
         const modal = document.getElementById("commentModal");
         const openModalBtn = document.getElementById("openModalBtn");
         const closeModalBtn = document.querySelector(".close-btn");
 
-        openModalBtn.onclick = function() {
-            modal.style.display = "block";
-        }
+        openModalBtn?.addEventListener("click", () => modal.style.display = "block");
+        closeModalBtn?.addEventListener("click", () => modal.style.display = "none");
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) modal.style.display = "none";
+        });
 
-        closeModalBtn.onclick = function() {
-            modal.style.display = "none";
-        }
+        // --- Счетчик количества ---
+        const updateQuantity = (inputSelector, delta) => {
+            const input = document.querySelector(inputSelector);
+            if (!input) return;
+            const value = parseInt(input.value) || 0;
+            const min = parseInt(input.parentNode.getAttribute('data-min')) || 0;
+            const max = parseInt(input.parentNode.getAttribute('data-max')) || Infinity;
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    });
+            const newValue = value + delta;
+            if (newValue >= min && newValue <= max) input.value = newValue;
+        };
 
-    function increment() {
-        var input = document.querySelector('.number-text');
-        var value = parseInt(input.value);
-        var max = parseInt(input.parentNode.getAttribute('data-max'));
-        if (value < max) {
-            input.value = value + 1;
-        }
-    }
+        window.increment = () => updateQuantity('.number-text', 1);
+        window.decrement = () => updateQuantity('.number-text', -1);
 
-    function decrement() {
-        var input = document.querySelector('.number-text');
-        var value = parseInt(input.value);
-        var min = parseInt(input.parentNode.getAttribute('data-min'));
-        if (value > min) {
-            input.value = value - 1;
-        }
-    }
+        // --- Форматирование цены ---
+        const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-    // Функция для форматирования числа с пробелами
-    function formatPrice(price) {
-        return price.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    }
+        const priceElements = [
+            "formattedDiscountPrice",
+            "formattedOriginalPrice",
+            "formattedPrice"
+        ];
 
-    // Форматируем цену со скидкой
-    var discountPriceElement = document.getElementById("formattedDiscountPrice");
-    if (discountPriceElement) {
-        var discountPrice = discountPriceElement.innerText;
-        var formattedDiscountPrice = formatPrice(discountPrice);
-        discountPriceElement.innerText = formattedDiscountPrice + " ₸";
-    }
+        priceElements.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = formatPrice(el.innerText) + " ₸";
+        });
 
-    // Форматируем оригинальную цену
-    var originalPriceElement = document.getElementById("formattedOriginalPrice");
-    if (originalPriceElement) {
-        var originalPrice = originalPriceElement.innerText;
-        var formattedOriginalPrice = formatPrice(originalPrice);
-        originalPriceElement.innerText = formattedOriginalPrice + " ₸";
-    }
-
-    // Форматируем цену, если нет скидки
-    var priceElement = document.getElementById("formattedPrice");
-    if (priceElement) {
-        var price = priceElement.innerText;
-        var formattedPrice = formatPrice(price);
-        priceElement.innerText = formattedPrice + " ₸";
-    }
-
-    //Разделы
-    document.addEventListener("DOMContentLoaded", () => {
+        // --- Табы ---
         const buttons = document.querySelectorAll(".tab-button");
         const sections = document.querySelectorAll(".tab-section");
-        // Скрываем все секции при загрузке
+
         sections.forEach(section => section.classList.remove("active"));
-        // Показываем секцию, соответствующую первой активной кнопке
-        document.getElementById("description-section").classList.add("active");
+        document.getElementById("description-section")?.classList.add("active");
+
         buttons.forEach(button => {
             button.addEventListener("click", () => {
                 const tabId = button.getAttribute("data-tab");
-                // Скрываем все секции
                 sections.forEach(section => section.classList.remove("active"));
-                // Отображаем только нужную секцию
-                document.getElementById(`${tabId}-section`).classList.add("active");
-                // Меняем активный класс у кнопок
+                document.getElementById(`${tabId}-section`)?.classList.add("active");
                 buttons.forEach(btn => btn.classList.remove("active"));
                 button.classList.add("active");
             });
         });
+
+        // --- Выбор размера ---
+        window.selectSize = (element) => {
+            const addButton = document.getElementById('add-to-cart-btn');
+            const selectedInput = document.getElementById('selected-size');
+
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selectedInput.value = '';
+                addButton.disabled = true;
+            } else {
+                document.querySelectorAll('.size-label-btn').forEach(size => size.classList.remove('selected'));
+                element.classList.add('selected');
+                selectedInput.value = element.textContent.trim();
+                addButton.disabled = false;
+            }
+        };
+
+        // --- Проверка формы ---
+        const form = document.querySelector('form');
+        form?.addEventListener('submit', (e) => {
+            const selectedSize = document.getElementById('selected-size')?.value;
+            if (!selectedSize) {
+                e.preventDefault();
+                document.getElementById('size-error').style.display = 'inline';
+            }
+        });
     });
-    function selectSize(element) {
-        // Проверяем, был ли уже выбран этот размер
-        if (element.classList.contains('selected')) {
-            // Если выбран, отменяем выбор
-            element.classList.remove('selected');
-            // Сбрасываем значение скрытого поля
-            document.getElementById('selected-size').value = '';
-        } else {
-            // Если не выбран, добавляем класс "selected" и удаляем его с других элементов
-            var allSizes = document.querySelectorAll('.size-label-btn');
-            allSizes.forEach(function(size) {
-                size.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            // Устанавливаем значение выбранного размера в скрытое поле
-            document.getElementById('selected-size').value = element.textContent.trim();
-        }
-    }
-
-
-
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const wrapper = document.getElementById('imagesWrapper');

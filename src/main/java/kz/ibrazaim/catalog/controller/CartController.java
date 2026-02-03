@@ -6,6 +6,7 @@ import kz.ibrazaim.catalog.repository.CartItemRepository;
 import kz.ibrazaim.catalog.service.CartService;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,5 +45,9 @@ public class CartController {
         }
         return "redirect:/cart";
     }
+
+
+
 }
+
 

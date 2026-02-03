@@ -752,6 +752,13 @@ main {
     border-color: #9a073d; /* Красная граница */
 }
 
+.size-error {
+    color: #ff7300;
+    font-size: 0.9em;
+    display: none;
+    margin-left: 8px;
+}
+
 /* Основной стиль секции продуктов */
 .products-section {
     margin: 60px auto;

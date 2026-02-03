@@ -43,7 +43,7 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryId", categoryId);
-        model.addAttribute("cartItemsCount", cartService.getCartItemsCount());
+        model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
         if (user != null && user.getRole().equals(Role.ADMIN.getServiceName())) {
             return "productsByAdmin";
         }
@@ -101,10 +101,11 @@ public class ProductController {
             @PathVariable("id") long id,
             Model model
     ) {
+        User user = userService.getUser();
         Product product = productService.findById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
-        int cartItemsCount = cartService.getCartItemsCount(); // Метод для получения количества товаров в корзине
+        int cartItemsCount = cartService.getCartItemsCountByUser(user); // Метод для получения количества товаров в корзине
         model.addAttribute("cartItemsCount", cartItemsCount);
         return "update-product";
     }
@@ -141,17 +142,17 @@ public class ProductController {
             @PathVariable Long id,
             Model model
     ) {
+        User user = userService.getUser();
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         model.addAttribute("products", productService.findAll());
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
         model.addAttribute("imageUrls", productImageService.findAllByProduct(product));
-        model.addAttribute("cartItemsCount", cartService.getCartItemsCount());
+        model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
         List<ProductSize> sizes = productSizeService.findByProduct(product);
         model.addAttribute("sizes", sizes);
 
-        User user = userService.getUser();
         if (user != null) {
             model.addAttribute("user", user);
         } else {

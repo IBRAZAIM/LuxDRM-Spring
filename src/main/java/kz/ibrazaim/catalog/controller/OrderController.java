@@ -32,7 +32,7 @@ public class OrderController {
         model.addAttribute("user",user);
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
         model.addAttribute("orderItems", cartItems);
-        int totalPrice = cartService.returnTotalPrice(cartItems);
+        int totalPrice = cartService.totalPrice(cartItems);
         model.addAttribute("totalPrice", totalPrice);
         return "checkout";
     }
@@ -64,7 +64,7 @@ public class OrderController {
     @GetMapping("/orders")
     public String showOrders(Model model) {
         User user = userService.getUser();
-        int cartItemsCount = cartService.getCartItemsCount(); // Метод для получения количества товаров в корзине
+        int cartItemsCount = cartService.getCartItemsCountByUser(user); // Метод для получения количества товаров в корзине
         model.addAttribute("cartItemsCount", cartItemsCount);
         // Проверка на авторизованного пользователя
         if (user == null) {
@@ -118,7 +118,7 @@ public class OrderController {
         }
 
         model.addAttribute("order", order);
-        int cartItemsCount = cartService.getCartItemsCount(); // Метод для получения количества товаров в корзине
+        int cartItemsCount = cartService.getCartItemsCountByUser(user); // Метод для получения количества товаров в корзине
         model.addAttribute("cartItemsCount", cartItemsCount);
         return "orderPage";
     }
