@@ -120,3 +120,26 @@ SELECT MAX(id) FROM product_images;
 SELECT setval('product_images_id_seq', (SELECT MAX(id) FROM product_images));
 
 
+-- Основная таблица для текущих посещений
+CREATE TABLE visits
+(
+    id         BIGSERIAL PRIMARY KEY,
+    visit_date TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id    BIGINT       NULL, -- если есть авторизация
+    page       VARCHAR(255) NULL, -- какая страница посещалась
+    session_id VARCHAR(255) NULL  -- уникальный идентификатор сессии
+);
+
+-- Индексы для быстрого подсчета посещений по дате и странице
+CREATE INDEX idx_visits_date ON visits (visit_date);
+CREATE INDEX idx_visits_page ON visits (page);
+
+-- Таблица архива для старых данных
+CREATE TABLE visits_archive
+(
+    id         BIGSERIAL PRIMARY KEY,
+    visit_date TIMESTAMP    NOT NULL,
+    user_id    BIGINT       NULL,
+    page       VARCHAR(255) NULL,
+    session_id VARCHAR(255) NULL
+);

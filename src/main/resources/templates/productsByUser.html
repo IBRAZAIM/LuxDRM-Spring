@@ -127,5 +127,9 @@
         return isValid; // Отменить отправку формы, если есть ошибки
     }
 </script>
+<script>
+    // Регистрируем визит при заходе на страницу
+    fetch('/analytics/register', { method: 'GET' });
+</script>
 </body>
 </html>

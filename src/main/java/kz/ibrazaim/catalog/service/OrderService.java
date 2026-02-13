@@ -105,6 +105,17 @@ public class OrderService {
             order.setTotalPrice(totalPrice); // Устанавливаем рассчитанную стоимость
         }
     }
+
+    // Количество заказов за период
+    public Long getOrdersCount(LocalDateTime start, LocalDateTime end) {
+        return orderRepository.countOrdersInPeriod(start, end);
+    }
+
+    // Сумма всех заказов за период
+    public Double getTotalSales(LocalDateTime start, LocalDateTime end) {
+        Double total = orderRepository.sumTotalInPeriod(start, end);
+        return total != null ? total : 0.0;
+    }
 }
 
 
