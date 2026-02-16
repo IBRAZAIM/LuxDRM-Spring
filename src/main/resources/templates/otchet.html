@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Отчётность продаж</title>
+    <title>Отчетность продаж</title>
     <link rel="stylesheet" th:href="@{/sales.css}">
 </head>
 <body>
@@ -14,79 +14,24 @@
 
     <nav>
         <ul class="items">
-            <!-- Dashboard / Обзор -->
             <li class="item active">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-          <rect x="14" y="3" width="7" height="4" rx="1.2"/>
-          <rect x="3" y="12" width="7" height="9" rx="1.2"/>
-          <rect x="14" y="11" width="7" height="10" rx="1.5"/>
-        </svg>
-      </span>
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                      <rect x="14" y="3" width="7" height="4" rx="1.2"/>
+                      <rect x="3" y="12" width="7" height="9" rx="1.2"/>
+                      <rect x="14" y="11" width="7" height="10" rx="1.5"/>
+                    </svg>
+                </span>
                 <span class="text">Обзор</span>
             </li>
-
-            <!-- Finance / Финансы (Бриллиант) -->
-            <li class="item">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10.5 3 8 9l4 13 4-13-2.5-6"/>
-          <path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/>
-          <path d="M2 9h20"/>
-        </svg>
-      </span>
-                <span class="text">Финансы</span>
-            </li>
-
-            <!-- CRM / Пользователи -->
-            <li class="item">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="8" cy="8" r="3"/>
-          <circle cx="16" cy="8" r="3"/>
-          <path d="M2 20c0-2.67 5.33-4 8-4s8 1.33 8 4"/>
-        </svg>
-      </span>
-                <span class="text">CRM</span>
-            </li>
-
-            <!-- Products / Товары -->
-            <li class="item">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-5 9 5v10l-9 5-9-5V9z"/>
-          <path d="M12 14v7"/>
-          <path d="M6 12l6 3 6-3"/>
-        </svg>
-      </span>
-                <span class="text">Товары</span>
-            </li>
-
-            <!-- Orders / Заказы -->
-            <li class="item">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 3h18v18H3V3z"/>
-          <path d="M7 12h10M7 16h10"/>
-        </svg>
-      </span>
-                <span class="text">Заказы</span>
-            </li>
-
-            <!-- Management / Управление -->
-            <li class="item">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a7 7 0 0 0 0-6M4.6 9a7 7 0 0 0 0 6"/>
-          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>
-        </svg>
-      </span>
-                <span class="text">Управление</span>
-            </li>
+            <li class="item"><span class="text">Финансы</span></li>
+            <li class="item"><span class="text">CRM</span></li>
+            <li class="item"><span class="text">Товары</span></li>
+            <li class="item"><span class="text">Заказы</span></li>
         </ul>
     </nav>
+
     <footer class="account-info">
         <div th:if="${user != null}">
             <span th:text="${user.name}"></span>
@@ -95,125 +40,98 @@
             <a href="/login">Вход</a>
         </div>
     </footer>
-
 </div>
 
 <main class="right-content">
     <div class="top-nav">
-        <!-- Breadcrumb / путь -->
         <nav class="breadcrumb">
             <span class="crumb">Главная</span>
             <span class="separator">/</span>
-            <span class="crumb active">Обзор</span>
+            <span class="crumb active">Отчеты</span>
         </nav>
-
-        <!-- Search -->
-        <form class="search-bar" action="/search" method="get">
-            <input type="text" name="query" placeholder="Поиск..."/>
-            <div type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"/>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-            </div>
-        </form>
-
         <div class="actions">
-            <button class="btn export">Экспорт</button>
-            <button class="btn settings">Настройки</button>
+            <a class="btn settings" href="/main">На витрину</a>
         </div>
     </div>
 
-    <!-- Основной контент / отчёты -->
     <div class="reports">
-        <!-- UX: фильтр периода -->
         <div class="report-toolbar">
             <div class="period-tabs">
-                <button class="period-btn active"onclick="changePeriod('TODAY')">Сегодня</button>
-                <button class="period-btn" onclick="changePeriod('WEEK')">Неделя</button>
-                <button class="period-btn" onclick="changePeriod('MONTH')">Месяц</button>
-                <button class="period-btn" onclick="changePeriod('QUARTER')">Квартал</button>
-                <button class="period-btn" onclick="changePeriod('YEAR')">Год</button>
-                <button class="period-btn" onclick="changePeriod('ALL')">За всё время</button>
+                <button class="period-btn active" data-period="TODAY">Сегодня</button>
+                <button class="period-btn" data-period="WEEK">Неделя</button>
+                <button class="period-btn" data-period="MONTH">Месяц</button>
+                <button class="period-btn" data-period="QUARTER">Квартал</button>
+                <button class="period-btn" data-period="YEAR">Год</button>
+                <button class="period-btn" data-period="ALL">За все время</button>
             </div>
 
             <div class="date-range">
-                <label>
-                    <input type="date">
-                </label>
-                <span class="dash">—</span>
-                <label>
-                    <input type="date">
-                </label>
+                <label><input id="customStart" type="date"></label>
+                <span class="dash">-</span>
+                <label><input id="customEnd" type="date"></label>
+                <button id="applyCustom" class="apply-btn" type="button">Применить</button>
             </div>
         </div>
 
+        <div class="meta-row">
+            <span id="periodLabel">Период: сегодня</span>
+            <span id="updatedAt">Обновлено: --:--</span>
+        </div>
 
-        <!-- Бэнто блоки с метриками -->
         <div class="report-grid">
             <div class="report-card wide">
                 <h3>Общие продажи</h3>
-                <p id="totalSales" class="report-value" th:text="${overview.totalSales()}">$0</p>
+                <p id="kpiSales" class="report-value" th:text="${overview.totalSales()}">0</p>
             </div>
 
             <div class="report-card">
                 <h3>Посещений</h3>
-                <p id="visits" class="report-value" th:text="${overview.visitsByDay()}">0</p>
+                <p id="kpiVisits" class="report-value" th:text="${overview.visitsToday()}">0</p>
             </div>
 
             <div class="report-card">
                 <h3>Заказы</h3>
-                <p id="orders" class="report-value" th:text="${overview.ordersToday()}">0</p>
+                <p id="kpiOrders" class="report-value" th:text="${overview.ordersToday()}">0</p>
             </div>
 
             <div class="report-card">
                 <h3>Конверсия</h3>
-                <p id="conversion" class="report-value" th:text="${overview.conversion() + '%'}">0%</p>
+                <p id="kpiConversion" class="report-value" th:text="${overview.conversion() + '%'}">0%</p>
             </div>
 
-            <div class="report-card tall">
-                <h3>Аналитика</h3>
-                <div class="chart-placeholder">График</div>
+            <div class="report-card">
+                <h3>Средний чек</h3>
+                <p id="kpiAverageCheck" class="report-value">0</p>
+            </div>
+
+            <div class="report-card">
+                <h3>Доход с визита</h3>
+                <p id="kpiRevenuePerVisit" class="report-value">0</p>
+            </div>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="report-card chart-card">
+                <h3>Выручка</h3>
+                <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+            </div>
+            <div class="report-card chart-card">
+                <h3>Трафик и заказы</h3>
+                <div class="chart-wrap"><canvas id="trafficChart"></canvas></div>
+            </div>
+            <div class="report-card chart-card">
+                <h3>Конверсия</h3>
+                <div class="chart-wrap"><canvas id="conversionChart"></canvas></div>
+            </div>
+            <div class="report-card insights-card">
+                <h3>Инсайты</h3>
+                <ul id="insightsList"></ul>
             </div>
         </div>
     </div>
-
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/js/sales.js}"></script>
 </body>
-<script src="/static/js/sales.js"></script>
-<!-- Sparkline библиотека -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
-<script>
-    async function changePeriod(period) {
-
-        document.querySelectorAll('.period-btn')
-            .forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-
-        const res = await fetch(`/sales/api/overview?period=${period}`);
-        const data = await res.json();
-
-        document.getElementById('totalSales').innerText = data.totalSales;
-        document.getElementById('visits').innerText = data.visitsToday;
-        document.getElementById('orders').innerText = data.ordersToday;
-        document.getElementById('conversion').innerText =
-            data.conversion.toFixed(2) + '%';
-
-        renderSparkline(data.visitsByDay);
-    }
-
-    function renderSparkline(map) {
-        const values = Object.values(map);
-
-        $('.sparkline').sparkline(values, {
-            type: 'line',
-            width: '100%',
-            height: '40',
-            lineWidth: 2,
-            fillColor: false,
-            spotRadius: 0
-        });
-    }
-</script>
 </html>

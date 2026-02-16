@@ -262,3 +262,114 @@ h1, h2, p {
 @media screen and (min-width: 768px) {
 }
 
+/* ===== Theme + Responsive Overrides ===== */
+.welcome-main {
+    justify-content: flex-start;
+    align-items: flex-end;
+    min-height: clamp(320px, 62vh, 680px);
+    padding: clamp(18px, 4vw, 56px);
+    background:
+            linear-gradient(130deg, rgba(12, 12, 61, 0.92), rgba(28, 28, 92, 0.82)),
+            radial-gradient(circle at 80% 20%, rgba(154, 7, 61, 0.22), transparent 45%);
+    border-bottom: 1px solid #e2e6ef;
+}
+
+.welcome-content .btn {
+    border-radius: 999px;
+    padding: 12px 24px;
+    font-weight: 600;
+    box-shadow: 0 10px 22px rgba(12, 12, 61, 0.16);
+}
+
+.products {
+    padding: 0 14px;
+}
+
+.products-section {
+    margin: 38px auto 28px;
+    padding: 8px 0 14px;
+}
+
+.products-section-container {
+    gap: 14px;
+}
+
+.products-section-card {
+    border: 1px solid #e3e7ef;
+    border-radius: 16px;
+    box-shadow: 0 12px 22px rgba(15, 23, 42, 0.06);
+}
+
+.products-section-img {
+    border-radius: 10px;
+    aspect-ratio: 4 / 5;
+}
+
+.products-section-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.products-section-price {
+    font-size: 17px;
+}
+
+.marquee-container {
+    height: 38px;
+    line-height: 38px;
+    border-color: #e2e6ef;
+}
+
+.back-to-top {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0c0c3d, #1f256d);
+}
+
+@media screen and (max-width: 1100px) {
+    .products-section-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 820px) {
+    .products-section-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .discount-znak {
+        top: 10px;
+        right: 10px;
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .welcome-main {
+        min-height: 300px;
+        padding: 18px 14px 24px;
+    }
+
+    .products-section-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    #product-section .topic {
+        font-size: 1.45rem;
+        margin-bottom: 18px;
+    }
+
+    .marquee-container {
+        font-size: 13px;
+    }
+
+    .back-to-top {
+        width: 42px;
+        height: 42px;
+        right: 12px;
+        bottom: 14px;
+    }
+}
+

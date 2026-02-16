@@ -11,12 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+    public record BucketStats(long orders, double sales) {}
+
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
@@ -115,6 +119,23 @@ public class OrderService {
     public Double getTotalSales(LocalDateTime start, LocalDateTime end) {
         Double total = orderRepository.sumTotalInPeriod(start, end);
         return total != null ? total : 0.0;
+    }
+
+    public Map<String, BucketStats> aggregateByPeriod(LocalDateTime start, LocalDateTime end, VisitService.Aggregation aggregation) {
+        List<Object[]> rows = switch (aggregation) {
+            case DAY -> orderRepository.aggregateByDay(start, end);
+            case WEEK -> orderRepository.aggregateByWeek(start, end);
+            case MONTH -> orderRepository.aggregateByMonth(start, end);
+        };
+
+        Map<String, BucketStats> stats = new LinkedHashMap<>();
+        for (Object[] row : rows) {
+            String label = row[0].toString();
+            long orders = ((Number) row[1]).longValue();
+            double sales = ((Number) row[2]).doubleValue();
+            stats.put(label, new BucketStats(orders, sales));
+        }
+        return stats;
     }
 }
 

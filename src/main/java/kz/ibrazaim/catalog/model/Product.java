@@ -24,6 +24,7 @@ public class Product {
     int discount;
     double rating;
 
+    @Column(columnDefinition = "TEXT")
     String description;
 
     @ManyToOne

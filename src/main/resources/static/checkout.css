@@ -160,9 +160,10 @@ h2 {
 
 .payment-button:hover {
     background-color: #0c0c3d;
-    .pay-btn{
-        color: #FFFFFF;
-    }
+}
+
+.payment-button:hover .pay-btn {
+    color: #FFFFFF;
 }
 
 .payment-button:active {
@@ -517,4 +518,174 @@ input[type="number"]::placeholder {
 }
 
 
+
+
+/* ===== Theme + Adaptive Overrides ===== */
+body {
+    background: #f5f6f9;
+}
+
+.checkout-container {
+    width: min(1320px, calc(100% - 26px));
+    margin: 16px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.left-part {
+    width: calc(100% - 560px);
+    min-width: 320px;
+    margin-left: 0;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e3e8f2;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    padding: 20px;
+}
+
+.right-part {
+    width: 540px;
+    position: relative;
+}
+
+.card-container {
+    width: 100%;
+    max-width: 540px;
+    height: auto;
+    min-height: 450px;
+    margin-top: 0;
+    position: relative;
+    border-radius: 16px;
+    box-shadow: 0 16px 28px rgba(12, 12, 61, 0.18);
+}
+
+.inputs input.name,
+.input-block input {
+    width: 100%;
+}
+
+.inputs input:nth-child(1),
+.address {
+    margin-right: 0;
+}
+
+.checkbox-line {
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.payment-button {
+    width: min(540px, 100%);
+    margin: 8px 0 24px auto;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.pay-btn {
+    font-size: 19px;
+}
+
+.payment-button:hover {
+    background-color: #0c0c3d;
+}
+
+.payment-button:hover .pay-btn {
+    color: #fff;
+}
+
+@media (max-width: 1180px) {
+    .checkout-container {
+        width: calc(100% - 20px);
+        flex-direction: column;
+    }
+
+    .left-part,
+    .right-part {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .payment-button {
+        margin: 10px 0 20px;
+    }
+}
+
+@media (max-width: 760px) {
+    .checkout-container {
+        width: calc(100% - 12px);
+        margin-top: 10px;
+        gap: 12px;
+    }
+
+    .left-part {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-bottom: 14px;
+    }
+
+    .option {
+        font-size: 16px;
+    }
+
+    .input-block input {
+        height: 38px;
+        font-size: 15px;
+        padding-left: 12px;
+    }
+
+    .checkbox-details {
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .checkbox-text {
+        font-size: 13px;
+    }
+
+    .card-container {
+        min-height: 430px;
+        padding-bottom: 12px;
+    }
+
+    .card,
+    .card-back {
+        width: calc(100% - 22px);
+        max-width: 320px;
+        margin-left: 11px;
+    }
+
+    .card-input-zone {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+    .card-number-input,
+    .card-name-input {
+        width: 100%;
+    }
+
+    .cart-container-down {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .card-date-input {
+        margin-right: 0;
+    }
+
+    .payment-button {
+        width: 100%;
+        height: 50px;
+    }
+
+    .pay-btn {
+        font-size: 17px;
+    }
+}
 

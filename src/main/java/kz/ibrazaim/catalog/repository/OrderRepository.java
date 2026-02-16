@@ -22,4 +22,19 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Сумма всех заказов за период
     @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.date BETWEEN :start AND :end")
     Double sumTotalInPeriod(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT FUNCTION('to_char', o.date, 'YYYY-MM-DD'), COUNT(o), COALESCE(SUM(o.totalPrice), 0) " +
+            "FROM Order o WHERE o.date BETWEEN :start AND :end " +
+            "GROUP BY FUNCTION('to_char', o.date, 'YYYY-MM-DD') ORDER BY 1")
+    List<Object[]> aggregateByDay(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT FUNCTION('to_char', o.date, 'IYYY-IW'), COUNT(o), COALESCE(SUM(o.totalPrice), 0) " +
+            "FROM Order o WHERE o.date BETWEEN :start AND :end " +
+            "GROUP BY FUNCTION('to_char', o.date, 'IYYY-IW') ORDER BY 1")
+    List<Object[]> aggregateByWeek(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT FUNCTION('to_char', o.date, 'YYYY-MM'), COUNT(o), COALESCE(SUM(o.totalPrice), 0) " +
+            "FROM Order o WHERE o.date BETWEEN :start AND :end " +
+            "GROUP BY FUNCTION('to_char', o.date, 'YYYY-MM') ORDER BY 1")
+    List<Object[]> aggregateByMonth(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
