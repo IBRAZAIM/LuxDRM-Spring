@@ -28,25 +28,33 @@ public class ProductController {
 
     @GetMapping
     public String findAll(
-            @RequestParam(defaultValue = "0") Integer minPrice,
-            @RequestParam(defaultValue = "" + Integer.MAX_VALUE) Integer maxPrice,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice,
             @RequestParam(required = false) Long categoryId,
             Model model
     ) {
         User user = userService.getUser();
+
+        if (minPrice == null) minPrice = 0;
+        if (maxPrice == null) maxPrice = Integer.MAX_VALUE;
+
         List<Product> products;
-        if (minPrice == 0 && maxPrice == Integer.MAX_VALUE && categoryId == null) {
+
+        if (categoryId == null && minPrice == 0 && maxPrice == Integer.MAX_VALUE) {
             products = productService.findAll();
         } else {
             products = productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice);
         }
+
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
+
         if (user != null && user.getRole().equals(Role.ADMIN.getServiceName())) {
             return "productsByAdmin";
         }
+
         return "productsByUser";
     }
 

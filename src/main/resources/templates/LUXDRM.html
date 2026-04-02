@@ -1,73 +1,305 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxDRM</title>
+    <title>UXD</title>
     <link rel="stylesheet" th:href="@{/LUXDRM.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
+
 <div th:insert="~{navbar :: navigation-panel}"></div>
+
+<!-- ── Announcement Bar ─────────────────── -->
 <div class="marquee-container">
     <div class="marquee">
-        🔥 Скидки до 15% на домашнюю одежду! Акция ограничена! 🔥
-        🌟 Удобство и стиль для всей семьи!
-        🕒 Успейте! Предложение заканчивается скоро!
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Скидки до 15% на домашнюю одежду — акция ограничена
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Бесплатная доставка от 45 000 тг
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Удобство и стиль для всей семьи
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </div>
 </div>
+
+<!-- ── Hero ─────────────────────────────── -->
 <main class="welcome-main">
     <div class="welcome-content">
-        <a th:href="@{'/products'}" class="btn">Начать покупки</a>
+        <span class="welcome-eyebrow">Новая коллекция · 2025</span>
+        <h1 class="welcome-headline">Домашний<br>комфорт</h1>
+        <a th:href="@{'/products'}" class="btn">
+            <span>Смотреть коллекцию</span>
+        </a>
     </div>
 </main>
-<main class="products">
+
+<!-- ── Categories ───────────────────────── -->
+<section class="categories-section">
+    <div class="categories-section-inner">
+        <span class="section-label">Коллекции</span>
+        <h2 class="section-title">Категории</h2>
+
+        <div class="categories-grid">
+
+            <a th:href="@{'/products?category=pyjamas'}" class="category-card category-card--pyjamas">
+                <div class="category-card-bg"
+                     th:style="${categoryImages != null && categoryImages['pyjamas'] != null
+                       ? 'background-image: url(' + categoryImages['pyjamas'] + ')' : ''}">
+                </div>
+                <div class="category-card-overlay"></div>
+                <div class="category-card-content">
+                    <div class="category-card-name">Пижамы</div>
+                    <div class="category-card-cta">Смотреть</div>
+                </div>
+            </a>
+
+            <a th:href="@{'/products?category=home'}" class="category-card category-card--home">
+                <div class="category-card-bg"
+                     th:style="${categoryImages != null && categoryImages['home'] != null
+                       ? 'background-image: url(' + categoryImages['home'] + ')' : ''}">
+                </div>
+                <div class="category-card-overlay"></div>
+                <div class="category-card-content">
+                    <div class="category-card-name">Домашняя одежда</div>
+                    <div class="category-card-cta">Смотреть</div>
+                </div>
+            </a>
+
+            <a th:href="@{'/products?category=kids'}" class="category-card category-card--kids">
+                <div class="category-card-bg"
+                     th:style="${categoryImages != null && categoryImages['kids'] != null
+                       ? 'background-image: url(' + categoryImages['kids'] + ')' : ''}">
+                </div>
+                <div class="category-card-overlay"></div>
+                <div class="category-card-content">
+                    <div class="category-card-name">Детская</div>
+                    <div class="category-card-cta">Смотреть</div>
+                </div>
+            </a>
+
+            <a th:href="@{'/products?category=lounge'}" class="category-card category-card--lounge">
+                <div class="category-card-bg"
+                     th:style="${categoryImages != null && categoryImages['lounge'] != null
+                       ? 'background-image: url(' + categoryImages['lounge'] + ')' : ''}">
+                </div>
+                <div class="category-card-overlay"></div>
+                <div class="category-card-content">
+                    <div class="category-card-name">Lounge</div>
+                    <div class="category-card-cta">Смотреть</div>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── New Arrivals ──────────────────────── -->
+<div class="products">
     <section id="product-section">
-        <h2 class="topic">Новинки</h2>
-        <div class="products-section-container">
-            <div th:each="product : ${products}" class="products-section-card">
+        <div class="products-header">
+            <h2 class="topic">Новинки</h2>
+            <a th:href="@{'/products'}" class="products-view-all">Все товары →</a>
+        </div>
+
+        <div class="products-section-container" id="products-grid">
+
+            <!--/* Skeleton placeholders — скрыты JS после загрузки */-->
+            <div class="products-section-card skeleton" th:each="i : ${#numbers.sequence(1, 8)}" id="skeleton-cards">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-info">
+                    <div class="skeleton-line skeleton-line--short"></div>
+                    <div class="skeleton-line skeleton-line--medium"></div>
+                </div>
+            </div>
+
+            <!--/* Реальные карточки — изначально скрыты */-->
+            <div th:each="product : ${products}"
+                 class="products-section-card real-card"
+                 style="display:none"
+                 th:data-id="${product.getId()}"
+                 th:data-name="${product.getName()}"
+                 th:data-price="${product.getPrice()}"
+                 th:data-discount="${product.discount}"
+                 th:data-img1="${product.images != null && !product.images.isEmpty() ? product.images[0].image : ''}"
+                 th:data-img2="${product.images != null && product.images.size() > 1 ? product.images[1].image : (product.images != null && !product.images.isEmpty() ? product.images[0].image : '')}">
+
+                <div class="discount-znak"
+                     th:text="${product.discount != null && product.discount > 0 ? product.discount + '%' : ''}"
+                     th:if="${product.discount != null && product.discount > 0}"></div>
+
                 <a th:href="@{'/products/' + ${product.getId()}}" class="products-section-link">
-                    <!-- Скидка сверху -->
-                    <div class="discount-znak" th:text="${product.discount != null ? product.discount + '%' : ''}" th:if="${product.discount != null && product.discount > 0}"></div>
-                    <img th:src="${product.images != null && !product.images.isEmpty() ? product.images[0].image : 'https://gemini.google.com/share/83dfcab58776'}"
-                         alt="product-img"
-                         class="products-section-img">
+                    <div class="card-img-wrapper">
+                        <img th:src="${product.images != null && !product.images.isEmpty() ? product.images[0].image : ''}"
+                             alt="" class="products-section-img products-section-img--primary" loading="lazy">
+                        <img th:src="${product.images != null && product.images.size() > 1 ? product.images[1].image : (product.images != null && !product.images.isEmpty() ? product.images[0].image : '')}"
+                             alt="" class="products-section-img products-section-img--secondary" loading="lazy">
+                    </div>
                     <div class="products-section-info">
                         <p class="products-section-name" th:text="${product.getName()}"></p>
                         <p class="products-section-price" th:text="${product.getPrice()} + ' тг'"></p>
                     </div>
                 </a>
+
+                <button class="card-quick-view"
+                        th:data-id="${product.getId()}"
+                        th:data-name="${product.getName()}"
+                        th:data-price="${product.getPrice()}"
+                        th:data-img="${product.images != null && !product.images.isEmpty() ? product.images[0].image : ''}">
+                    Быстрый просмотр
+                </button>
             </div>
+
         </div>
     </section>
-</main>
+</div>
+
+<!-- ── Quick View Modal ──────────────────── -->
+<div class="qv-overlay" id="qvOverlay">
+    <div class="qv-modal" role="dialog" aria-modal="true">
+        <button class="qv-close" id="qvClose" aria-label="Закрыть">✕</button>
+
+        <div class="qv-gallery">
+            <img src="" alt="" class="qv-gallery-main" id="qvImg">
+            <div class="qv-gallery-dots" id="qvDots"></div>
+        </div>
+
+        <div class="qv-info">
+            <div class="qv-label">LuxDRM</div>
+            <h3 class="qv-name" id="qvName">—</h3>
+            <div class="qv-price" id="qvPrice">—</div>
+            <div class="qv-divider"></div>
+            <div class="qv-size-label">Размер</div>
+            <div class="qv-sizes">
+                <button class="qv-size-btn active">XS</button>
+                <button class="qv-size-btn">S</button>
+                <button class="qv-size-btn">M</button>
+                <button class="qv-size-btn">L</button>
+                <button class="qv-size-btn">XL</button>
+            </div>
+            <button class="qv-add-btn">
+                <span>Добавить в корзину</span>
+            </button>
+            <a href="#" class="qv-goto" id="qvGoto">Перейти к товару →</a>
+        </div>
+    </div>
+</div>
+
+<!-- ── Back to Top ──────────────────────── -->
 <div class="back-to-top" id="backToTop">
-    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="fff" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
-        <path d="M12 6V18M12 6L7 11M12 6L17 11" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 6V18M12 6L7 11M12 6L17 11" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
 </div>
+
 <div th:insert="~{footer :: footer-code}"></div>
-</body>
+
 <script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+
+        /* ── Skeleton → real cards ─────────────── */
+        const skeletons = document.querySelectorAll('.skeleton');
+        const realCards = document.querySelectorAll('.real-card');
+
+        // Simulate natural load — swap after images settle
+        const revealCards = () => {
+            skeletons.forEach(s => s.remove());
+            realCards.forEach((card, i) => {
+                card.style.display = 'flex';
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(16px)';
+                card.style.transition = `opacity 0.45s ease ${i * 0.06}s, transform 0.45s ease ${i * 0.06}s`;
+                requestAnimationFrame(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        };
+
+        // Wait for at least first image to load, or 1.2s timeout
+        const firstImg = document.querySelector('.real-card img');
+        if (firstImg && !firstImg.complete) {
+            firstImg.addEventListener('load', revealCards, { once: true });
+            setTimeout(revealCards, 1200);
+        } else {
+            setTimeout(revealCards, 400);
+        }
+
+        /* ── Quick View ────────────────────────── */
+        const overlay = document.getElementById('qvOverlay');
+        const qvClose = document.getElementById('qvClose');
+        const qvName  = document.getElementById('qvName');
+        const qvPrice = document.getElementById('qvPrice');
+        const qvImg   = document.getElementById('qvImg');
+        const qvGoto  = document.getElementById('qvGoto');
+        const qvDots  = document.getElementById('qvDots');
+
+        function openQV(btn) {
+            const id    = btn.dataset.id;
+            const name  = btn.dataset.name;
+            const price = btn.dataset.price;
+            const img   = btn.dataset.img;
+
+            qvName.textContent  = name;
+            qvPrice.textContent = price + ' тг';
+            qvImg.src           = img;
+            qvGoto.href         = '/products/' + id;
+
+            // Fake dots for demo (real impl: pass all images)
+            qvDots.innerHTML = '';
+            [0,1,2].forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = 'qv-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => {
+                    document.querySelectorAll('.qv-dot').forEach(d => d.classList.remove('active'));
+                    dot.classList.add('active');
+                });
+                qvDots.appendChild(dot);
+            });
+
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeQV() {
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('.card-quick-view');
+            if (btn) { e.preventDefault(); openQV(btn); }
+        });
+
+        qvClose.addEventListener('click', closeQV);
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeQV(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQV(); });
+
+        /* ── Size buttons ──────────────────────── */
+        document.querySelectorAll('.qv-size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.qv-size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        /* ── Back to top ───────────────────────── */
         const backToTop = document.getElementById("backToTop");
-        const SHOW_AFTER = 200;
-
         window.addEventListener("scroll", () => {
-            backToTop.classList.toggle("show", window.scrollY > SHOW_AFTER);
+            backToTop.classList.toggle("show", window.scrollY > 200);
         }, { passive: true });
-
-        backToTop.addEventListener("click", (e) => {
+        backToTop.addEventListener("click", e => {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: "smooth" });
         });
     });
 </script>
 <script>
-    // Регистрируем визит при заходе на страницу
     fetch('/analytics/register', { method: 'GET' });
 </script>
+
+</body>
 </html>

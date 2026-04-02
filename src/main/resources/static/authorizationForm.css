@@ -1,56 +1,190 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --navy:   #0c0c3d;
+    --white:  #ffffff;
+    --bg:     #f4f4f8;
+    --border: rgba(12,12,61,0.10);
+    --muted:  #8888aa;
+    --error:  #c0392b;
+    --t:      0.18s ease;
+}
+
+html, body {
+    height: 100%;
+}
+
 body {
-    background-color: #f5f5f5;
-    font-family: Arial, sans-serif;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
+    justify-content: center;
+    background: var(--bg);
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    padding: 24px;
 }
 
-.login-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
-}
-
-.login-container h2 {
-    text-align: center;
-    color: #0c0c3d;
-    margin-bottom: 20px;
-}
-
-.login-container label {
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-}
-
-.login-container input {
-    width: 95%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.login-container button {
+/* ── Card ── */
+.card {
     width: 100%;
-    padding: 10px;
-    background-color: #0c0c3d;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 5px;
+    max-width: 400px;
+    background: var(--white);
+    border-top: 3px solid var(--navy);
+    padding: 48px 44px 40px;
+    animation: up .4s cubic-bezier(.22,1,.36,1) both;
 }
 
-.login-container button:hover {
-    background-color: #333;
+@keyframes up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
-.create{
+
+/* ── Brand ── */
+.brand {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--navy);
+    opacity: .4;
+    margin-bottom: 36px;
+}
+
+/* ── Heading ── */
+h2 {
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--navy);
+    letter-spacing: -.01em;
+    margin-bottom: 32px;
+    line-height: 1.2;
+}
+
+/* ── Error ── */
+.error {
+    font-size: 13px;
+    color: var(--error);
+    border-left: 2px solid var(--error);
+    padding-left: 10px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* ── Field ── */
+.field {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    transition: color var(--t);
+}
+
+.field:focus-within label {
+    color: var(--navy);
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    border-radius: 0;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--navy);
+    outline: none;
+    transition: border-color var(--t);
+    appearance: none;
+}
+
+input:hover {
+    border-color: rgba(12,12,61,.25);
+}
+
+input:focus {
+    border-color: var(--navy);
+}
+
+input::placeholder {
+    color: rgba(12,12,61,.18);
+    font-weight: 300;
+}
+
+/* ── Two-col row ── */
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ── Password strength ── */
+.strength {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.s {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    transition: background .25s;
+}
+
+/* ── Submit ── */
+button[type="submit"] {
+    width: 100%;
+    height: 48px;
+    margin-top: 8px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity var(--t), transform .1s;
+}
+
+button[type="submit"]:hover  { opacity: .85; }
+button[type="submit"]:active { transform: scale(.99); }
+
+/* ── Footer link ── */
+.foot {
+    margin-top: 28px;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--muted);
     text-align: center;
+}
+
+.foot a {
+    color: var(--navy);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(12,12,61,.18);
+    padding-bottom: 1px;
+    transition: border-color var(--t);
+}
+
+.foot a:hover { border-color: var(--navy); }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .card { padding: 40px 28px 36px; }
+    .row  { grid-template-columns: 1fr; gap: 0; }
 }

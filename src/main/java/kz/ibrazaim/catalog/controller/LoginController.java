@@ -3,8 +3,6 @@ package kz.ibrazaim.catalog.controller;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,8 +33,11 @@ public class LoginController {
         }
         try {
             userService.create(user);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "registerForm";
         } catch (Exception e) {
-            model.addAttribute("error", "Регистрация не удалась. Пожалуйста, попробуйте снова.");
+            model.addAttribute("error", "Регистрация не удалась. Попробуйте снова.");
             return "registerForm";
         }
         return "redirect:/login";
@@ -45,20 +46,13 @@ public class LoginController {
     @GetMapping("/login")
     public String login(
             @RequestParam(value = "redirect", required = false) String redirect,
+            @RequestParam(value = "error", required = false) String error,
             Model model
     ) {
         if (redirect != null) {
             model.addAttribute("redirect", redirect);
         }
-        return "loginForm";
-    }
-
-    @PostMapping("/login")
-    public String loginUser(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            return "redirect:" ;
-        } else {
+        if (error != null) {
             model.addAttribute("loginError", true);
         }
         return "loginForm";

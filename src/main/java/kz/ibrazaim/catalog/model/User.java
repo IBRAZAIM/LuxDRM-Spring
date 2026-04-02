@@ -20,8 +20,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+    @Column(nullable = false)
     String login;
 
+    @Column(nullable = false)
     String password;
 
     String name;
@@ -30,7 +32,7 @@ public class User {
 
     String surname;
 
-    @JoinColumn(name = "registration_date")
+    @Column(name = "registration_date", updatable = false)
     @CreationTimestamp
     LocalDateTime registrationDate;
 

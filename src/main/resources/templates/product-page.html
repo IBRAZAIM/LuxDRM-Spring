@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Страница продукта</title>
+    <title th:text="${product.name} + ' — UXD'">Страница продукта — UXD</title>
     <link rel="stylesheet" th:href="@{/product.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <!--    <link rel="stylesheet" th:href="@{/userPanel.css}">-->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
 </head>
@@ -16,367 +15,756 @@
 <header>
     <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
 </header>
+
+<!-- HERO PRODUCT SECTION -->
 <main class="product-container">
 
-    <!-- Product Images Gallery -->
+    <!-- Gallery -->
     <div class="product-gallery">
+        <div class="thumbnail-column">
+            <ul>
+                <li th:each="image, iterStat : ${product.images}"
+                    th:classappend="${iterStat.index == 0} ? ' active' : ''"
+                    th:onclick="'showImageByIndex(this,' + ${iterStat.index} + ')'">
+                    <img th:src="@{${image.image}}"
+                         alt="Product Thumbnail"
+                         class="thumbnail-img"
+                         loading="lazy"
+                         onload="this.closest('li').classList.add('img-loaded')">
+                </li>
+            </ul>
+        </div>
+
         <div class="main-image-container" id="mainImageContainer">
             <div class="images-wrapper" id="imagesWrapper">
-                <!-- Использование Thymeleaf для динамического добавления изображений -->
                 <img th:each="image : ${product.images}"
                      th:src="@{${image.image}}"
                      alt="Main Product Image"
                      class="large-img">
             </div>
+
+            <!-- Arrow navigation (desktop) -->
+            <button class="gallery-arrow gallery-arrow--prev" id="galleryPrev" aria-label="Предыдущее фото" type="button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="gallery-arrow gallery-arrow--next" id="galleryNext" aria-label="Следующее фото" type="button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+            <!-- Image counter (mobile) -->
+            <div class="image-counter" id="imageCounter">1 / 1</div>
+
+            <!-- Zoom hint (desktop) -->
+            <div class="zoom-hint">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+            </div>
         </div>
-        <div class="thumbnail-column">
-            <ul>
-                <!-- Генерируем миниатюры для всех изображений -->
-                <li th:each="image, iterStat : ${product.images}"
-                    onclick="showImageByIndex(this, [[${iterStat:index}]])">
-                    <img th:src="@{${image.image}}" alt="Product Thumbnail" class="thumbnail-img">
-                </li>
-            </ul>
-        </div>
+
+        <!-- Dot indicators (mobile, injected by JS) -->
+        <div class="gallery-dots" id="galleryDots"></div>
     </div>
 
+    <!-- Product Info -->
     <div class="right-column">
         <div class="description-zone">
-            <div class="product-top">
-                <div class="product-name-container">
-                    <span th:text="${product.category.name}" class="category"></span>
-                    <div class="product-info" th:if="${product.discount > 0}">
-                        <!-- Знак верификации качества -->
-                        <div class="quality-verification">
-                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
-                                <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon>
-                                <polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
-                            </svg>
-                        </div>
-                        <h1 th:text="${product.name}" class="product-name">Название товара</h1>
-                        <span class="discount-percentage" th:text="${product.discount + '%'}">Скидка</span>
+
+            <!-- Breadcrumb + badge -->
+            <div class="product-meta-row">
+                <span th:text="${product.category.name}" class="category-badge"></span>
+                <div class="verified-badge" title="Верифицированный товар">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 48 48">
+                        <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon>
+                        <polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
+                    </svg>
+                    <span>Оригинал</span>
+                </div>
+            </div>
+
+            <!-- Name -->
+            <div class="product-title-block">
+                <h1 th:text="${product.name}" class="product-name">Название товара</h1>
+                <span class="discount-badge" th:if="${product.discount > 0}" th:text="'−' + ${product.discount} + '%'">−15%</span>
+            </div>
+
+            <!-- Rating -->
+            <div class="product-rating">
+                <div class="stars">
+                    <span th:each="i : ${#numbers.sequence(1, 5)}" class="star"
+                          th:classappend="${i <= (product.rating != null ? (product.rating < 4.0 ? 4.0 : product.rating) : 4.0)} ? ' filled' : ''">&#9733;</span>
+                </div>
+                <span class="rating-value" th:text="${product.rating != null ? (product.rating < 4.0 ? '4.0' : product.rating) : '4.0'} + ' / 5.0'">4.0 / 5.0</span>
+                <span class="reviews-count" th:if="${reviews != null and !reviews.isEmpty()}" th:text="'(' + ${#lists.size(reviews)} + ' отзывов)'"></span>
+            </div>
+
+            <!-- Price -->
+            <div class="price-block">
+                <div th:if="${product.discount > 0}" class="price-with-discount">
+                    <span class="price-current" th:text="${product.price - product.price * product.discount / 100}" id="formattedDiscountPrice"></span>
+                    <span class="price-original" th:text="${product.price}" id="formattedOriginalPrice"></span>
+                    <span class="price-saving">Экономия <span th:text="${product.price * product.discount / 100}" id="formattedSaving"></span></span>
+                </div>
+                <div th:unless="${product.discount > 0}">
+                    <span class="price-current" th:text="${product.price}" id="formattedPrice"></span>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="section-divider"></div>
+        </div>
+        <!-- Size selector + cart form -->
+        <form class="add-to-cart-form" th:action="@{|/cart/${product.getId()}|}" method="post" id="cartForm">
+            <div class="sizes-container">
+                <div class="sizes-header">
+                    <span class="size-label">Размер</span>
+                    <a href="#" class="size-guide-link" id="openSizeGuide">Таблица размеров</a>
+                </div>
+                <div class="sizes-options">
+                    <div th:each="size : ${sizes}" class="size-option">
+                        <div th:text="${size.size}" class="size-label-btn" role="button" tabindex="0"
+                             aria-pressed="false" onclick="selectSize(this)"></div>
                     </div>
-                    <div class="product-info" th:unless="${product.discount > 0}">
-                        <!-- Знак верификации качества -->
-                        <div class="quality-verification">
-                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
-                                <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"></polygon><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"></polygon>
-                            </svg>
-                        </div>
-                        <h1 th:text="${product.name}" class="product-name">Название товара</h1>
+                </div>
+                <input type="hidden" name="size" id="selected-size">
+                <span id="size-error" class="size-error" role="alert" aria-live="assertive">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Пожалуйста, выберите размер
+                    </span>
+            </div>
+
+            <!-- Quantity + CTA -->
+            <div class="cart-actions" id="cartActions">
+                <div class="quantity-block">
+                    <label class="qty-label" for="quantityInput">Кол-во</label>
+                    <div class="number">
+                        <button type="button" class="number-minus" id="qtyMinus" aria-label="Уменьшить">−</button>
+                        <input class="number-text" type="text" id="quantityInput" name="quantity" value="1" readonly
+                               aria-label="Количество">
+                        <button type="button" class="number-plus" id="qtyPlus" aria-label="Увеличить">+</button>
                     </div>
-                    <!-- Звезды для рейтинга -->
-                    <div class="product-rating">
-                        <div class="stars">
-                            <span th:each="i : ${#numbers.sequence(1, 5)}" class="star" th:classappend="${i <= (product.rating != null ? (product.rating < 4.0 ? 4.0 : product.rating) : 4.0) ? ' filled' : ''}">&#9733;</span>
-                        </div>
-                        <!-- Рейтинг в формате 4.0/5.0 -->
-                        <span class="rating-value" th:text="${product.rating != null ? (product.rating < 4.0 ? 4.0 : product.rating) : 4.0} + '/5.0'">4.0/5.0</span>
+                </div>
+
+                <button type="submit" class="add-to-cart" id="add-to-cart-btn" disabled aria-disabled="true">
+                    <span class="btn-text">Добавить в корзину</span>
+                    <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                </button>
+            </div>
+
+            <!-- Hint shown only when button is disabled -->
+            <p class="select-size-hint" id="sizeHint" aria-hidden="true">Выберите размер, чтобы добавить в корзину</p>
+
+            <!-- Trust signals -->
+            <div class="trust-row">
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                     </div>
-                    <div class="discount" th:if="${product.discount > 0}">
-                        <span class="price" th:text="${product.price - product.price * product.discount / 100}" id="formattedDiscountPrice">Цена со скидкой</span>
-                        <span class="original-price" th:text="${product.price}" id="formattedOriginalPrice">Цена</span>
+                    <div class="trust-text">
+                        <span class="trust-title">Доставка</span>
+                        <span class="trust-sub">Бесплатно от 45 000 ₸</span>
                     </div>
-                    <div th:unless="${product.discount > 0}">
-                        <p th:text="${product.price}" class="price" id="formattedPrice">Цена</p>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    </div>
+                    <div class="trust-text">
+                        <span class="trust-title">Возврат</span>
+                        <span class="trust-sub">Бракованныый товар? Без вопросов</span>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="trust-text">
+                        <span class="trust-title">Гарантия</span>
+                        <span class="trust-sub">Подлинность подтверждена</span>
                     </div>
                 </div>
             </div>
-            <div class="product-mobile-image">
-                <!--Добавляется div-image-->
+        </form>
+    </div>
+</main>
+
+<!-- TABS SECTION -->
+<!-- ======================================================
+     PATCH: заменить всю секцию .tabs-section в product.html
+     ====================================================== -->
+
+<!-- TABS SECTION -->
+<section class="tabs-section">
+
+    <!-- Tab navigation -->
+    <div class="tabs-container" role="tablist" aria-label="Информация о товаре">
+        <button class="tab-button active" data-tab="description" role="tab"
+                aria-selected="true" aria-controls="description-section">Описание</button>
+        <button class="tab-button" data-tab="characteristics" role="tab"
+                aria-selected="false" aria-controls="characteristics-section">Характеристики</button>
+        <button class="tab-button" data-tab="reviews" role="tab"
+                aria-selected="false" aria-controls="reviews-section">
+            Отзывы
+            <span class="tab-count" th:if="${reviews != null and !reviews.isEmpty()}"
+                  th:text="${#lists.size(reviews)}"></span>
+        </button>
+    </div>
+
+    <div class="tab-content">
+
+        <!-- ── DESCRIPTION ── -->
+        <div class="tab-section active" id="description-section" role="tabpanel">
+            <div class="description-inner">
+                <p th:text="${product.description}" class="description-text">Описание продукта</p>
             </div>
-            <!-- Форма добавления в корзину -->
-            <div class="product-bottom">
-                <form class="add-to-cart-form" th:action="@{|/cart/${product.getId()}|}" method="post">
-                    <div class="sizes-container">
-                        <span class="size-label">Размер</span>
-                        <div class="sizes-options">
-                            <div th:each="size, iterStat : ${sizes}" class="size-option">
-                                <div th:text="${size.size}" class="size-label-btn" onclick="selectSize(this, '${size.size}')"></div>
+        </div>
+
+        <!-- ── CHARACTERISTICS ── -->
+        <div class="tab-section" id="characteristics-section" role="tabpanel" hidden>
+            <div class="characteristics-inner">
+                <table class="characteristics-table">
+                    <tbody>
+                    <tr th:each="entry : ${options}">
+                        <td class="char-key" th:text="${entry.getKey().getName()}">Характеристика</td>
+                        <td class="char-val"
+                            th:text="${entry.getValue().isPresent() ? entry.getValue().get().name : '—'}">Значение</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── REVIEWS ── -->
+        <div class="tab-section" id="reviews-section" role="tabpanel" hidden>
+            <div class="reviews-inner">
+
+                <!-- Rating summary block -->
+                <div class="reviews-summary" th:if="${reviews != null and !reviews.isEmpty()}">
+                    <div class="reviews-summary-score">
+                        <span class="big-score"
+                              th:text="${product.rating != null ? (product.rating < 4.0 ? '4.0' : product.rating) : '4.0'}">4.0</span>
+                        <div class="summary-stars">
+                            <span th:each="i : ${#numbers.sequence(1,5)}" class="star"
+                                  th:classappend="${i <= (product.rating != null ? (product.rating < 4.0 ? 4.0 : product.rating) : 4.0)} ? ' filled' : ''">&#9733;</span>
+                        </div>
+                        <span class="score-label">из 5.0</span>
+                    </div>
+
+                    <div class="reviews-summary-divider"></div>
+
+                    <div class="reviews-summary-info">
+                        <span class="reviews-summary-total"
+                              th:text="${#lists.size(reviews)} + ' отзывов покупателей'">24 отзыва покупателей</span>
+                        <div class="star-bars">
+                            <div class="star-bar-row">
+                                <span>5★</span>
+                                <div class="star-bar-track"><div class="star-bar-fill" style="width:68%"></div></div>
+                                <span>68%</span>
+                            </div>
+                            <div class="star-bar-row">
+                                <span>4★</span>
+                                <div class="star-bar-track"><div class="star-bar-fill" style="width:20%"></div></div>
+                                <span>20%</span>
+                            </div>
+                            <div class="star-bar-row">
+                                <span>3★</span>
+                                <div class="star-bar-track"><div class="star-bar-fill" style="width:8%"></div></div>
+                                <span>8%</span>
+                            </div>
+                            <div class="star-bar-row">
+                                <span>2★</span>
+                                <div class="star-bar-track"><div class="star-bar-fill" style="width:3%"></div></div>
+                                <span>3%</span>
+                            </div>
+                            <div class="star-bar-row">
+                                <span>1★</span>
+                                <div class="star-bar-track"><div class="star-bar-fill" style="width:1%"></div></div>
+                                <span>1%</span>
                             </div>
                         </div>
-                        <input type="hidden" name="size" id="selected-size">
                     </div>
-                    <div class="mobile-add-to-cart">
-                        <div class="cart-container">
-                            <div class="quantity-block">
-                                <label class="quantity">Кол-во</label>
-                                <div class="number" data-step="1" data-min="1" data-max="20">
-                                    <a class="number-minus" onclick="decrement()">−</a>
-                                    <input class="number-text" type="text" name="quantity" value="1">
-                                    <a class="number-plus" onclick="increment()">+</a>
+                </div>
+
+                <!-- Empty state -->
+                <div class="reviews-empty" th:if="${reviews == null or reviews.isEmpty()}">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <p>Пока отзывов нет. Будьте первым!</p>
+                    <p class="empty-sub">Поделитесь впечатлениями о товаре</p>
+                </div>
+
+                <!-- Review list -->
+                <ul class="reviews-list" th:if="${reviews != null and !reviews.isEmpty()}">
+                    <li th:each="review : ${reviews}" class="review-card">
+                        <div class="review-top">
+                            <div class="reviewer-avatar"
+                                 th:text="${#strings.substring(review.getUser().getName(), 0, 1)}">А</div>
+                            <div class="reviewer-info">
+                                <div class="reviewer-name-row">
+                                    <strong th:text="${review.getUser().getName()}">Имя</strong>
+                                    <span class="review-date">Недавно</span>
+                                </div>
+                                <div class="review-stars">
+                                    <i th:each="s : ${#numbers.sequence(1,5)}"
+                                       th:class="${s <= review.getEstimation()} ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="add-cart-div">
-                            <button type="submit" class="add-to-cart" id="add-to-cart-btn" disabled>Добавить в корзину
+                        <p th:text="${review.getText()}" class="review-text"></p>
+                        <div class="review-helpful">
+                            <span class="review-helpful-label">Полезный отзыв?</span>
+                            <button class="review-helpful-btn" type="button">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                                    <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                                </svg>
+                                Да
                             </button>
-                            <span id="size-error" class="size-error" role="alert">Пожалуйста, выберите размер</span>
                         </div>
+                    </li>
+                </ul>
+
+                <!-- Write review / login prompt -->
+                <div class="reviews-footer">
+                    <div th:if="${#authorization.expression('isAuthenticated()')}">
+                        <a id="openModalBtn" class="add-review-btn" role="button" tabindex="0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            Написать отзыв
+                        </a>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</main>
-<div class="tabs-container">
-    <p class="tab-button active" data-tab="description">Описание</p>
-    <p class="tab-button" data-tab="characteristics">Характеристики</p>
-    <p class="tab-button" data-tab="reviews">Отзывы</p>
-</div>
-<div class="tab-content">
-    <!-- Описание -->
-    <div class="tab-section active" id="description-section">
-        <p th:text="${product.description}" class="description-text">Product Description</p>
-    </div>
-
-    <!-- Характеристики -->
-    <div class="tab-section" id="characteristics-section">
-        <table class="characteristics-table">
-            <thead>
-            <tr>
-                <th>Характеристика</th>
-                <th>Значение</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="entry : ${options}">
-                <td th:text="${entry.getKey().getName()}">Характеристика</td>
-                <td th:text="${entry.getValue().isPresent() ? entry.getValue().get().name : 'Не указано'}">Значение</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Отзывы -->
-    <div class="tab-section" id="reviews-section">
-        <ul class="reviews-list">
-            <li th:each="review : ${reviews}">
-                <div class="review-header">
-                    <strong th:text="${review.getUser().getName()}">Имя пользователя</strong>
-                    <div class="review-rating">
-                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 1 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 2 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 3 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() >= 4 ? ' fa-solid' : ''}"></i>
-                        <i class="fa-regular fa-star" th:classappend="${review.getEstimation() == 5 ? ' fa-solid' : ''}"></i>
+                    <div th:unless="${#authorization.expression('isAuthenticated()')}">
+                        <p class="login-prompt">Чтобы оставить отзыв, необходимо <a th:href="@{/login}">войти в аккаунт</a></p>
                     </div>
                 </div>
-                <p th:text="${review.getText()}" class="comment-text"></p>
-            </li>
-        </ul>
-        <div th:if="${#authorization.expression('isAuthenticated()')}">
-            <a id="openModalBtn" class="add-review-btn">Добавить отзыв</a>
-        </div>
-        <div th:unless="${#authorization.expression('isAuthenticated()')}">
-            <p class="login-prompt">Чтобы оставить отзыв необходимо <a th:href="@{/login}">авторизоваться</a></p>
-        </div>
-    </div>
-    <!-- Отзывы -->
 
-</div>
-<main class="products-section">
-    <section id="product-section">
-        <div class="products-section-header">
-            <h2 class="products-section-topic">Похожие товары</h2>
-        </div>
-        <div class="products-section-container">
-            <div th:each="product : ${products}" class="products-section-card">
-                <a th:href="@{'/products/' + ${product.getId()}}" class="products-section-link">
-                    <!-- Скидка сверху -->
-                    <div class="discount-znak" th:text="${product.discount != null ? product.discount + '%' : ''}" th:if="${product.discount != null && product.discount > 0}"></div>
-                    <img th:src="${product.getImages().get(0).image}" alt="product-img" class="products-section-img">
-                    <div class="products-section-info">
-                        <p class="products-section-name" th:text="${product.getName()}"></p>
-                        <p class="products-section-price" th:text="${product.getPrice()} + ' тг'"></p>
-                    </div>
-                </a>
             </div>
         </div>
-    </section>
-</main>
 
-<div id="commentModal" class="modal">
+    </div>
+</section>
+
+<!-- SIMILAR PRODUCTS -->
+<section class="similar-section">
+    <div class="similar-header">
+        <h2 class="similar-title">Похожие товары</h2>
+        <div class="similar-line"></div>
+    </div>
+    <div class="products-grid">
+        <div th:each="product : ${products}" class="product-card">
+            <!-- Wishlist button -->
+            <button class="product-card-wish" type="button" aria-label="В избранное" onclick="toggleWish(this)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            </button>
+
+            <a th:href="@{'/products/' + ${product.getId()}}" class="product-card-link">
+                <div class="product-card-image-wrap">
+                    <div class="discount-badge-card" th:if="${product.discount != null and product.discount > 0}"
+                         th:text="'−' + ${product.discount} + '%'"></div>
+                    <img th:src="${product.getImages().get(0).image}" alt="product" class="product-card-img" loading="lazy">
+                    <div class="product-card-overlay">
+                        <span>Смотреть</span>
+                    </div>
+                </div>
+                <div class="product-card-info">
+                    <p class="product-card-name" th:text="${product.getName()}"></p>
+                    <p class="product-card-price" th:text="${product.getPrice()} + ' ₸'"></p>
+                </div>
+            </a>
+
+            <!-- Quick-add CTA -->
+            <a th:href="@{'/products/' + ${product.getId()}}" class="product-card-quick-add" aria-label="Перейти к товару">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                Выбрать размер
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- REVIEW MODAL -->
+<div id="commentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-backdrop"></div>
     <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <div th:class="comment-form">
-            <h3 class="comment-add-text">Добавить отзыв</h3>
-            <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="productId" th:value="${product.id}">
-                <input type="hidden" name="userId" th:value="${user.id}">
-                <div>
-                    <label th:for="estimation">Оценка:</label>
-                    <div class="star-rating">
-                        <input type="radio" name="estimation" id="star5" value="5" required>
-                        <label for="star5" title="5 stars"><i class="fa-regular fa-star"></i></label>
-                        <input type="radio" name="estimation" id="star4" value="4">
-                        <label for="star4" title="4 stars"><i class="fa-regular fa-star"></i></label>
-                        <input type="radio" name="estimation" id="star3" value="3">
-                        <label for="star3" title="3 stars"><i class="fa-regular fa-star"></i></label>
-                        <input type="radio" name="estimation" id="star2" value="2">
-                        <label for="star2" title="2 stars"><i class="fa-regular fa-star"></i></label>
-                        <input type="radio" name="estimation" id="star1" value="1">
-                        <label for="star1" title="1 star"><i class="fa-regular fa-star"></i></label>
-                    </div>
+        <button class="close-btn" id="closeCommentModal" aria-label="Закрыть">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <h3 id="modalTitle" class="modal-title">Ваш отзыв</h3>
+        <form th:action="@{/products/addComment}" method="post" enctype="multipart/form-data" class="review-form">
+            <input type="hidden" name="productId" th:value="${product.id}">
+            <input type="hidden" name="userId" th:value="${user.id}">
+            <div class="form-group">
+                <label class="form-label">Оценка</label>
+                <div class="star-rating" role="group" aria-label="Выберите оценку от 1 до 5">
+                    <input type="radio" name="estimation" id="star5" value="5" required>
+                    <label for="star5" aria-label="5 звёзд"><i class="fa-regular fa-star"></i></label>
+                    <input type="radio" name="estimation" id="star4" value="4">
+                    <label for="star4" aria-label="4 звезды"><i class="fa-regular fa-star"></i></label>
+                    <input type="radio" name="estimation" id="star3" value="3">
+                    <label for="star3" aria-label="3 звезды"><i class="fa-regular fa-star"></i></label>
+                    <input type="radio" name="estimation" id="star2" value="2">
+                    <label for="star2" aria-label="2 звезды"><i class="fa-regular fa-star"></i></label>
+                    <input type="radio" name="estimation" id="star1" value="1">
+                    <label for="star1" aria-label="1 звезда"><i class="fa-regular fa-star"></i></label>
                 </div>
-                <div>
-                    <label for="comment">Текст отзыва:</label>
-                    <textarea name="comment" id="comment" placeholder="Текст комментария" required></textarea>
-                </div>
-                <button type="submit">Отправить</button>
-            </form>
-        </div>
+            </div>
+            <div class="form-group">
+                <label for="comment" class="form-label">Текст отзыва</label>
+                <textarea name="comment" id="comment" class="form-textarea"
+                          placeholder="Расскажите о вашем опыте..." required
+                          rows="4"></textarea>
+            </div>
+            <button type="submit" class="modal-submit-btn">Опубликовать отзыв</button>
+        </form>
     </div>
 </div>
+
+<!-- Size guide modal -->
+<div id="sizeModal" class="modal" role="dialog" aria-modal="true" aria-label="Таблица размеров">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-content--wide">
+        <button class="close-btn close-size-btn" id="closeSizeModal" aria-label="Закрыть">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <h3 class="modal-title">Таблица размеров</h3>
+        <div class="size-table-wrap">
+            <table class="size-guide-table">
+                <thead>
+                <tr><th>EU</th><th>US</th><th>UK</th><th>Длина стопы (см)</th></tr>
+                </thead>
+                <tbody>
+                <tr><td>40</td><td>7</td><td>6</td><td>25.5</td></tr>
+                <tr><td>41</td><td>8</td><td>7</td><td>26.0</td></tr>
+                <tr><td>42</td><td>8.5</td><td>7.5</td><td>26.5</td></tr>
+                <tr><td>43</td><td>9.5</td><td>8.5</td><td>27.5</td></tr>
+                <tr><td>44</td><td>10</td><td>9</td><td>28.0</td></tr>
+                <tr><td>45</td><td>11</td><td>10</td><td>29.0</td></tr>
+                <tr><td>46</td><td>12</td><td>11</td><td>30.0</td></tr>
+                <tr><td>47</td><td>13</td><td>12</td><td>31.0</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="size-note">Измерьте длину стопы вечером — она немного увеличивается в течение дня.</p>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <div th:insert="~{footer :: footer-code}"></div>
 <script th:src="@{/js/navbar-component.js}" defer></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // --- Модальное окно ---
-        const modal = document.getElementById("commentModal");
-        const openModalBtn = document.getElementById("openModalBtn");
-        const closeModalBtn = document.querySelector(".close-btn");
 
-        openModalBtn?.addEventListener("click", () => modal.style.display = "block");
-        closeModalBtn?.addEventListener("click", () => modal.style.display = "none");
-        window.addEventListener("click", (e) => {
-            if (e.target === modal) modal.style.display = "none";
+        /* ─────────────────────────────────────────
+           GALLERY
+        ───────────────────────────────────────── */
+        const wrapper      = document.getElementById('imagesWrapper');
+        const slides       = wrapper ? Array.from(wrapper.querySelectorAll('.large-img')) : [];
+        const thumbItems   = Array.from(document.querySelectorAll('.thumbnail-column li'));
+        const counter      = document.getElementById('imageCounter');
+        const dotsWrap     = document.getElementById('galleryDots');
+        const btnPrev      = document.getElementById('galleryPrev');
+        const btnNext      = document.getElementById('galleryNext');
+        let current = 0;
+        const total = slides.length;
+
+        // Build dot indicators
+        if (dotsWrap && total > 1) {
+            slides.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = 'gallery-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Фото ${i + 1}`);
+                dot.type = 'button';
+                dot.addEventListener('click', () => showImage(i));
+                dotsWrap.appendChild(dot);
+            });
+        }
+
+        function updateArrows() {
+            if (btnPrev) btnPrev.disabled = current === 0;
+            if (btnNext) btnNext.disabled = current === total - 1;
+        }
+
+        function showImage(idx) {
+            idx = Math.max(0, Math.min(idx, total - 1));
+            current = idx;
+
+            if (wrapper) wrapper.style.transform = `translateX(-${idx * 100}%)`;
+
+            thumbItems.forEach((t, i) => {
+                t.classList.toggle('active', i === idx);
+            });
+
+            if (thumbItems[idx]) {
+                thumbItems[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+
+            if (counter) counter.textContent = `${idx + 1} / ${total}`;
+
+            if (dotsWrap) {
+                Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === idx));
+            }
+
+            updateArrows();
+        }
+
+        thumbItems.forEach((t, i) => t.addEventListener('click', () => showImage(i)));
+        window.showImageByIndex = (el, i) => showImage(i);
+
+        if (btnPrev) btnPrev.addEventListener('click', () => showImage(current - 1));
+        if (btnNext) btnNext.addEventListener('click', () => showImage(current + 1));
+
+        document.addEventListener('keydown', e => {
+            if (e.key === "ArrowRight") showImage(current + 1);
+            if (e.key === "ArrowLeft") showImage(current - 1);
         });
 
-        // --- Счетчик количества ---
-        const updateQuantity = (inputSelector, delta) => {
-            const input = document.querySelector(inputSelector);
-            if (!input) return;
-            const value = parseInt(input.value) || 0;
-            const min = parseInt(input.parentNode.getAttribute('data-min')) || 0;
-            const max = parseInt(input.parentNode.getAttribute('data-max')) || Infinity;
+        // Touch swipe
+        let startX = 0, startY = 0, isDragging = false;
+        const container = document.getElementById('mainImageContainer');
+        if (container) {
+            container.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isDragging = false;
+            }, { passive: true });
 
-            const newValue = value + delta;
-            if (newValue >= min && newValue <= max) input.value = newValue;
+            container.addEventListener('touchmove', e => {
+                const dx = Math.abs(e.touches[0].clientX - startX);
+                const dy = Math.abs(e.touches[0].clientY - startY);
+                if (dx > dy && dx > 8) isDragging = true;
+            }, { passive: true });
+
+            container.addEventListener('touchend', e => {
+                if (!isDragging) return;
+                const dx = e.changedTouches[0].clientX - startX;
+                if (dx < -40) showImage(current + 1);
+                if (dx > 40) showImage(current - 1);
+            });
+        }
+
+        showImage(0);
+
+
+        /* ─────────────────────────────────────────
+           PRICE FORMATTING
+        ───────────────────────────────────────── */
+        const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u202f") + "\u00a0₸";
+        ["formattedDiscountPrice", "formattedOriginalPrice", "formattedPrice"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = fmt(parseFloat(el.textContent));
+        });
+        const savEl = document.getElementById("formattedSaving");
+        if (savEl) savEl.textContent = fmt(parseFloat(savEl.textContent));
+
+
+        /* ─────────────────────────────────────────
+           QUANTITY
+        ───────────────────────────────────────── */
+        const qtyInput = document.getElementById('quantityInput');
+        const btnMinus = document.getElementById('qtyMinus');
+        const btnPlus  = document.getElementById('qtyPlus');
+        const MIN = 1, MAX = 20;
+
+        function updateQty(delta) {
+            if (!qtyInput) return;
+            const next = Math.min(MAX, Math.max(MIN, (parseInt(qtyInput.value) || 1) + delta));
+            qtyInput.value = next;
+            if (btnMinus) btnMinus.disabled = next <= MIN;
+            if (btnPlus)  btnPlus.disabled  = next >= MAX;
+        }
+
+        if (btnMinus) btnMinus.addEventListener('click', () => updateQty(-1));
+        if (btnPlus)  btnPlus.addEventListener('click',  () => updateQty(1));
+        updateQty(0);
+
+        window.increment = () => updateQty(1);
+        window.decrement = () => updateQty(-1);
+
+
+        /* ─────────────────────────────────────────
+           SIZE SELECTION
+        ───────────────────────────────────────── */
+        const addBtn    = document.getElementById('add-to-cart-btn');
+        const sizeInput = document.getElementById('selected-size');
+        const sizeError = document.getElementById('size-error');
+        const sizeHint  = document.getElementById('sizeHint');
+
+        function setSizeState(hasSize) {
+            if (addBtn) {
+                addBtn.disabled = !hasSize;
+                addBtn.setAttribute('aria-disabled', String(!hasSize));
+            }
+            if (sizeHint) sizeHint.style.display = hasSize ? 'none' : 'block';
+        }
+
+        window.selectSize = function(el) {
+            if (el.closest('.size-option.out-of-stock')) return;
+
+            const isSelected = el.classList.contains('selected');
+            document.querySelectorAll('.size-label-btn').forEach(s => {
+                s.classList.remove('selected');
+                s.setAttribute('aria-pressed', 'false');
+            });
+
+            if (!isSelected) {
+                el.classList.add('selected');
+                el.setAttribute('aria-pressed', 'true');
+                if (sizeInput) sizeInput.value = el.textContent.trim();
+                setSizeState(true);
+                if (sizeError) sizeError.style.display = 'none';
+            } else {
+                if (sizeInput) sizeInput.value = '';
+                setSizeState(false);
+            }
         };
 
-        window.increment = () => updateQuantity('.number-text', 1);
-        window.decrement = () => updateQuantity('.number-text', -1);
-
-        // --- Форматирование цены ---
-        const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-
-        const priceElements = [
-            "formattedDiscountPrice",
-            "formattedOriginalPrice",
-            "formattedPrice"
-        ];
-
-        priceElements.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.innerText = formatPrice(el.innerText) + " ₸";
-        });
-
-        // --- Табы ---
-        const buttons = document.querySelectorAll(".tab-button");
-        const sections = document.querySelectorAll(".tab-section");
-
-        sections.forEach(section => section.classList.remove("active"));
-        document.getElementById("description-section")?.classList.add("active");
-
-        buttons.forEach(button => {
-            button.addEventListener("click", () => {
-                const tabId = button.getAttribute("data-tab");
-                sections.forEach(section => section.classList.remove("active"));
-                document.getElementById(`${tabId}-section`)?.classList.add("active");
-                buttons.forEach(btn => btn.classList.remove("active"));
-                button.classList.add("active");
+        document.querySelectorAll('.size-label-btn').forEach(btn => {
+            btn.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    window.selectSize(btn);
+                }
             });
         });
 
-        // --- Выбор размера ---
-        window.selectSize = (element) => {
-            const addButton = document.getElementById('add-to-cart-btn');
-            const selectedInput = document.getElementById('selected-size');
+        setSizeState(false);
 
-            if (element.classList.contains('selected')) {
-                element.classList.remove('selected');
-                selectedInput.value = '';
-                addButton.disabled = true;
-            } else {
-                document.querySelectorAll('.size-label-btn').forEach(size => size.classList.remove('selected'));
-                element.classList.add('selected');
-                selectedInput.value = element.textContent.trim();
-                addButton.disabled = false;
-            }
-        };
 
-        // --- Проверка формы ---
-        const form = document.querySelector('form');
-        form?.addEventListener('submit', (e) => {
-            const selectedSize = document.getElementById('selected-size')?.value;
-            if (!selectedSize) {
-                e.preventDefault();
-                document.getElementById('size-error').style.display = 'inline';
-            }
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const wrapper = document.getElementById('imagesWrapper');
-        const slides = wrapper.querySelectorAll('.large-img');
-        const thumbnails = document.querySelectorAll('.thumbnail-column li');
-
-        let currentIndex = 0;
-        const total = slides.length;
-
-        function showImage(index) {
-            if (index < 0) index = 0;
-            if (index >= total) index = total - 1;
-
-            currentIndex = index;
-            wrapper.style.transform = `translateX(-${index * 100}%)`;
-
-            thumbnails.forEach(t => t.classList.remove('active'));
-            if (thumbnails[index]) thumbnails[index].classList.add('active');
+        /* ─────────────────────────────────────────
+           FORM SUBMIT
+        ───────────────────────────────────────── */
+        const cartForm = document.getElementById('cartForm');
+        if (cartForm) {
+            cartForm.addEventListener('submit', e => {
+                const size = sizeInput && sizeInput.value;
+                if (!size) {
+                    e.preventDefault();
+                    if (sizeError) sizeError.style.display = 'flex';
+                    const sizesEl = document.querySelector('.sizes-container');
+                    if (sizesEl) sizesEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+                if (addBtn) {
+                    addBtn.classList.add('is-loading');
+                    addBtn.querySelector('.btn-text').textContent = 'Добавляем…';
+                }
+            });
         }
 
-        thumbnails.forEach((thumb, index) => {
-            thumb.addEventListener('click', () => showImage(index));
+
+        /* ─────────────────────────────────────────
+           TABS
+        ───────────────────────────────────────── */
+        const tabBtns     = Array.from(document.querySelectorAll(".tab-button"));
+        const tabSections = Array.from(document.querySelectorAll(".tab-section"));
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.dataset.tab;
+                tabBtns.forEach(b => {
+                    b.classList.remove("active");
+                    b.setAttribute('aria-selected', 'false');
+                });
+                tabSections.forEach(s => {
+                    s.classList.remove("active");
+                    s.hidden = true;
+                });
+                btn.classList.add("active");
+                btn.setAttribute('aria-selected', 'true');
+                const target = document.getElementById(`${id}-section`);
+                if (target) {
+                    target.classList.add("active");
+                    target.hidden = false;
+                }
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            });
         });
 
-        let startX = 0;
-        const container = document.getElementById('mainImageContainer');
 
-        container.addEventListener('touchstart', e => {
-            startX = e.touches[0].clientX;
+        /* ─────────────────────────────────────────
+           MODALS
+        ───────────────────────────────────────── */
+        function openModal(id) {
+            const m = document.getElementById(id);
+            if (!m) return;
+            m.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            const focusable = m.querySelector('button, [href], input, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusable) setTimeout(() => focusable.focus(), 50);
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            if (!m) return;
+            m.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById("openModalBtn")?.addEventListener("click", () => openModal("commentModal"));
+        document.getElementById("openModalBtn")?.addEventListener("keydown", e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal("commentModal"); }
         });
+        document.getElementById("closeCommentModal")?.addEventListener("click", () => closeModal("commentModal"));
 
-        container.addEventListener('touchend', e => {
-            const endX = e.changedTouches[0].clientX;
-            if (endX < startX - 50) showImage(currentIndex + 1);
-            if (endX > startX + 50) showImage(currentIndex - 1);
+        document.getElementById("openSizeGuide")?.addEventListener("click", e => {
+            e.preventDefault();
+            openModal("sizeModal");
+        });
+        document.getElementById("closeSizeModal")?.addEventListener("click", () => closeModal("sizeModal"));
+
+        document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+            backdrop.addEventListener("click", closeAllModals);
         });
 
         document.addEventListener('keydown', e => {
-            if (e.key === "ArrowRight") showImage(currentIndex + 1);
-            if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+            if (e.key === 'Escape') closeAllModals();
         });
 
-        showImage(0);
+
+        /* ─────────────────────────────────────────
+           TOAST
+        ───────────────────────────────────────── */
+        const toastEl = document.getElementById('toast');
+        let toastTimer;
+
+        window.showToast = function(msg, duration = 3000) {
+            if (!toastEl) return;
+            clearTimeout(toastTimer);
+            toastEl.textContent = msg;
+            toastEl.classList.add('show');
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), duration);
+        };
+
+
+        /* ─────────────────────────────────────────
+           WISHLIST TOGGLE (similar products)
+        ───────────────────────────────────────── */
+        window.toggleWish = function(btn) {
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            btn.innerHTML = isActive
+                ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
+                : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+            window.showToast(isActive ? 'Добавлено в избранное' : 'Удалено из избранного');
+        };
+
     });
 </script>
+
 <script>
-    window.addEventListener("DOMContentLoaded", () => {
-        if (window.innerWidth <= 780) {
-            const gallery = document.querySelector('.product-gallery');
-            const rightColumn = document.querySelector('.product-mobile-image');
-            if (gallery && rightColumn) {
-                // Перемещаем галерею в самый низ правой колонки
-                rightColumn.appendChild(gallery);
-            }
-        }
-    });
-</script>
-<script>
-    // Регистрируем визит при заходе на страницу
     fetch('/analytics/register', { method: 'GET' });
 </script>
 </body>
