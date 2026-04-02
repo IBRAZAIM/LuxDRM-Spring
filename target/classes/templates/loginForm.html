@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UXD — Вход</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/authorizationForm.css}">
+</head>
+<body>
+<div class="card">
+    <p class="brand">UXD</p>
+    <h2>Вход</h2>
+
+    <div th:if="${loginError}" class="error">
+        Неверный логин или пароль
+    </div>
+
+    <form th:action="@{/login}" method="post" autocomplete="on">
+        <input type="hidden" name="redirect" th:value="${redirect}"/>
+
+        <div class="field">
+            <label for="username">Логин</label>
+            <input type="text" id="username" name="username"
+                   placeholder="Ваш логин"
+                   autocomplete="username" required/>
+        </div>
+
+        <div class="field">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password"
+                   placeholder="Ваш пароль"
+                   autocomplete="current-password" required/>
+        </div>
+
+        <button type="submit">Войти</button>
+    </form>
+
+    <p class="foot">Нет аккаунта? <a th:href="@{/register}">Создать</a></p>
+</div>
+</body>
+</html>

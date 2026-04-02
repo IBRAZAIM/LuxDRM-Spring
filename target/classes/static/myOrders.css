@@ -1,0 +1,208 @@
+body{
+    user-select: none;
+}
+
+.container {
+    width: 90%;
+    padding: 50px;
+    justify-self: center;
+}
+
+.title {
+    font-size: 36px;
+    color: #0c0c3d;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+.filters {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.filters label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #9A073D;
+}
+
+.filters select {
+    padding: 6px 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    background-color: #fff;
+    color: #0c0c3d;
+    transition: all 0.3s ease;
+}
+
+.filters select:hover {
+    border-color: #9A073D;
+}
+
+.filters .download-invoice {
+    font-family: Montserrat, sans-serif;
+    font-weight: bold;
+    background-color: #9A073D;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    margin-left: 20px;
+}
+
+.filters .download-invoice:hover {
+    background-color: #7A052F;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #0c0c3d;
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+td {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    font-family: 'Poppins', sans-serif;
+}
+
+.order-number {
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0c0c3d;
+    text-align: center;
+    padding: 10px;
+}
+
+.status {
+    text-align: center;
+    text-transform: uppercase; /* Добавляет солидность */
+}
+
+.status[data-status="В ожидании"] {
+    color: #EF6C00; /* Темно-оранжевый текст */
+}
+
+.status[data-status="Оформлено"] {
+    color: #0f0f6e;
+}
+
+.status[data-status="Отменено"] {
+    color: #C62828; /* Бордовый текст */
+}
+
+.status[data-status="Отправлено"] {
+    color: #2E7D32;
+}
+
+.status[data-status="Доставлено"] {
+    color: #119b08;
+}
+
+.total{
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    color: #4CAF50;
+}
+
+.date, .status {
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+}
+
+.order-item:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transform: translateY(-2px);
+}
+
+.view-order-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #0c0c3d; /* Ваш основной цвет */
+    color: #FFFFFF; /* Цвет текста */
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.view-order-btn:hover {
+    border: 1px #0c0c3d;
+    background-color: #FFFFFF;
+    color: #0c0c3d;
+    cursor: pointer;
+}
+
+.actions {
+    width: 50%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.continue-btn {
+    background-color: #0c0c3d;
+    color: white;
+    font-family: "Montserrat SemiBold", sans-serif;
+    font-style: italic;
+    font-size: 16px;
+    border: none;
+    padding: 15px 32px 15px 32px;
+    margin: 35px 0 0 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.continue-btn:hover {
+    background-color: #0a0a33;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 30px;
+    }
+
+    .title {
+        font-size: 30px;
+    }
+
+    .filters {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    th, td {
+        font-size: 14px;
+    }
+
+    .filters select, .filters .download-invoice {
+        width: 100%;
+    }
+}
+
+
+

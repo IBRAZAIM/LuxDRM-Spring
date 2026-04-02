@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UXD — Регистрация</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/authorizationForm.css}">
+</head>
+<body>
+<div class="card">
+    <p class="brand">UXD</p>
+    <h2>Регистрация</h2>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <form th:action="@{/register}" th:object="${user}" method="post" autocomplete="off">
+
+        <div class="field">
+            <label for="login">Логин</label>
+            <input type="text" id="login" th:field="*{login}"
+                   placeholder="от 3 до 50 символов"
+                   required minlength="3" maxlength="50"
+                   pattern="[A-Za-z0-9._-]{3,50}"
+                   autocomplete="username"/>
+        </div>
+
+        <div class="field">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" th:field="*{password}"
+                   placeholder="не менее 8 символов"
+                   required minlength="8" maxlength="72"
+                   autocomplete="new-password"
+                   oninput="strength(this.value)"/>
+            <div class="strength">
+                <div class="s" id="s1"></div>
+                <div class="s" id="s2"></div>
+                <div class="s" id="s3"></div>
+                <div class="s" id="s4"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label for="name">Имя</label>
+                <input type="text" id="name" th:field="*{name}"
+                       placeholder="Необязательно" maxlength="255"/>
+            </div>
+            <div class="field">
+                <label for="surname">Фамилия</label>
+                <input type="text" id="surname" th:field="*{surname}"
+                       placeholder="Необязательно" maxlength="255"/>
+            </div>
+        </div>
+
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <p class="foot">Уже есть аккаунт? <a th:href="@{/login}">Войти</a></p>
+</div>
+
+<script>
+    var c = ['#e24b4a','#e08530','#b89a5a','#1a7a4a'];
+    function strength(v) {
+        var s = 0;
+        if (v.length >= 8)  s++;
+        if (v.length >= 12) s++;
+        if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++;
+        if (/[0-9]/.test(v)) s++;
+        if (/[^A-Za-z0-9]/.test(v)) s++;
+        var l = Math.min(Math.ceil(s / 1.25), 4);
+        var col = l > 0 ? c[l - 1] : 'var(--border)';
+        for (var i = 1; i <= 4; i++)
+            document.getElementById('s' + i).style.background = i <= l ? col : 'var(--border)';
+    }
+</script>
+</body>
+</html>

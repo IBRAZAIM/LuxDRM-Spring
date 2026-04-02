@@ -1,0 +1,190 @@
+.footer {
+    margin-top: 40px;
+    background-color: #F4F4F4;
+    padding-top: 33px;
+    font-size: 14px;
+}
+
+.footer-content {
+    margin-left: 26px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Изначально 4 колонки */
+    gap: 25px;
+    justify-items: center;
+}
+
+.footer-part {
+    padding: 0;
+}
+
+.footer-part .footer-title {
+    color: #545454;
+    font-family: Montserrat Bold, sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 39px;
+}
+
+.footer-links {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links .list {
+    margin-bottom: 22px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.footer-links .ssylka {
+    color: #292929;
+    text-decoration: none;
+    font-style: italic;
+    font-size: 16px;
+    font-family: Montserrat Light, sans-serif;
+}
+
+.footer-links .ssylka:hover {
+    text-decoration: underline;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.footer-social a {
+    color: #292929;
+    font-size: 46px;
+    transition: color 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: #0c0c3d;
+}
+
+.footer-policy .footer-links{
+    font-family: Montserrat Light, sans-serif;
+    font-style: italic;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+    gap: 170px;
+    text-align: center;
+}
+
+.footer-policy .footer-links .ssylka{
+    color: #292929;
+    text-decoration: none;
+    font-style: italic;
+    font-size: 16px;
+    font-family: Montserrat Light, sans-serif;
+}
+
+.footer-policy .ssylka:hover{
+    text-decoration: underline;
+}
+.footer-text {
+    font-family: Montserrat Light, sans-serif;
+    text-align: center;
+    white-space: nowrap;
+    color: #292929;
+    padding-bottom: 20px;
+}
+
+.footer-bottom{
+    margin: 30px 0 20px 0;
+}
+
+/* Адаптивность для разных размеров экранов */
+
+/* Когда экран меньше 1200px */
+@media screen and (max-width: 1200px) {
+    .footer-content {
+        grid-template-columns: repeat(3, 1fr); /* 3 колонки */
+        position: relative;
+    }
+
+    .footer-content > *:nth-child(4) {
+        display: none;
+
+    }
+}
+
+
+/* Когда экран меньше 992px */
+@media screen and (max-width: 992px) {
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        justify-items: left;
+    }
+
+    .footer-content > *:nth-child(2),
+    .footer-content > *:nth-child(4) {
+        display: block;
+    }
+}
+
+/* Когда экран меньше 768px */
+@media screen and (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-part .footer-title{
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .footer-links .ssylka{
+        font-size: 14px;
+        font-family: "Montserrat Light", sans-serif;
+        font-style: italic;
+    }
+
+    .footer-policy .footer-links{
+        gap: 100px;
+    }
+
+    .footer-policy .footer-links .ssylka{
+        font-size: 14px;
+    }
+}
+
+/* Когда экран меньше 576px */
+@media screen and (max-width: 700px) {
+    .footer-content{
+        grid-template-columns: 1fr; /* Одноэлементная структура */
+    }
+
+    .footer-part .footer-title{
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .footer-links .ssylka{
+        font-size: 16px;
+    }
+
+    .footer-policy .footer-links{
+        gap: 30px;
+    }
+}
+
+@media screen and (max-width: 560px){
+    .footer-policy .footer-links .ssylka{
+        font-family: Montserrat Light, sans-serif;
+        margin-top: 69px;
+        gap: 20px;
+    }
+}
+
+@media screen and (max-width: 430px){
+    .footer-text{
+        font-size: 10px;
+    }
+}

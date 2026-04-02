@@ -1,0 +1,144 @@
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    background-color: #f9f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+.catalog-body {
+    margin-top: 120px;
+}
+
+.product-container {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    position: relative;
+}
+
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 20px 0 0 40px;
+    border-radius: 8px;
+}
+
+label {
+    margin-right: 10px;
+    opacity: 0.7;
+}
+
+input[type="number"],
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #0c0c3d;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    background-color: #333;
+}
+
+.category-label {
+    margin-right: 10px;
+}
+
+.product-name {
+    text-decoration: none;
+    color: #333;
+}
+
+button:hover {
+    background-color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 8px;
+}
+
+th {
+    border: none;
+    background-color: #0c0c3d;
+    color: white;
+}
+tr{
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+tr:hover {
+    background-color: #e0e0e0;
+}
+
+.icon-edit {
+    text-decoration: none;
+    color: blue;
+}
+
+.icon-delete {
+    text-decoration: none;
+    color: red;
+}
+
+.add-product-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    margin-left: 14px;
+    background-color: white;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Плавное изменение фона и эффекта при наведении */
+    text-decoration: none;
+}
+
+.add-product-btn:hover {
+    background-color: #4CAF50;
+    color: white;
+    transform: scale(1.1); /* Небольшое увеличение при наведении */
+}
+
+.add-product-btn i {
+    font-size: 20px;
+}
+
+.category {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100px;
+}
+

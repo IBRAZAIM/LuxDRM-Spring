@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/productList.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <title>Каталог</title>
+</head>
+<body>
+<div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
+<main class="catalog-body">
+    <div class="product-container">
+        <div th:insert="~{filter :: filter-div}"></div>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Категория</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.getId()}"></td>
+                <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}" class="product-name"></a></td>
+                <td th:text="${product.getPrice()}"></td>
+                <td th:text="${product.category.getName()}"></td>
+                <td><a th:href="@{'/products/update/' + ${product.getId()}}" class="icon-edit"><i class="fa-regular fa-pen-to-square"></i></a></td>
+                <td><a th:href="@{'/products/delete/' + ${product.getId()}}" class="icon-delete"><i class="fa-regular fa-trash-can"></i></a></td>
+            </tr>
+            </tbody>
+        </table>
+        <a th:href="@{'/products/create/chooseCategory'}" class="add-product-btn"><i class="fas fa-plus"></i></a>
+    </div>
+</main>
+<div th:insert="~{footer :: footer-code}"></div>
+<script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/navbar-component.js}" defer></script>
+</body>
+</html>
+

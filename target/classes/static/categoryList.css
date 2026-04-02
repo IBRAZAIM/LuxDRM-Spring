@@ -1,0 +1,71 @@
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    background-color: #f9f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #0c0c3d;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+th {
+    background-color: #0c0c3d;
+    color: tan;
+}
+
+tr:hover {
+    background-color: #e0e0e0;
+}
+
+.add-product-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    margin-left: 14px;
+    background-color: white;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Плавное изменение фона и эффекта при наведении */
+    text-decoration: none;
+}
+
+.add-product-btn:hover {
+    background-color: #4CAF50;
+    color: white;
+    transform: scale(1.1); /* Небольшое увеличение при наведении */
+}
+
+.add-product-btn i {
+    font-size: 20px;
+}

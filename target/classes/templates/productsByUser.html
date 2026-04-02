@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог товаров</title>
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <link rel="stylesheet" th:href="@{/productsByUser.css}">
+</head>
+<body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
+
+<nav class="bc">
+    <a th:href="@{/main}">Главная</a>
+    <span class="sep">›</span>
+    <span class="cur">Каталог</span>
+</nav>
+
+<section class="hero">
+    <div class="hero-inner">
+        <p class="hero-eye">Премиальная коллекция</p>
+        <h1 class="hero-h1">Каталог <em>товаров</em></h1>
+        <p class="hero-sub">Тщательно отобранные позиции для вашего стиля</p>
+        <div class="hero-nums">
+            <div class="hero-n"><span id="totalCount">0</span><span>Товаров</span></div>
+            <div class="hero-n"><span id="catCount">0</span><span>Категорий</span></div>
+            <div class="hero-n"><span id="maxDisc">0%</span><span>Макс. скидка</span></div>
+        </div>
+    </div>
+</section>
+
+<div class="toolbar">
+    <p class="count">Показано <strong id="shownCount">0</strong> товаров</p>
+    <div class="tr-right">
+        <button class="mob-filter-btn" onclick="catalogToggleSidebar()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="6" x2="20" y2="6"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+                <line x1="10" y1="18" x2="14" y2="18"/>
+            </svg>
+            Фильтры
+        </button>
+        <select class="sort-sel" id="sortSel" onchange="applyAll()">
+            <option value="default">По умолчанию</option>
+            <option value="price_asc">Цена ↑</option>
+            <option value="price_desc">Цена ↓</option>
+            <option value="discount">Скидка ↓</option>
+            <option value="name_asc">Название А–Я</option>
+            <option value="rating">Рейтинг ↓</option>
+        </select>
+        <div class="grid-btns">
+            <button class="g-btn act" id="gb4" onclick="setGrid(4)" title="4 колонки">
+                <svg viewBox="0 0 16 16"><rect x="0" y="0" width="6" height="6"/><rect x="10" y="0" width="6" height="6"/><rect x="0" y="10" width="6" height="6"/><rect x="10" y="10" width="6" height="6"/></svg>
+            </button>
+            <button class="g-btn" id="gb3" onclick="setGrid(3)" title="3 колонки">
+                <svg viewBox="0 0 16 16"><rect x="0" y="0" width="4" height="16"/><rect x="6" y="0" width="4" height="16"/><rect x="12" y="0" width="4" height="16"/></svg>
+            </button>
+            <button class="g-btn" id="gb2" onclick="setGrid(2)" title="2 колонки">
+                <svg viewBox="0 0 16 16"><rect x="0" y="0" width="7" height="16"/><rect x="9" y="0" width="7" height="16"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="cat-body">
+    <div class="f-overlay" id="fOverlay" onclick="catalogToggleSidebar()"></div>
+
+    <aside class="cat-sidebar" id="catalogSidebar">
+        <div class="sb-head">
+            <span class="sb-title">Фильтры</span>
+            <button class="sb-reset" onclick="resetAll()">Сбросить</button>
+        </div>
+
+        <div class="active-tags" id="activeTags"></div>
+
+        <div class="sb-section">
+            <div class="sb-sec-head" onclick="toggleSec(this)">
+                <span class="sb-sec-label">Категория</span>
+                <span class="sb-sec-ico open">▾</span>
+            </div>
+            <div class="sb-sec-body cat-pills" id="catBody"></div>
+        </div>
+
+        <div class="sb-section">
+            <div class="sb-sec-head" onclick="toggleSec(this)">
+                <span class="sb-sec-label">Цена</span>
+                <span class="sb-sec-ico open">▾</span>
+            </div>
+            <div class="sb-sec-body">
+                <div class="price-disp">
+                    <span id="pMinD">0 ₸</span>
+                    <span id="pMaxD">500 000 ₸</span>
+                </div>
+                <div class="slider-wrap">
+                    <div class="s-track"></div>
+                    <div class="s-fill" id="sFill"></div>
+                    <input type="range" class="s-thumb" id="tMin" min="0" max="500000" value="0" step="1000" oninput="syncRange()">
+                    <input type="range" class="s-thumb" id="tMax" min="0" max="500000" value="500000" step="1000" oninput="syncRange()">
+                </div>
+                <div class="price-inputs">
+                    <div class="p-inp-g">
+                        <label for="pMin">От</label>
+                        <input type="number" id="pMin" placeholder="0" min="0" oninput="syncFromInput()">
+                    </div>
+                    <span class="p-sep">—</span>
+                    <div class="p-inp-g">
+                        <label for="pMax">До</label>
+                        <input type="number" id="pMax" placeholder="500 000" min="0" oninput="syncFromInput()">
+                    </div>
+                </div>
+                <p class="p-err" id="pErr">Минимум не может быть больше максимума</p>
+            </div>
+        </div>
+
+        <div class="sb-section">
+            <div class="sb-sec-head" onclick="toggleSec(this)">
+                <span class="sb-sec-label">Скидка</span>
+                <span class="sb-sec-ico open">▾</span>
+            </div>
+            <div class="sb-sec-body disc-opts">
+                <button class="disc-btn" onclick="setDisc(this,10)"><span class="disc-dot"></span> От 10%</button>
+                <button class="disc-btn" onclick="setDisc(this,25)"><span class="disc-dot"></span> От 25%</button>
+                <button class="disc-btn" onclick="setDisc(this,50)"><span class="disc-dot"></span> От 50%</button>
+                <button class="disc-btn" onclick="setDisc(this,70)"><span class="disc-dot"></span> От 70%</button>
+            </div>
+        </div>
+
+        <div class="sb-section">
+            <div class="sb-sec-head" onclick="toggleSec(this)">
+                <span class="sb-sec-label">Рейтинг</span>
+                <span class="sb-sec-ico open">▾</span>
+            </div>
+            <div class="sb-sec-body rating-opts">
+                <button class="rat-btn" onclick="setRating(this,4)">
+                    <div class="rat-stars">★★★★<span class="rs e">★</span></div>
+                    <span class="rat-label">от 4 и выше</span>
+                </button>
+                <button class="rat-btn" onclick="setRating(this,3)">
+                    <div class="rat-stars">★★★<span class="rs e">★</span><span class="rs e">★</span></div>
+                    <span class="rat-label">от 3 и выше</span>
+                </button>
+                <button class="rat-btn" onclick="setRating(this,2)">
+                    <div class="rat-stars">★★<span class="rs e">★</span><span class="rs e">★</span><span class="rs e">★</span></div>
+                    <span class="rat-label">от 2 и выше</span>
+                </button>
+            </div>
+        </div>
+
+        <button class="apply-btn" onclick="applyAll();catalogCloseSidebar()"><span>Применить</span></button>
+    </aside>
+
+    <main class="prod-area">
+        <div class="prod-grid" id="grid"></div>
+        <div class="lm-wrap" id="lmWrap" style="display:none">
+            <button class="lm-btn" onclick="loadMore()"><span>Показать ещё</span></button>
+        </div>
+    </main>
+</div>
+
+<div id="toast"></div>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
+<script th:inline="javascript">
+    const RAW = [];
+    /*[# th:each="p : ${products}"]*/
+    RAW.push({
+        id: [[${p.id}]],
+        name: [[${p.name}]],
+        cat: [[${p.category != null ? p.category.name : 'Без категории'}]],
+        price: [[${p.price}]],
+        disc: [[${p.discount}]],
+        rating: [[${p.rating}]],
+        reviews: 0,
+        img: [[${(p.images != null and !#lists.isEmpty(p.images) and p.images[0] != null and p.images[0].image != null) ? p.images[0].image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80'}]]
+    });
+    /*[/]*/
+
+    let cols = 4, activeDisc = null, activeRating = null, page = 8;
+    const PER = 8;
+    let filtered = [...RAW];
+    const RANGE_MAX = Math.max(500000, ...RAW.map(p => Math.round(p.price * (1 - p.disc / 100))));
+
+    function esc(s) {
+        return String(s)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+    }
+
+    function fmt(n) { return Number(n).toLocaleString('ru-KZ') + ' ₸'; }
+
+    function stars(r) {
+        let s = '';
+        for (let i = 1; i <= 5; i++) s += `<span class="cstar${i <= Math.round(r) ? '' : ' e'}">★</span>`;
+        return s;
+    }
+
+    function initStats() {
+        document.getElementById('totalCount').textContent = RAW.length;
+        document.getElementById('catCount').textContent = new Set(RAW.map(p => p.cat)).size;
+        document.getElementById('maxDisc').textContent = '−' + (RAW.length ? Math.max(...RAW.map(p => p.disc)) : 0) + '%';
+    }
+
+    function buildCategories() {
+        const counts = {};
+        RAW.forEach(p => counts[p.cat] = (counts[p.cat] || 0) + 1);
+        const html = Object.entries(counts)
+            .sort((a, b) => a[0].localeCompare(b[0], 'ru'))
+            .map(([name, count]) =>
+                `<label class="cat-pill"><input type="checkbox" name="cat" value="${esc(name)}" onchange="applyAll()"><span class="pill-box"></span><span class="pill-name">${esc(name)}</span><span class="pill-ct">${count}</span></label>`
+            ).join('');
+        document.getElementById('catBody').innerHTML = html;
+    }
+
+    function card(p, delay) {
+        const final = Math.round(p.price * (1 - p.disc / 100));
+        const url = `/products/${p.id}`;
+        // Ширина карточки вычисляется по текущему cols
+        const w = `calc(${100 / cols}% - ${18 * (cols - 1) / cols}px)`;
+        return `<div class="p-card" onclick="window.location.href='${url}'" style="width:${w};animation-delay:${delay}ms">
+    <div class="card-img">
+      <img src="${p.img}" alt="${esc(p.name)}" loading="lazy">
+      ${p.disc > 0 ? `<span class="c-badge">−${p.disc}%</span>` : ''}
+      <button class="c-wish" onclick="event.stopPropagation();wishlist(this,${p.id})" aria-label="Избранное">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </button>
+      <button class="c-qadd" onclick="event.stopPropagation();addCart(${p.id})">В корзину</button>
+    </div>
+    <div class="card-body">
+      <p class="c-cat">${esc(p.cat)}</p>
+      <a class="c-name" href="${url}" onclick="event.stopPropagation()">${esc(p.name)}</a>
+      <div class="c-rating"><div class="c-stars">${stars(p.rating)}</div><span class="c-rct">(${p.reviews})</span></div>
+      <div class="c-prices">
+        <span class="price-f">${fmt(final)}</span>
+        ${p.disc > 0 ? `<span class="price-o">${fmt(p.price)}</span><span class="price-s">−${p.disc}%</span>` : ''}
+      </div>
+    </div>
+  </div>`;
+    }
+
+    function render() {
+        const grid = document.getElementById('grid');
+        const slice = filtered.slice(0, page);
+        if (!slice.length) {
+            grid.innerHTML = `<div class="empty"><span class="empty-ico">◎</span><h2 class="empty-t">Ничего не найдено</h2><p class="empty-s">Попробуйте изменить фильтры</p></div>`;
+            document.getElementById('lmWrap').style.display = 'none';
+        } else {
+            grid.innerHTML = slice.map((p, i) => card(p, i * 50)).join('');
+            document.getElementById('lmWrap').style.display = filtered.length > page ? 'flex' : 'none';
+        }
+        document.getElementById('shownCount').textContent = Math.min(slice.length, filtered.length);
+        updateTags();
+    }
+
+    function applyAll() {
+        const cats = [...document.querySelectorAll('input[name="cat"]:checked')].map(c => c.value);
+        const minV = parseInt(document.getElementById('tMin').value) || 0;
+        const maxV = parseInt(document.getElementById('tMax').value) || RANGE_MAX;
+        const err = document.getElementById('pErr');
+        if (minV > maxV) { err.classList.add('show'); return; }
+        err.classList.remove('show');
+        const sort = document.getElementById('sortSel').value;
+
+        filtered = RAW.filter(p => {
+            if (cats.length && !cats.includes(p.cat)) return false;
+            const fp = Math.round(p.price * (1 - p.disc / 100));
+            if (fp < minV || fp > maxV) return false;
+            if (activeDisc && p.disc < activeDisc) return false;
+            if (activeRating && p.rating < activeRating) return false;
+            return true;
+        });
+
+        if (sort === 'price_asc') filtered.sort((a, b) => Math.round(a.price * (1 - a.disc / 100)) - Math.round(b.price * (1 - b.disc / 100)));
+        else if (sort === 'price_desc') filtered.sort((a, b) => Math.round(b.price * (1 - b.disc / 100)) - Math.round(a.price * (1 - a.disc / 100)));
+        else if (sort === 'discount') filtered.sort((a, b) => b.disc - a.disc);
+        else if (sort === 'name_asc') filtered.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+        else if (sort === 'rating') filtered.sort((a, b) => b.rating - a.rating);
+
+        page = PER;
+        render();
+    }
+
+    function updateTags() {
+        const box = document.getElementById('activeTags');
+        const cats = [...document.querySelectorAll('input[name="cat"]:checked')].map(c => c.value);
+        const minV = parseInt(document.getElementById('tMin').value) || 0;
+        const maxV = parseInt(document.getElementById('tMax').value) || RANGE_MAX;
+        let html = '';
+        cats.forEach(c => html += tag(c, () => {
+            document.querySelectorAll('input[name="cat"]').forEach(input => { if (input.value === c) input.checked = false; });
+            applyAll();
+        }));
+        if (minV > 0 || maxV < RANGE_MAX) html += tag(`${fmt(minV)} — ${fmt(maxV)}`, () => {
+            document.getElementById('tMin').value = 0;
+            document.getElementById('tMax').value = RANGE_MAX;
+            document.getElementById('pMin').value = '';
+            document.getElementById('pMax').value = '';
+            syncRange(); applyAll();
+        });
+        if (activeDisc) html += tag(`Скидка от ${activeDisc}%`, () => {
+            activeDisc = null;
+            document.querySelectorAll('.disc-btn').forEach(b => b.classList.remove('act'));
+            applyAll();
+        });
+        if (activeRating) html += tag(`Рейтинг ${activeRating}+`, () => {
+            activeRating = null;
+            document.querySelectorAll('.rat-btn').forEach(b => b.classList.remove('act'));
+            applyAll();
+        });
+        box.innerHTML = html;
+    }
+
+    function tag(text, fn) {
+        const id = 't' + Math.random().toString(36).slice(2);
+        setTimeout(() => { const el = document.getElementById(id); if (el) el.onclick = fn; }, 0);
+        return `<span class="tag" id="${id}">${esc(text)}<span class="tag-x">✕</span></span>`;
+    }
+
+    function syncRange() {
+        let mn = parseInt(document.getElementById('tMin').value) || 0;
+        let mx = parseInt(document.getElementById('tMax').value) || RANGE_MAX;
+        if (mn > mx) { document.getElementById('tMin').value = mx; mn = mx; }
+        document.getElementById('pMinD').textContent = fmt(mn);
+        document.getElementById('pMaxD').textContent = fmt(mx);
+        document.getElementById('pMin').value = mn || '';
+        document.getElementById('pMax').value = mx < RANGE_MAX ? mx : '';
+        const f = document.getElementById('sFill');
+        f.style.left = (mn / RANGE_MAX * 100) + '%';
+        f.style.right = ((1 - mx / RANGE_MAX) * 100) + '%';
+        applyAll();
+    }
+
+    function syncFromInput() {
+        const mn = parseInt(document.getElementById('pMin').value) || 0;
+        const mx = parseInt(document.getElementById('pMax').value) || RANGE_MAX;
+        document.getElementById('tMin').value = Math.min(mn, RANGE_MAX);
+        document.getElementById('tMax').value = Math.min(mx, RANGE_MAX);
+        syncRange();
+    }
+
+    function setDisc(btn, val) {
+        if (activeDisc === val) { btn.classList.remove('act'); activeDisc = null; }
+        else { document.querySelectorAll('.disc-btn').forEach(b => b.classList.remove('act')); btn.classList.add('act'); activeDisc = val; }
+        applyAll();
+    }
+
+    function setRating(btn, val) {
+        if (activeRating === val) { btn.classList.remove('act'); activeRating = null; }
+        else { document.querySelectorAll('.rat-btn').forEach(b => b.classList.remove('act')); btn.classList.add('act'); activeRating = val; }
+        applyAll();
+    }
+
+    function toggleSec(head) {
+        const body = head.nextElementSibling;
+        const ico = head.querySelector('.sb-sec-ico');
+        const open = !body.classList.contains('hidden');
+        body.classList.toggle('hidden', open);
+        ico.classList.toggle('open', !open);
+    }
+
+    function resetAll() {
+        document.querySelectorAll('input[name="cat"]').forEach(c => c.checked = false);
+        document.getElementById('tMin').value = 0;
+        document.getElementById('tMax').value = RANGE_MAX;
+        document.getElementById('pMin').value = '';
+        document.getElementById('pMax').value = '';
+        document.querySelectorAll('.disc-btn').forEach(b => b.classList.remove('act'));
+        document.querySelectorAll('.rat-btn').forEach(b => b.classList.remove('act'));
+        document.getElementById('sortSel').value = 'default';
+        activeDisc = null; activeRating = null;
+        syncRange();
+    }
+
+    function getAutoCols() {
+        if (window.innerWidth > 1100) return 4;
+        if (window.innerWidth > 900) return 3;
+        return 2;
+    }
+
+    function setGrid(n) {
+        cols = n;
+        document.querySelectorAll('.g-btn').forEach(b => b.classList.remove('act'));
+        const btn = document.getElementById('gb' + n);
+        if (btn) btn.classList.add('act');
+        render();
+    }
+
+    function catalogToggleSidebar() {
+        document.getElementById('catalogSidebar').classList.toggle('open');
+        document.getElementById('fOverlay').classList.toggle('open');
+    }
+    function catalogCloseSidebar() {
+        document.getElementById('catalogSidebar').classList.remove('open');
+        document.getElementById('fOverlay').classList.remove('open');
+    }
+
+    function loadMore() { page += PER; render(); }
+
+    function toast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.style.transform = 'translateY(0)'; t.style.opacity = '1';
+        setTimeout(() => { t.style.transform = 'translateY(70px)'; t.style.opacity = '0'; }, 2400);
+    }
+
+    function addCart(id) { toast('Добавлено в корзину ✓'); }
+    function wishlist(btn, id) {
+        const liked = btn.dataset.liked === '1';
+        btn.dataset.liked = liked ? '0' : '1';
+        toast(liked ? 'Удалено из избранного' : 'Добавлено в избранное ♡');
+    }
+
+    window.addEventListener('resize', () => {
+        const target = getAutoCols();
+        if (target !== cols) setGrid(target);
+    });
+
+    buildCategories();
+    initStats();
+    document.getElementById('tMax').max = RANGE_MAX;
+    document.getElementById('tMax').value = RANGE_MAX;
+    document.getElementById('tMin').max = RANGE_MAX;
+    document.getElementById('pMax').placeholder = RANGE_MAX.toLocaleString('ru-KZ');
+    setGrid(getAutoCols());
+    syncRange();
+</script>
+</body>
+</html>
