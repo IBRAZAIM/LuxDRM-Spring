@@ -59,10 +59,16 @@ body{
     background-color: #7A052F;
 }
 
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 30px;
+    min-width: 600px; /* Ensures it scrolls instead of squishing */
 }
 
 th, td {

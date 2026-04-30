@@ -12,6 +12,7 @@
   <p class="subtitle">Заполните информацию о товаре</p>
 
   <form th:action="@{/products/create}" th:object="${product}" method="post">
+    <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
     <input type="hidden" name="categoryId" th:value="${category.id}">
     <!-- Основная информация -->
     <div class="form-section">

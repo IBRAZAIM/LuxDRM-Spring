@@ -1,11 +1,15 @@
 .checkout-container {
     width: 100%;
     user-select: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
     justify-content: space-between;
 }
 
 .left-part {
-    width: 60%;
+    flex: 1;
+    min-width: 300px;
     margin-left: 73px;
 }
 
@@ -28,11 +32,13 @@ h2 {
 }
 
 .inputs input.name {
-    width: calc(745px - 28px);
+    width: 100%;
+    max-width: calc(745px - 28px);
 }
 
 .checkbox-line {
     display: flex;
+    flex-wrap: wrap;
     gap: 50px;
 }
 
@@ -50,7 +56,7 @@ h2 {
 }
 
 .inputs input:nth-child(1), .address{
-    margin-right: 37px;
+    margin-right: 20px;
 }
 
 .input-block input::placeholder {
@@ -343,8 +349,41 @@ button:active {
 }
 
 /* Контейнер для нижних элементов */
-.cart-container-down {
+.cart-container-down{
     display: flex;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+    .left-part {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .right-part {
+        width: 100%;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .payment-button {
+        justify-content: center;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .checkout-container {
+        flex-direction: column;
+    }
+    .input-block input {
+        width: 100%;
+        margin-right: 0;
+    }
+    .inputs input.name, .address {
+        width: 100%;
+    }
+    .inputs input:nth-child(1), .address {
+        margin-right: 0;
+    }
 }
 
 .card-input {

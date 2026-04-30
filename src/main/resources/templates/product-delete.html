@@ -10,6 +10,7 @@
     <h1>Удаление продукта</h1>
     <p>Вы уверены, что хотите удалить продукт с ID: <span th:text="${product.getId()}"></span>?</p>
     <form th:action="@{'/products/delete/' + ${product.id}}" method="post">
+        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
         <input type="hidden" name="_method" value="DELETE"/>
         <input type="submit" value="Удалить" class="delete-button"><a href="/products" class="cancel">Отмена</a>
     </form>

@@ -16,6 +16,7 @@
     <div th:if="${error}" class="error" th:text="${error}"></div>
 
     <form th:action="@{/register}" th:object="${user}" method="post" autocomplete="off">
+        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
 
         <div class="field">
             <label for="login">Логин</label>
@@ -57,7 +58,7 @@
         <button type="submit">Зарегистрироваться</button>
     </form>
 
-    <p class="foot">Уже есть аккаунт? <a th:href="@{/login}">Войти</a></p>
+    <p class="foot">Уже есть аккаунт? <a th:href="@{/login(redirect=${currentRequestPath})}">Войти</a></p>
 </div>
 
 <script>
@@ -77,3 +78,4 @@
 </script>
 </body>
 </html>
+

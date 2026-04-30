@@ -1,14 +1,21 @@
 package kz.ibrazaim.catalog.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.AccessLevel;
 
 import java.time.LocalDateTime;
 
@@ -32,8 +39,9 @@ public class Review {
     @JoinColumn(name = "product_id")
     Product product;
 
-    @Column(name = "publication_status")
-    String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "publication_status", nullable = false, length = 255)
+    ReviewStatus status;
 
     @Column(name = "estimation")
     int estimation;

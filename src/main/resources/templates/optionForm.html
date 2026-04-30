@@ -9,6 +9,7 @@
 <div class="container">
     <h1>Создание значения</h1>
     <form th:action="@{/option/create}" th:object="${option}" method="post" class="createForm">
+        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
         <p>Название: <input type="text" th:field="*{name}"></p>
         <p>Идентификатор товара:
 

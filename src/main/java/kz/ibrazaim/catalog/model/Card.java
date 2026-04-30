@@ -1,10 +1,18 @@
 package kz.ibrazaim.catalog.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
-import java.time.LocalDate;
+import lombok.AccessLevel;
 
 @Getter
 @Setter
@@ -16,27 +24,25 @@ import java.time.LocalDate;
 public class Card {
 
     @jakarta.persistence.Id
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    User user; // Связь с таблицей пользователей
+    User user;
 
-    @Column(name = "card_number", nullable = false, length = 19)
+    @Column(name = "card_number", nullable = false, columnDefinition = "TEXT")
     String cardNumber;
 
-    @Column(name = "card_holder", nullable = false)
+    @Column(name = "card_holder", nullable = false, columnDefinition = "TEXT")
     String cardHolder;
 
-    @Column(name = "card_month", nullable = false)
+    @Column(name = "card_month", nullable = false, columnDefinition = "TEXT")
     String month;
 
-    @Column(name = "card_year", nullable = false)
+    @Column(name = "card_year", nullable = false, columnDefinition = "TEXT")
     String year;
 
-    @Column(name = "cvv_code", nullable = false)
+    @Column(name = "cvv_code", columnDefinition = "TEXT")
     String cvv;
 }
-

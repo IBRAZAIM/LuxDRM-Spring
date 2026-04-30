@@ -1,0 +1,7 @@
+.git
+.idea
+.ai
+target
+*.iml
+firebase-debug.log
+firebase-debug.*.log

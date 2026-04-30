@@ -1,0 +1,5 @@
+ALTER TABLE orders
+    ADD COLUMN IF NOT EXISTS delivery_method VARCHAR(255);
+
+ALTER TABLE orders
+    ADD COLUMN IF NOT EXISTS payment_method VARCHAR(255);

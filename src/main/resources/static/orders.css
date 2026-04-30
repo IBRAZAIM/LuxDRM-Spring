@@ -20,10 +20,16 @@ body {
     color: #333333;
 }
 
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    min-width: 600px;
 }
 
 th, td {

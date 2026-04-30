@@ -1,6 +1,10 @@
 package kz.ibrazaim.catalog.service;
 
-import kz.ibrazaim.catalog.model.*;
+import kz.ibrazaim.catalog.model.CartItem;
+import kz.ibrazaim.catalog.model.Order;
+import kz.ibrazaim.catalog.model.OrderProduct;
+import kz.ibrazaim.catalog.model.OrderStatus;
+import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.repository.OrderProductRepository;
 import kz.ibrazaim.catalog.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +17,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,15 +27,22 @@ public class OrderService {
     public record BucketStats(long orders, double sales) {}
 
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
+    private final CartService cartService;
 
     @Transactional
-    public Order create(User user, String email, String phone, String fullName, String country, String city, String address, String postalCode, List<CartItem> cartItems, int totalPrice) {
+    public Order create(User user, String email, String phone, String fullName, String country, String city, String address, String postalCode, String deliveryMethod, String paymentMethod, List<CartItem> cartItems) {
         try {
+            List<CartItem> safeCartItems = cartItems == null ? List.of() : cartItems;
+            if (safeCartItems.isEmpty()) {
+                throw new IllegalArgumentException("Cart is empty");
+            }
+
             Order order = new Order();
             order.setUser(user);
-            order.setStatus("В ожидании");
+            order.setStatus(OrderStatus.PENDING);
             order.setEmail(email);
             order.setPhone(phone);
             order.setFullName(fullName);
@@ -38,25 +50,27 @@ public class OrderService {
             order.setCity(city);
             order.setAddress(address);
             order.setPostalCode(postalCode);
+            order.setDeliveryMethod(deliveryMethod);
+            order.setPaymentMethod(paymentMethod);
             order.setDate(LocalDateTime.now());
-            order.setTotalPrice(totalPrice);
-            // Генерация уникального серийного номера для заказа
-            String serialNumber = generateOrderSerialNumber(user.getId());
-            order.setSerialNumber(serialNumber);  // Устанавливаем серийный номер в заказ
+            order.setTotalPrice(cartService.finalPrice(safeCartItems));
+            order.setSerialNumber(generateOrderSerialNumber());
 
             List<OrderProduct> orderProducts = new ArrayList<>();
-            for (CartItem cartItem : cartItems) {
+            for (CartItem cartItem : safeCartItems) {
                 OrderProduct orderProduct = new OrderProduct();
                 orderProduct.setOrder(order);
                 orderProduct.setProduct(cartItem.getProduct());
+                orderProduct.setSize(cartItem.getSize());
+                orderProduct.setUnitPrice(cartItem.getProduct().getPrice());
+                orderProduct.setDiscountPercent(Math.max(0, Math.min(cartItem.getProduct().getDiscount(), 100)));
                 orderProduct.setQuantity(cartItem.getQuantity());
+                orderProduct.setLineTotal(cartService.lineFinalPrice(cartItem));
                 orderProducts.add(orderProduct);
             }
 
             order.setOrderProducts(orderProducts);
-            orderRepository.save(order); // Сохраняем заказ в базе данных
-
-            // Сохраняем все позиции заказа в базе данных после сохранения заказа
+            orderRepository.save(order);
             orderProductRepository.saveAll(orderProducts);
 
             return order;
@@ -67,55 +81,31 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders() {
-        List<Order> orders = orderRepository.findAll();
-        calculateTotalPriceForOrders(orders);
-        return orders;
+        return orderRepository.findAll();
     }
 
     public List<Order> getOrdersForUser(User user) {
-        List<Order> orders = orderRepository.findByUser(user);
-        calculateTotalPriceForOrders(orders);
         return orderRepository.findByUser(user);
     }
 
-    public Order getOrderById(long id){
+    public Order getOrderById(long id) {
         return orderRepository.getOrderById(id);
     }
 
     public void updateOrderStatus(Long orderId, String status) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
-        order.setStatus(status);
+        order.setStatus(OrderStatus.fromValue(status));
         orderRepository.save(order);
     }
 
-    // Метод для создания уникального числового серийного номера
-    private String generateOrderSerialNumber(long userId) {
-        // Генерация случайного числа для повышения уникальности
-        Random random = new Random();
-        int randomSuffix = random.nextInt(100000);  // Генерация случайного числа от 0 до 99999
-
-        // Создаем числовой серийный номер, комбинируя ID пользователя и случайное число
-        return String.format("%d%05d", userId, randomSuffix);  // Форматируем как <userId><randomSuffix>
+    private String generateOrderSerialNumber() {
+        return "ORD-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase(Locale.ROOT);
     }
 
-    // Метод для расчета общей стоимости
-    // Метод для расчета общей стоимости для каждого заказа
-    private void calculateTotalPriceForOrders(List<Order> orders) {
-        for (Order order : orders) {
-            int totalPrice = 0;
-            for (OrderProduct orderProduct : order.getOrderProducts()) {
-                totalPrice += orderProduct.getProduct().getPrice() * orderProduct.getQuantity();
-            }
-            order.setTotalPrice(totalPrice); // Устанавливаем рассчитанную стоимость
-        }
-    }
-
-    // Количество заказов за период
     public Long getOrdersCount(LocalDateTime start, LocalDateTime end) {
         return orderRepository.countOrdersInPeriod(start, end);
     }
 
-    // Сумма всех заказов за период
     public Double getTotalSales(LocalDateTime start, LocalDateTime end) {
         Double total = orderRepository.sumTotalInPeriod(start, end);
         return total != null ? total : 0.0;
@@ -138,6 +128,3 @@ public class OrderService {
         return stats;
     }
 }
-
-
-

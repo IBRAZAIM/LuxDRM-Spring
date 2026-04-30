@@ -46,7 +46,7 @@
             <span th:text="'Итого: ' + ${order.totalPrice} + ' ₸'"></span>
         </div>
         <div class="actions">
-            <a th:href="@{'/main'}" class="continue">Продолжить покупки</a>
+        <a th:href="@{'/'}" class="continue">Продолжить покупки</a>
         </div>
     </div>
     <div class="right">
@@ -79,6 +79,14 @@
                 <div class="status">
                     <span class="option">Статус:</span>
                     <span class="value" th:text="${order.status}"></span>
+                </div>
+                <div class="delivery" th:if="${order.deliveryMethod != null}">
+                    <span class="option">Способ доставки:</span>
+                    <span class="value" th:text="${order.deliveryMethod}"></span>
+                </div>
+                <div class="payment" th:if="${order.paymentMethod != null}">
+                    <span class="option">Способ оплаты:</span>
+                    <span class="value" th:text="${order.paymentMethod}"></span>
                 </div>
             </div>
         </div>

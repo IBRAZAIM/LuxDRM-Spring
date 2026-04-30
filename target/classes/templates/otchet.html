@@ -37,7 +37,7 @@
             <span th:text="${user.name}"></span>
         </div>
         <div th:if="${user == null}">
-            <a href="/login">Вход</a>
+            <a th:href="@{/login(redirect=${currentRequestPath})}">Вход</a>
         </div>
     </footer>
 </div>
@@ -50,7 +50,7 @@
             <span class="crumb active">Отчеты</span>
         </nav>
         <div class="actions">
-            <a class="btn settings" href="/main">На витрину</a>
+            <a class="btn settings" th:href="@{/}">На витрину</a>
         </div>
     </div>
 

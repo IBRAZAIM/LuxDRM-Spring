@@ -11,6 +11,7 @@
     <p class="subtitle">Изменения сохраняются сразу после отправки</p>
 
     <form th:action="@{/products/update/{id}(id=${product.id})}" th:object="${product}" method="post">
+        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
         <input type="hidden" th:field="*{id}">
 
         <div class="form-section">

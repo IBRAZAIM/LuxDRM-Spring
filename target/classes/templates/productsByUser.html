@@ -3,29 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог товаров</title>
+    <title>Каталог товаров — UXD</title>
+    <meta name="description" content="Каталог UXD с фильтрами по цене, скидкам и рейтингу. Выберите домашнюю одежду, пижамы и товары для комфорта." />
+    <link rel="canonical" th:href="${canonicalUrl}" />
+    <meta property="og:title" content="Каталог товаров — UXD" />
+    <meta property="og:description" content="Каталог UXD с фильтрами по цене, скидкам и рейтингу. Выберите домашнюю одежду и пижамы." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" th:content="${canonicalUrl}" />
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" th:href="@{/productsByUser.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}"></div>
 
 <nav class="bc">
-    <a th:href="@{/main}">Главная</a>
+    <a th:href="@{/}">Главная</a>
     <span class="sep">›</span>
     <span class="cur">Каталог</span>
 </nav>
 
 <section class="hero">
+    <svg class="hero-bg-line" viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <line x1="0" y1="0" x2="900" y2="360" stroke="rgba(201,169,110,0.03)" stroke-width="1"/>
+        <line x1="900" y1="0" x2="0" y2="360" stroke="rgba(201,169,110,0.03)" stroke-width="1"/>
+    </svg>
+    <div class="hero-deco"></div>
+
     <div class="hero-inner">
-        <p class="hero-eye">Премиальная коллекция</p>
-        <h1 class="hero-h1">Каталог <em>товаров</em></h1>
-        <p class="hero-sub">Тщательно отобранные позиции для вашего стиля</p>
-        <div class="hero-nums">
-            <div class="hero-n"><span id="totalCount">0</span><span>Товаров</span></div>
-            <div class="hero-n"><span id="catCount">0</span><span>Категорий</span></div>
-            <div class="hero-n"><span id="maxDisc">0%</span><span>Макс. скидка</span></div>
+        <div>
+            <div class="hero-eyebrow">
+                <span class="hero-eyebrow-line"></span>
+                <span class="hero-eyebrow-text">Основная коллекция</span>
+            </div>
+            <h1 class="hero-title">Каталог <em>товаров</em></h1>
+            <p class="hero-sub">Тщательно отобранные позиции для вашего стиля</p>
+            <div class="hero-divider"></div>
+        </div>
+    </div>
+
+    <div class="hero-nums">
+        <div class="hero-n">
+            <span class="hero-n-val" id="totalCount">0</span>
+            <span class="hero-n-label">Товаров</span>
+        </div>
+        <div class="hero-n">
+            <span class="hero-n-val" id="catCount">0</span>
+            <span class="hero-n-label">Категорий</span>
+        </div>
+        <div class="hero-n">
+            <span class="hero-n-val" id="maxDisc">0%</span>
+            <span class="hero-n-label">Макс. скидка</span>
         </div>
     </div>
 </section>
@@ -69,7 +98,7 @@
     <aside class="cat-sidebar" id="catalogSidebar">
         <div class="sb-head">
             <span class="sb-title">Фильтры</span>
-            <button class="sb-reset" onclick="resetAll()">Сбросить</button>
+            <button class="sb-reset" onclick="resetAll()">Сбросить всё</button>
         </div>
 
         <div class="active-tags" id="activeTags"></div>
@@ -116,9 +145,9 @@
         <div class="sb-section">
             <div class="sb-sec-head" onclick="toggleSec(this)">
                 <span class="sb-sec-label">Скидка</span>
-                <span class="sb-sec-ico open">▾</span>
+                <span class="sb-sec-ico">▾</span>
             </div>
-            <div class="sb-sec-body disc-opts">
+            <div class="sb-sec-body disc-opts hidden">
                 <button class="disc-btn" onclick="setDisc(this,10)"><span class="disc-dot"></span> От 10%</button>
                 <button class="disc-btn" onclick="setDisc(this,25)"><span class="disc-dot"></span> От 25%</button>
                 <button class="disc-btn" onclick="setDisc(this,50)"><span class="disc-dot"></span> От 50%</button>
@@ -129,9 +158,9 @@
         <div class="sb-section">
             <div class="sb-sec-head" onclick="toggleSec(this)">
                 <span class="sb-sec-label">Рейтинг</span>
-                <span class="sb-sec-ico open">▾</span>
+                <span class="sb-sec-ico">▾</span>
             </div>
-            <div class="sb-sec-body rating-opts">
+            <div class="sb-sec-body rating-opts hidden">
                 <button class="rat-btn" onclick="setRating(this,4)">
                     <div class="rat-stars">★★★★<span class="rs e">★</span></div>
                     <span class="rat-label">от 4 и выше</span>
@@ -166,14 +195,14 @@
     const RAW = [];
     /*[# th:each="p : ${products}"]*/
     RAW.push({
-        id: [[${p.id}]],
-        name: [[${p.name}]],
-        cat: [[${p.category != null ? p.category.name : 'Без категории'}]],
-        price: [[${p.price}]],
-        disc: [[${p.discount}]],
-        rating: [[${p.rating}]],
+        id:      [[${p.id}]],
+        name:    [[${p.name}]],
+        cat:     [[${p.category != null ? p.category.name : 'Без категории'}]],
+        price:   [[${p.price}]],
+        disc:    [[${p.discount}]],
+        rating:  [[${p.rating}]],
         reviews: 0,
-        img: [[${(p.images != null and !#lists.isEmpty(p.images) and p.images[0] != null and p.images[0].image != null) ? p.images[0].image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80'}]]
+        img:     [[${(p.images != null and !#lists.isEmpty(p.images) and p.images[0] != null and p.images[0].image != null) ? p.images[0].image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80'}]]
     });
     /*[/]*/
 
@@ -184,15 +213,10 @@
 
     function esc(s) {
         return String(s)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#39;");
+            .replaceAll("&","&amp;").replaceAll("<","&lt;")
+            .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
     }
-
     function fmt(n) { return Number(n).toLocaleString('ru-KZ') + ' ₸'; }
-
     function stars(r) {
         let s = '';
         for (let i = 1; i <= 5; i++) s += `<span class="cstar${i <= Math.round(r) ? '' : ' e'}">★</span>`;
@@ -208,27 +232,23 @@
     function buildCategories() {
         const counts = {};
         RAW.forEach(p => counts[p.cat] = (counts[p.cat] || 0) + 1);
-        const html = Object.entries(counts)
+        document.getElementById('catBody').innerHTML = Object.entries(counts)
             .sort((a, b) => a[0].localeCompare(b[0], 'ru'))
             .map(([name, count]) =>
                 `<label class="cat-pill"><input type="checkbox" name="cat" value="${esc(name)}" onchange="applyAll()"><span class="pill-box"></span><span class="pill-name">${esc(name)}</span><span class="pill-ct">${count}</span></label>`
             ).join('');
-        document.getElementById('catBody').innerHTML = html;
     }
 
     function card(p, delay) {
         const final = Math.round(p.price * (1 - p.disc / 100));
         const url = `/products/${p.id}`;
-        // Ширина карточки вычисляется по текущему cols
-        const w = `calc(${100 / cols}% - ${18 * (cols - 1) / cols}px)`;
-        return `<div class="p-card" onclick="window.location.href='${url}'" style="width:${w};animation-delay:${delay}ms">
+        return `<div class="p-card" onclick="window.location.href='${url}'" style="animation-delay:${delay}ms">
     <div class="card-img">
       <img src="${p.img}" alt="${esc(p.name)}" loading="lazy">
       ${p.disc > 0 ? `<span class="c-badge">−${p.disc}%</span>` : ''}
       <button class="c-wish" onclick="event.stopPropagation();wishlist(this,${p.id})" aria-label="Избранное">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
       </button>
-      <button class="c-qadd" onclick="event.stopPropagation();addCart(${p.id})">В корзину</button>
     </div>
     <div class="card-body">
       <p class="c-cat">${esc(p.cat)}</p>
@@ -245,11 +265,12 @@
     function render() {
         const grid = document.getElementById('grid');
         const slice = filtered.slice(0, page);
+        grid.className = 'prod-grid cols-' + cols;
         if (!slice.length) {
             grid.innerHTML = `<div class="empty"><span class="empty-ico">◎</span><h2 class="empty-t">Ничего не найдено</h2><p class="empty-s">Попробуйте изменить фильтры</p></div>`;
             document.getElementById('lmWrap').style.display = 'none';
         } else {
-            grid.innerHTML = slice.map((p, i) => card(p, i * 50)).join('');
+            grid.innerHTML = slice.map((p, i) => card(p, i * 40)).join('');
             document.getElementById('lmWrap').style.display = filtered.length > page ? 'flex' : 'none';
         }
         document.getElementById('shownCount').textContent = Math.min(slice.length, filtered.length);
@@ -260,7 +281,7 @@
         const cats = [...document.querySelectorAll('input[name="cat"]:checked')].map(c => c.value);
         const minV = parseInt(document.getElementById('tMin').value) || 0;
         const maxV = parseInt(document.getElementById('tMax').value) || RANGE_MAX;
-        const err = document.getElementById('pErr');
+        const err  = document.getElementById('pErr');
         if (minV > maxV) { err.classList.add('show'); return; }
         err.classList.remove('show');
         const sort = document.getElementById('sortSel').value;
@@ -269,29 +290,29 @@
             if (cats.length && !cats.includes(p.cat)) return false;
             const fp = Math.round(p.price * (1 - p.disc / 100));
             if (fp < minV || fp > maxV) return false;
-            if (activeDisc && p.disc < activeDisc) return false;
+            if (activeDisc   && p.disc   < activeDisc)   return false;
             if (activeRating && p.rating < activeRating) return false;
             return true;
         });
 
-        if (sort === 'price_asc') filtered.sort((a, b) => Math.round(a.price * (1 - a.disc / 100)) - Math.round(b.price * (1 - b.disc / 100)));
-        else if (sort === 'price_desc') filtered.sort((a, b) => Math.round(b.price * (1 - b.disc / 100)) - Math.round(a.price * (1 - a.disc / 100)));
-        else if (sort === 'discount') filtered.sort((a, b) => b.disc - a.disc);
-        else if (sort === 'name_asc') filtered.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-        else if (sort === 'rating') filtered.sort((a, b) => b.rating - a.rating);
+        if (sort === 'price_asc')  filtered.sort((a,b) => Math.round(a.price*(1-a.disc/100)) - Math.round(b.price*(1-b.disc/100)));
+        else if (sort === 'price_desc') filtered.sort((a,b) => Math.round(b.price*(1-b.disc/100)) - Math.round(a.price*(1-a.disc/100)));
+        else if (sort === 'discount')   filtered.sort((a,b) => b.disc - a.disc);
+        else if (sort === 'name_asc')   filtered.sort((a,b) => a.name.localeCompare(b.name,'ru'));
+        else if (sort === 'rating')     filtered.sort((a,b) => b.rating - a.rating);
 
         page = PER;
         render();
     }
 
     function updateTags() {
-        const box = document.getElementById('activeTags');
+        const box  = document.getElementById('activeTags');
         const cats = [...document.querySelectorAll('input[name="cat"]:checked')].map(c => c.value);
         const minV = parseInt(document.getElementById('tMin').value) || 0;
         const maxV = parseInt(document.getElementById('tMax').value) || RANGE_MAX;
         let html = '';
         cats.forEach(c => html += tag(c, () => {
-            document.querySelectorAll('input[name="cat"]').forEach(input => { if (input.value === c) input.checked = false; });
+            document.querySelectorAll('input[name="cat"]').forEach(i => { if (i.value===c) i.checked=false; });
             applyAll();
         }));
         if (minV > 0 || maxV < RANGE_MAX) html += tag(`${fmt(minV)} — ${fmt(maxV)}`, () => {
@@ -301,16 +322,8 @@
             document.getElementById('pMax').value = '';
             syncRange(); applyAll();
         });
-        if (activeDisc) html += tag(`Скидка от ${activeDisc}%`, () => {
-            activeDisc = null;
-            document.querySelectorAll('.disc-btn').forEach(b => b.classList.remove('act'));
-            applyAll();
-        });
-        if (activeRating) html += tag(`Рейтинг ${activeRating}+`, () => {
-            activeRating = null;
-            document.querySelectorAll('.rat-btn').forEach(b => b.classList.remove('act'));
-            applyAll();
-        });
+        if (activeDisc)   html += tag(`Скидка от ${activeDisc}%`, () => { activeDisc=null; document.querySelectorAll('.disc-btn').forEach(b=>b.classList.remove('act')); applyAll(); });
+        if (activeRating) html += tag(`Рейтинг ${activeRating}+`,  () => { activeRating=null; document.querySelectorAll('.rat-btn').forEach(b=>b.classList.remove('act')); applyAll(); });
         box.innerHTML = html;
     }
 
@@ -329,7 +342,7 @@
         document.getElementById('pMin').value = mn || '';
         document.getElementById('pMax').value = mx < RANGE_MAX ? mx : '';
         const f = document.getElementById('sFill');
-        f.style.left = (mn / RANGE_MAX * 100) + '%';
+        f.style.left  = (mn / RANGE_MAX * 100) + '%';
         f.style.right = ((1 - mx / RANGE_MAX) * 100) + '%';
         applyAll();
     }
@@ -344,47 +357,47 @@
 
     function setDisc(btn, val) {
         if (activeDisc === val) { btn.classList.remove('act'); activeDisc = null; }
-        else { document.querySelectorAll('.disc-btn').forEach(b => b.classList.remove('act')); btn.classList.add('act'); activeDisc = val; }
+        else { document.querySelectorAll('.disc-btn').forEach(b=>b.classList.remove('act')); btn.classList.add('act'); activeDisc = val; }
         applyAll();
     }
 
     function setRating(btn, val) {
         if (activeRating === val) { btn.classList.remove('act'); activeRating = null; }
-        else { document.querySelectorAll('.rat-btn').forEach(b => b.classList.remove('act')); btn.classList.add('act'); activeRating = val; }
+        else { document.querySelectorAll('.rat-btn').forEach(b=>b.classList.remove('act')); btn.classList.add('act'); activeRating = val; }
         applyAll();
     }
 
     function toggleSec(head) {
         const body = head.nextElementSibling;
-        const ico = head.querySelector('.sb-sec-ico');
+        const ico  = head.querySelector('.sb-sec-ico');
         const open = !body.classList.contains('hidden');
         body.classList.toggle('hidden', open);
         ico.classList.toggle('open', !open);
     }
 
     function resetAll() {
-        document.querySelectorAll('input[name="cat"]').forEach(c => c.checked = false);
+        document.querySelectorAll('input[name="cat"]').forEach(c=>c.checked=false);
         document.getElementById('tMin').value = 0;
         document.getElementById('tMax').value = RANGE_MAX;
         document.getElementById('pMin').value = '';
         document.getElementById('pMax').value = '';
-        document.querySelectorAll('.disc-btn').forEach(b => b.classList.remove('act'));
-        document.querySelectorAll('.rat-btn').forEach(b => b.classList.remove('act'));
+        document.querySelectorAll('.disc-btn').forEach(b=>b.classList.remove('act'));
+        document.querySelectorAll('.rat-btn').forEach(b=>b.classList.remove('act'));
         document.getElementById('sortSel').value = 'default';
         activeDisc = null; activeRating = null;
         syncRange();
     }
 
     function getAutoCols() {
-        if (window.innerWidth > 1100) return 4;
-        if (window.innerWidth > 900) return 3;
+        if (window.innerWidth > 1200) return 4;
+        if (window.innerWidth > 900)  return 3;
         return 2;
     }
 
     function setGrid(n) {
         cols = n;
-        document.querySelectorAll('.g-btn').forEach(b => b.classList.remove('act'));
-        const btn = document.getElementById('gb' + n);
+        document.querySelectorAll('.g-btn').forEach(b=>b.classList.remove('act'));
+        const btn = document.getElementById('gb'+n);
         if (btn) btn.classList.add('act');
         render();
     }
@@ -392,37 +405,48 @@
     function catalogToggleSidebar() {
         document.getElementById('catalogSidebar').classList.toggle('open');
         document.getElementById('fOverlay').classList.toggle('open');
+        document.body.style.overflow = document.getElementById('catalogSidebar').classList.contains('open') ? 'hidden' : '';
     }
     function catalogCloseSidebar() {
         document.getElementById('catalogSidebar').classList.remove('open');
         document.getElementById('fOverlay').classList.remove('open');
+        document.body.style.overflow = '';
     }
 
     function loadMore() { page += PER; render(); }
 
     function toast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg; t.style.transform = 'translateY(0)'; t.style.opacity = '1';
+        t.textContent = msg;
+        t.style.transform = 'translateY(0)'; t.style.opacity = '1';
         setTimeout(() => { t.style.transform = 'translateY(70px)'; t.style.opacity = '0'; }, 2400);
     }
 
-    function addCart(id) { toast('Добавлено в корзину ✓'); }
     function wishlist(btn, id) {
         const liked = btn.dataset.liked === '1';
         btn.dataset.liked = liked ? '0' : '1';
         toast(liked ? 'Удалено из избранного' : 'Добавлено в избранное ♡');
     }
 
+    /* Debounced resize */
+    let resizeTimer;
     window.addEventListener('resize', () => {
-        const target = getAutoCols();
-        if (target !== cols) setGrid(target);
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (window.innerWidth <= 900) return;
+            const target = getAutoCols();
+            if (target !== cols) setGrid(target);
+        }, 150);
     });
+
+    /* Close sidebar on Escape */
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') catalogCloseSidebar(); });
 
     buildCategories();
     initStats();
-    document.getElementById('tMax').max = RANGE_MAX;
+    document.getElementById('tMax').max   = RANGE_MAX;
     document.getElementById('tMax').value = RANGE_MAX;
-    document.getElementById('tMin').max = RANGE_MAX;
+    document.getElementById('tMin').max   = RANGE_MAX;
     document.getElementById('pMax').placeholder = RANGE_MAX.toLocaleString('ru-KZ');
     setGrid(getAutoCols());
     syncRange();

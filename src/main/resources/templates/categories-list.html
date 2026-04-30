@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Категории товаров — UXD</title>
+    <meta name="description" content="Категории товаров UXD: пижамы, домашняя одежда, детские коллекции и lounge-позиции." />
+    <link rel="canonical" th:href="${canonicalUrl}" />
+    <meta property="og:title" content="Категории товаров — UXD" />
+    <meta property="og:description" content="Категории товаров UXD: пижамы, домашняя одежда, детские коллекции и lounge-позиции." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" th:content="${canonicalUrl}" />
     <link rel="stylesheet" th:href="@{/categoryList.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <title>Categories List</title>
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>

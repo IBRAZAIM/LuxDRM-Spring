@@ -16,17 +16,20 @@ body{
 
 main{
     display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin: 0 71px 60px 71px;
 }
 
 .left{
-    width: 50%;
+    flex: 1;
+    min-width: 300px;
 }
 
 .products-list {
     font-family: Montserrat, sans-serif;
-    width: 620px;
+    width: 100%;
     list-style: none;
-    margin-left: 71px;
 }
 
 .product-item {
@@ -68,7 +71,7 @@ main{
 
 .total-price{
     text-align: right;
-    margin: 20px 0 0 71px;
+    margin: 20px 0 0 0;
     font-family: Montserrat, sans-serif;
     font-style: italic;
     font-size: 22px;
@@ -76,18 +79,15 @@ main{
 }
 
 .right{
-    width: 50%;
+    flex: 1;
+    min-width: 300px;
 }
 
 .info-block{
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin: 100px 30px 0 0;
-    width: 580px;
-    height: 400px;
     background-color: #0c0c3d;
-
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 8px 24px rgba(12, 12, 61, 0.15);
 }
 
 .info-block div span {
@@ -95,10 +95,9 @@ main{
 }
 
 .pole{
-    padding: 39px 0 0 32px;
     font-family: Montserrat Light, sans-serif;
     font-style: italic;
-    font-size: 20px;
+    font-size: 18px;
     color: #FFFFFF;
 }
 
@@ -106,12 +105,9 @@ main{
     display: flex;
 }
 
-.full-name, .address, .phone{
-    margin-bottom: 16px;
-}
-
-.date{
-    margin-bottom: 7px;
+.full-name, .address, .phone, .email, .date, .order-serial, .status, .delivery, .payment {
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
 .info-block .option{
@@ -123,16 +119,23 @@ main{
     padding-bottom: 2px;
 }
 
-.email, .order-serial{
-    margin-bottom: 37px;
+.actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-start;
 }
 
-.actions {
-    margin-left: 71px;
-    width: 50%;
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
+@media (max-width: 768px) {
+    .order-title {
+        margin: 20px 20px 30px 20px;
+    }
+    main {
+        margin: 0 20px 60px 20px;
+        flex-direction: column;
+    }
+    .products-list, .info-block {
+        width: 100%;
+    }
 }
 
 .continue {

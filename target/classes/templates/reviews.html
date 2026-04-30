@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -26,10 +26,14 @@
                 <td th:text="${review.product.name}" class="review-product"></td>
                 <td>
                     <form th:action="@{/reviews/updateStatus}" method="post">
+                        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
                         <input type="hidden" th:name="reviewId" th:value="${review.id}">
                         <select th:name="status">
-                            <option th:selected="${review.status == null || review.status == ''}" value="">Не проверено</option>
-                            <option th:selected="${review.status == 'Проверено'}" value="Проверено">Проверено</option>
+                            <option th:each="statusOption : ${T(kz.ibrazaim.catalog.model.ReviewStatus).values()}"
+                                    th:value="${statusOption.name()}"
+                                    th:text="${statusOption.displayName}"
+                                    th:selected="${review.status == statusOption}">
+                            </option>
                         </select>
                         <button type="submit">Сохранить</button>
                     </form>
