@@ -18,6 +18,7 @@
     </div>
 
     <form th:action="@{/login}" method="post" autocomplete="on">
+        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
         <input type="hidden" name="redirect" th:value="${redirect}"/>
 
         <div class="field">

@@ -51,18 +51,28 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void addItemToCart(long productId, int quantity, String size) {
         User user = getUser();
-        CartItem cartItem = cartItemRepository.findByUserAndProductIdAndSize(user, productId, size)
+        if (user == null) {
+            throw new IllegalStateException("User is not authenticated.");
+        }
+        int normalizedQuantity = Math.max(1, Math.min(quantity, kz.ibrazaim.catalog.service.CartService.MAX_QTY));
+        String normalizedSize = normalizeSize(size);
+
+        CartItem cartItem = cartItemRepository.findByUserAndProductIdAndSize(user, productId, normalizedSize)
                 .orElse(null);
 
         if (cartItem != null) {
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            cartItem.setQuantity(Math.min(
+                    kz.ibrazaim.catalog.service.CartService.MAX_QTY,
+                    cartItem.getQuantity() + normalizedQuantity
+            ));
         } else {
             cartItem = new CartItem();
             cartItem.setUser(user);
-            cartItem.setSize(size);
-            cartItem.setQuantity(quantity);
+            cartItem.setSize(normalizedSize);
+            cartItem.setQuantity(normalizedQuantity);
 
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -82,7 +92,28 @@ public class UserService {
     }
 
     public List<CartItem> findCartItemsByUser(User user) {
+        if (user == null) {
+            return List.of();
+        }
         return cartItemRepository.findByUser(user);
+    }
+
+    public boolean hasRole(User user, Role role) {
+        return hasAnyRole(user, role);
+    }
+
+    public boolean hasAnyRole(User user, Role... roles) {
+        if (user == null || user.getRole() == null || roles == null) {
+            return false;
+        }
+
+        String actualRole = user.getRole().trim();
+        for (Role role : roles) {
+            if (role != null && actualRole.equalsIgnoreCase(role.getServiceName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String normalizeLogin(String rawLogin) {
@@ -115,6 +146,14 @@ public class UserService {
             return null;
         }
         String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private String normalizeSize(String size) {
+        if (size == null) {
+            return null;
+        }
+        String trimmed = size.trim();
         return trimmed.isEmpty() ? null : trimmed;
     }
 }

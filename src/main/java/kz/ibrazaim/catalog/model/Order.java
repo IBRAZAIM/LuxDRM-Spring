@@ -27,7 +27,9 @@ public class Order {
     @Column(name = "serial_number")
     String serialNumber;
 
-    String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 255)
+    OrderStatus status;
 
     String email;
 
@@ -42,6 +44,12 @@ public class Order {
     String address;
 
     String postalCode;
+
+    @Column(name = "delivery_method")
+    String deliveryMethod;
+
+    @Column(name = "payment_method")
+    String paymentMethod;
 
     LocalDateTime date;
 

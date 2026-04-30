@@ -1,6 +1,5 @@
 package kz.ibrazaim.catalog.controller;
 
-import kz.ibrazaim.catalog.exception.ProductCreateException;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.ProductSize;
 import kz.ibrazaim.catalog.model.Role;
@@ -51,7 +50,7 @@ public class ProductController {
         model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
 
-        if (user != null && user.getRole().equals(Role.ADMIN.getServiceName())) {
+        if (userService.hasAnyRole(user, Role.ADMIN, Role.MODER)) {
             return "productsByAdmin";
         }
 

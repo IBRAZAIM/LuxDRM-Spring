@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты и поддержка — UXD</title>
+    <meta name="description" content="Контакты поддержки UXD, проверка заказа, вопросы по доставке и политика конфиденциальности." />
+    <link rel="canonical" th:href="${canonicalUrl}" />
+    <meta property="og:title" content="Контакты и поддержка — UXD" />
+    <meta property="og:description" content="Свяжитесь с поддержкой UXD по вопросам заказа, доставки и возврата." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" th:content="${canonicalUrl}" />
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <link rel="stylesheet" th:href="@{/infoPage.css}">
+</head>
+<body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
+
+<main class="info-shell">
+    <section class="info-hero">
+        <span class="info-kicker">UXD</span>
+        <h1 class="info-title">Контакты и поддержка</h1>
+        <p class="info-copy">
+            Если нужен совет по размеру, доставке или статусу заказа, здесь собраны основные способы связи
+            и короткие подсказки, где посмотреть нужную информацию.
+        </p>
+        <div class="info-meta">
+            <span class="info-pill">Поддержка заказов</span>
+            <span class="info-pill">Статус доставки</span>
+            <span class="info-pill">Проверка данных</span>
+            <span class="info-pill">Конфиденциальность</span>
+        </div>
+    </section>
+
+    <nav class="info-nav" aria-label="Разделы контактов">
+        <a href="#support">Поддержка</a>
+        <a href="#order-tracking">Отслеживание заказа</a>
+        <a href="#order-check">Проверка заказа</a>
+        <a href="#privacy">Конфиденциальность</a>
+    </nav>
+
+    <div class="info-grid">
+        <section class="info-section info-contact" id="support">
+            <h2>Поддержка</h2>
+            <p>Для вопросов по заказам и оплате используйте следующие контакты:</p>
+            <a href="mailto:support@uxd.kz">support@uxd.kz</a>
+            <a href="tel:+77000000000">+7 (700) 000-00-00</a>
+            <p class="info-note">Ответ обычно занимает до одного рабочего дня.</p>
+        </section>
+
+        <section class="info-section" id="order-tracking">
+            <h2>Отслеживание заказа</h2>
+            <p>
+                Текущий статус смотрите в личном кабинете в разделе «Мои заказы».
+                Там же отображаются дата оформления, состав заказа и итоговая сумма.
+            </p>
+        </section>
+
+        <section class="info-section" id="order-check">
+            <h2>Проверка заказа</h2>
+            <ul class="info-list">
+                <li>Проверьте email и номер телефона перед оплатой.</li>
+                <li>Уточните размер и способ доставки.</li>
+                <li>Проверьте адрес, индекс и комментарий к доставке.</li>
+            </ul>
+        </section>
+
+        <section class="info-section" id="privacy">
+            <h2>Конфиденциальность</h2>
+            <p>
+                Мы используем личные данные только для обработки заказа, связи по доставке и обслуживания
+                возврата. Доступ к ним ограничен авторизованным аккаунтом.
+            </p>
+        </section>
+    </div>
+</main>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
+<script>
+    navigator.sendBeacon?.('/analytics/register') || fetch('/analytics/register', { method: 'GET' }).catch(() => {});
+</script>
+</body>
+</html>

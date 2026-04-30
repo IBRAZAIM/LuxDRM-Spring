@@ -11,6 +11,7 @@
     <p class="subtitle">Категория определяет набор характеристик товара</p>
 
     <form th:action="@{/categories/create}" th:object="${category}" method="post" id="categoryForm">
+        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
 
         <!-- Название -->
         <div class="form-group">

@@ -2,6 +2,7 @@ package kz.ibrazaim.catalog.service;
 
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.Review;
+import kz.ibrazaim.catalog.model.ReviewStatus;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,21 +26,21 @@ public class ReviewService {
         review.setEstimation(estimation);
         review.setText(text);
         review.setDate(LocalDateTime.now());
-        review.setStatus("Не проверено");
+        review.setStatus(ReviewStatus.PENDING);
         reviewRepository.save(review);
     }
 
-    public void updateReviewStatus(long reviewId, String status){
+    public void updateReviewStatus(long reviewId, String status) {
         Review review = reviewRepository.findById(reviewId).orElseThrow();
-        review.setStatus(status);
+        review.setStatus(ReviewStatus.fromValue(status));
         reviewRepository.save(review);
     }
 
     public List<Review> getCommentsForProduct(Product product) {
-        return reviewRepository.findByProductAndStatus(product,  "Проверено");
+        return reviewRepository.findByProductAndStatus(product, ReviewStatus.APPROVED);
     }
 
-    public List<Review> findALl(){
+    public List<Review> findALl() {
         return reviewRepository.findAll();
     }
 }

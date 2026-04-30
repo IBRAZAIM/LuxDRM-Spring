@@ -14,11 +14,17 @@ import java.util.List;
 
 @org.springframework.stereotype.Controller
 @RequiredArgsConstructor
-@RequestMapping("/main")
+@RequestMapping("/")
 public class Controller {
     private final ProductService productService;
     private final CartService cartService;
     private final UserService userService;
+
+    @GetMapping("/main")
+    public String legacyMain() {
+        return "redirect:/";
+    }
+
     @GetMapping
     public String getProducts(Model model) {
         User user = userService.getUser();

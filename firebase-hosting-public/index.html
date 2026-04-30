@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>LuxDRM</title>
+</head>
+<body>
+  <p>LuxDRM backend is served by Cloud Run.</p>
+</body>
+</html>
+<script>
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "firebase/app";
+  import { getAnalytics } from "firebase/analytics";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAs-xsWuEIUndQnTzcYlqnPmz3HlSZT2O0",
+    authDomain: "uxd-e-commerce.firebaseapp.com",
+    projectId: "uxd-e-commerce",
+    storageBucket: "uxd-e-commerce.firebasestorage.app",
+    messagingSenderId: "813152623611",
+    appId: "1:813152623611:web:59fc45cd168a82d385c95e",
+    measurementId: "G-Z1N9EZV7MK"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>

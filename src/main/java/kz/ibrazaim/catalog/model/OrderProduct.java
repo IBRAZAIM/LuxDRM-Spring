@@ -24,5 +24,16 @@ public class OrderProduct {
     @JoinColumn(name = "product_id")
     Product product;
 
+    String size;
+
+    @Column(name = "unit_price")
+    int unitPrice;
+
+    @Column(name = "discount_percent")
+    int discountPercent;
+
+    @Column(name = "line_total")
+    int lineTotal;
+
     int quantity;
 }

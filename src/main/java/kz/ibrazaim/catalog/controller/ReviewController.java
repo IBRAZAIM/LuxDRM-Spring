@@ -23,13 +23,18 @@ public class ReviewController {
     private final UserService userService;
 
     @GetMapping
-    public String allOrders(Model model){
+    public String allOrders(Model model) {
         User user = userService.getUser();
-        List<Review> reviews;
-        if (user.getRole().equals(Role.ADMIN.getServiceName()) || user.getRole().equals(Role.MODER.getServiceName())){
-            reviews = reviewService.findALl();
-            model.addAttribute("reviews", reviews);
-        }        return "reviews";
+        if (user == null) {
+            return "redirect:/login";
+        }
+        if (!userService.hasAnyRole(user, Role.ADMIN, Role.MODER)) {
+        return "redirect:/";
+        }
+
+        List<Review> reviews = reviewService.findALl();
+        model.addAttribute("reviews", reviews);
+        return "reviews";
     }
 
     @PostMapping("/updateStatus")
@@ -37,6 +42,11 @@ public class ReviewController {
             @RequestParam("reviewId") Long reviewId,
             @RequestParam("status") String status
     ) {
+        User user = userService.getUser();
+        if (user == null || !userService.hasAnyRole(user, Role.ADMIN, Role.MODER)) {
+            return "redirect:/login";
+        }
+
         reviewService.updateReviewStatus(reviewId, status);
         return "redirect:/reviews";
     }

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставка и возврат — UXD</title>
+    <meta name="description" content="Как оформить заказ в UXD, какие есть способы доставки, сроки, стоимость и условия возврата." />
+    <link rel="canonical" th:href="${canonicalUrl}" />
+    <meta property="og:title" content="Доставка и возврат — UXD" />
+    <meta property="og:description" content="Сроки доставки, самовывоз, экспресс-опция и правила возврата в UXD." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" th:content="${canonicalUrl}" />
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <link rel="stylesheet" th:href="@{/infoPage.css}">
+</head>
+<body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
+
+<main class="info-shell">
+    <section class="info-hero">
+        <span class="info-kicker">UXD</span>
+        <h1 class="info-title">Доставка и возврат</h1>
+        <p class="info-copy">
+            Здесь собраны основные правила оформления заказа, способы получения и условия возврата.
+            Страница помогает быстро понять, как будет идти доставка и что проверять перед оплатой.
+        </p>
+        <div class="info-meta">
+            <span class="info-pill">Онлайн-заказ</span>
+            <span class="info-pill">Самовывоз</span>
+            <span class="info-pill">Экспресс-доставка</span>
+            <span class="info-pill">Возврат 14 дней</span>
+        </div>
+    </section>
+
+    <nav class="info-nav" aria-label="Разделы доставки">
+        <a href="#how-to-order">Как оформить заказ</a>
+        <a href="#sizes">Размеры</a>
+        <a href="#shipping">Доставка</a>
+        <a href="#returns">Возврат</a>
+        <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="info-grid">
+        <section class="info-section" id="how-to-order">
+            <h2>Как оформить заказ</h2>
+            <ul class="info-list">
+                <li>Добавьте товар в корзину и выберите размер.</li>
+                <li>Заполните контактные данные и адрес доставки.</li>
+                <li>Выберите способ доставки и оплаты.</li>
+                <li>Подтвердите заказ и дождитесь статуса в разделе «Мои заказы».</li>
+            </ul>
+        </section>
+
+        <section class="info-section" id="sizes">
+            <h2>Размеры</h2>
+            <p>
+                Для одежды лучше сверяться с таблицей размеров на карточке товара.
+                Если размер между двумя значениями, выбирайте тот, который удобнее для ежедневной носки.
+            </p>
+            <p class="info-note">
+                На карточке товара доступна актуальная сетка размеров и быстрый просмотр.
+            </p>
+        </section>
+
+        <section class="info-section" id="shipping">
+            <h2>Доставка</h2>
+            <ul class="info-list">
+                <li>Стандартная доставка - 5-7 рабочих дней, бесплатно.</li>
+                <li>Экспресс-доставка - 2-3 рабочих дня, 2 500 ₸.</li>
+                <li>Самовывоз - готовность через 2 часа, бесплатно.</li>
+                <li>Премиум-доставка - в день заказа до 21:00, 5 600 ₸.</li>
+            </ul>
+        </section>
+
+        <section class="info-section" id="returns">
+            <h2>Возврат</h2>
+            <p>
+                Возврат возможен в течение 14 дней, если товар не был в носке и сохранены бирки,
+                упаковка и товарный вид.
+            </p>
+            <p>
+                Перед отправкой мы проверяем комплектность заказа и соответствие размера.
+            </p>
+        </section>
+
+        <section class="info-section" id="quality">
+            <h2>Контроль качества</h2>
+            <p>
+                Каждый заказ проходит проверку перед отправкой: корректность модели, размер, цвет
+                и комплектность. Это снижает риск ошибок на этапе доставки.
+            </p>
+        </section>
+
+        <section class="info-section" id="faq">
+            <h2>FAQ</h2>
+            <ul class="info-list">
+                <li>Можно ли изменить способ доставки? Да, до подтверждения оплаты.</li>
+                <li>Где отслеживать заказ? В личном кабинете в разделе «Мои заказы».</li>
+                <li>Что делать, если размер не подошёл? Оформить возврат или обмен через поддержку.</li>
+            </ul>
+        </section>
+    </div>
+</main>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
+<script>
+    navigator.sendBeacon?.('/analytics/register') || fetch('/analytics/register', { method: 'GET' }).catch(() => {});
+</script>
+</body>
+</html>

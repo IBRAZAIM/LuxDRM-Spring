@@ -2,11 +2,9 @@ package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.User;
-import kz.ibrazaim.catalog.repository.CartItemRepository;
 import kz.ibrazaim.catalog.service.CartService;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +20,12 @@ public class CartController {
 
     @PostMapping("/delete")
     public String deleteItem(@RequestParam("id") Long itemId) {
-        cartService.removeCartItem(itemId);
+        User user = userService.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        cartService.removeCartItem(user, itemId);
         return "redirect:/cart";
     }
 
@@ -31,7 +34,12 @@ public class CartController {
             @PathVariable Long cartItemId,
             @RequestParam("quantity") int quantity
     ) {
-        cartService.updateQuantity(cartItemId, quantity);
+        User user = userService.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        cartService.updateQuantity(user, cartItemId, quantity);
         return "redirect:/cart";
     }
 
@@ -39,15 +47,15 @@ public class CartController {
     @PostMapping("/clear")
     public String clearCart(){
         User user = userService.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
         if (!cartItems.isEmpty()){
             cartService.clearCart(user);
         }
         return "redirect:/cart";
     }
-
-
-
 }
 
 
