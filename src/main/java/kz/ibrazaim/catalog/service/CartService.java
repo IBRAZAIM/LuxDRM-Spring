@@ -7,6 +7,8 @@ import kz.ibrazaim.catalog.repository.CartItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -31,58 +33,74 @@ public class CartService {
                 .orElse(false);
     }
 
-    public int totalPrice(List<CartItem> cartItems) {
+    public BigDecimal totalPrice(List<CartItem> cartItems) {
         return subtotal(cartItems);
     }
 
-    public int subtotal(List<CartItem> cartItems) {
+    public BigDecimal subtotal(List<CartItem> cartItems) {
         return safeCartItems(cartItems).stream()
-                .mapToInt(this::lineSubtotal)
-                .sum();
+                .map(this::lineSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
-    public int discountAmount(List<CartItem> cartItems) {
+    public BigDecimal discountAmount(List<CartItem> cartItems) {
         return safeCartItems(cartItems).stream()
-                .mapToInt(this::lineDiscountAmount)
-                .sum();
+                .map(this::lineDiscountAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     public int discountPercent(List<CartItem> cartItems) {
-        int subtotal = subtotal(cartItems);
-        if (subtotal <= 0) {
+        BigDecimal subtotal = subtotal(cartItems);
+        if (subtotal.compareTo(BigDecimal.ZERO) <= 0) {
             return 0;
         }
-        return (int) Math.round(discountAmount(cartItems) * 100.0 / subtotal);
+        return discountAmount(cartItems)
+                .multiply(BigDecimal.valueOf(100))
+                .divide(subtotal, 0, RoundingMode.HALF_UP)
+                .intValue();
     }
 
-    public int finalPrice(List<CartItem> cartItems) {
-        return Math.max(0, subtotal(cartItems) - discountAmount(cartItems));
+    public BigDecimal finalPrice(List<CartItem> cartItems) {
+        return subtotal(cartItems)
+                .subtract(discountAmount(cartItems))
+                .max(BigDecimal.ZERO)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
-    public int lineSubtotal(CartItem cartItem) {
+    public BigDecimal lineSubtotal(CartItem cartItem) {
         if (cartItem == null || cartItem.getProduct() == null) {
-            return 0;
+            return BigDecimal.ZERO;
         }
-        int unitPrice = Math.max(0, cartItem.getProduct().getPrice());
+        BigDecimal unitPrice = cartItem.getProduct().getPrice();
+        if (unitPrice == null || unitPrice.compareTo(BigDecimal.ZERO) < 0) {
+            unitPrice = BigDecimal.ZERO;
+        }
         int quantity = Math.max(MIN_QTY, cartItem.getQuantity());
-        return unitPrice * quantity;
+        return unitPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public int lineDiscountAmount(CartItem cartItem) {
+    public BigDecimal lineDiscountAmount(CartItem cartItem) {
         if (cartItem == null || cartItem.getProduct() == null) {
-            return 0;
+            return BigDecimal.ZERO;
         }
 
-        int discountPercent = clampPercent(cartItem.getProduct().getDiscount());
-        if (discountPercent == 0) {
-            return 0;
+        BigDecimal discountPercent = clampPercent(cartItem.getProduct().getDiscount());
+        if (discountPercent.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
         }
 
-        return (int) Math.round(lineSubtotal(cartItem) * discountPercent / 100.0);
+        return lineSubtotal(cartItem)
+                .multiply(discountPercent)
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
 
-    public int lineFinalPrice(CartItem cartItem) {
-        return Math.max(0, lineSubtotal(cartItem) - lineDiscountAmount(cartItem));
+    public BigDecimal lineFinalPrice(CartItem cartItem) {
+        return lineSubtotal(cartItem)
+                .subtract(lineDiscountAmount(cartItem))
+                .max(BigDecimal.ZERO)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     public boolean updateQuantity(User user, Long cartItemId, int quantity) {
@@ -133,8 +151,11 @@ public class CartService {
         return cartItems == null ? List.of() : cartItems;
     }
 
-    private int clampPercent(int discountPercent) {
-        return Math.max(0, Math.min(discountPercent, 100));
+    private BigDecimal clampPercent(BigDecimal discountPercent) {
+        if (discountPercent == null || discountPercent.compareTo(BigDecimal.ZERO) < 0) {
+            return BigDecimal.ZERO;
+        }
+        return discountPercent.min(BigDecimal.valueOf(100));
     }
 
     public int normalizeQuantity(int quantity) {

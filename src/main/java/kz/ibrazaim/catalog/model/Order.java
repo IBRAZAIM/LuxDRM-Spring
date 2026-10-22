@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +54,8 @@ public class Order {
 
     LocalDateTime date;
 
-    @Column(name = "total_price")
-    int totalPrice;
+    @Column(name = "total_price", precision = 12, scale = 2)
+    BigDecimal totalPrice;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<OrderProduct> orderProducts = new ArrayList<>();

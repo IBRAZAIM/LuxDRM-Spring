@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -63,7 +65,11 @@ public class OrderService {
                 orderProduct.setProduct(cartItem.getProduct());
                 orderProduct.setSize(cartItem.getSize());
                 orderProduct.setUnitPrice(cartItem.getProduct().getPrice());
-                orderProduct.setDiscountPercent(Math.max(0, Math.min(cartItem.getProduct().getDiscount(), 100)));
+                orderProduct.setDiscountPercent(cartItem.getProduct().getDiscount()
+                        .max(BigDecimal.ZERO)
+                        .min(BigDecimal.valueOf(100))
+                        .setScale(0, RoundingMode.HALF_UP)
+                        .intValue());
                 orderProduct.setQuantity(cartItem.getQuantity());
                 orderProduct.setLineTotal(cartService.lineFinalPrice(cartItem));
                 orderProducts.add(orderProduct);

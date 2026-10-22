@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -27,19 +28,19 @@ public class ProductController {
 
     @GetMapping
     public String findAll(
-            @RequestParam(required = false) Integer minPrice,
-            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Long categoryId,
             Model model
     ) {
         User user = userService.getUser();
 
-        if (minPrice == null) minPrice = 0;
-        if (maxPrice == null) maxPrice = Integer.MAX_VALUE;
+        if (minPrice == null) minPrice = BigDecimal.ZERO;
+        if (maxPrice == null) maxPrice = new BigDecimal("9999999999.99");
 
         List<Product> products;
 
-        if (categoryId == null && minPrice == 0 && maxPrice == Integer.MAX_VALUE) {
+        if (categoryId == null && minPrice.compareTo(BigDecimal.ZERO) == 0 && maxPrice.compareTo(new BigDecimal("9999999999.99")) == 0) {
             products = productService.findAll();
         } else {
             products = productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice);
@@ -120,7 +121,7 @@ public class ProductController {
     @PostMapping("/update/{id}")
     public String updateProduct(
             @PathVariable long id,
-            String name, int price,
+            String name, BigDecimal price,
             @RequestParam List<Long> optionIds,
             @RequestParam List<String> values
     ) {

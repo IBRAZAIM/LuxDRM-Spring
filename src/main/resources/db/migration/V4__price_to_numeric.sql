@@ -1,0 +1,8 @@
+ALTER TABLE products
+  ALTER COLUMN price TYPE NUMERIC(12,2) USING price::NUMERIC,
+  ALTER COLUMN discount TYPE NUMERIC(5,2) USING discount::NUMERIC;
+ALTER TABLE orders
+  ALTER COLUMN total_price TYPE NUMERIC(12,2) USING total_price::NUMERIC;
+ALTER TABLE order_products
+  ALTER COLUMN unit_price TYPE NUMERIC(12,2) USING unit_price::NUMERIC,
+  ALTER COLUMN line_total TYPE NUMERIC(12,2) USING line_total::NUMERIC;

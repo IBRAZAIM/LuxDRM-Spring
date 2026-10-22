@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,14 +28,14 @@ public class OrderProduct {
 
     String size;
 
-    @Column(name = "unit_price")
-    int unitPrice;
+    @Column(name = "unit_price", precision = 12, scale = 2)
+    BigDecimal unitPrice;
 
     @Column(name = "discount_percent")
     int discountPercent;
 
-    @Column(name = "line_total")
-    int lineTotal;
+    @Column(name = "line_total", precision = 12, scale = 2)
+    BigDecimal lineTotal;
 
     int quantity;
 }

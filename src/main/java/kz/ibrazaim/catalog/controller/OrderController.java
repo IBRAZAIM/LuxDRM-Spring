@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -37,10 +38,10 @@ public class OrderController {
         model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
         model.addAttribute("orderItems", cartItems);
-        int subtotalPrice = cartService.subtotal(cartItems);
-        int discountAmount = cartService.discountAmount(cartItems);
+        BigDecimal subtotalPrice = cartService.subtotal(cartItems);
+        BigDecimal discountAmount = cartService.discountAmount(cartItems);
         int discountPercent = cartService.discountPercent(cartItems);
-        int finalPrice = cartService.finalPrice(cartItems);
+        BigDecimal finalPrice = cartService.finalPrice(cartItems);
         model.addAttribute("subtotalPrice", subtotalPrice);
         model.addAttribute("discountAmount", discountAmount);
         model.addAttribute("discountPercent", discountPercent);

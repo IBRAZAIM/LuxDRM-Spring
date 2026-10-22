@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,7 +58,7 @@ public class ProductService implements AbstractService<Product> {
 
         // Устанавливаем рейтинг и скидку по умолчанию
         product.setRating(5.0);      // рейтинг как double
-        product.setDiscount(0);    // скидка в процентах, например 10% = 10.0
+        product.setDiscount(BigDecimal.ZERO);    // скидка в процентах, например 10% = 10.0
 
         // Сохраняем продукт, чтобы получить ID
         Product savedProduct = productRepository.save(product);
@@ -104,7 +105,7 @@ public class ProductService implements AbstractService<Product> {
         return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id + "не найден"));
     }
 
-    public void update(long id, String name, int price, List<Long> optionIds, List<String> values) {
+    public void update(long id, String name, BigDecimal price, List<Long> optionIds, List<String> values) {
         Product existingProduct = findById(id);
         existingProduct.setName(name);
         existingProduct.setPrice(price);
@@ -147,7 +148,7 @@ public class ProductService implements AbstractService<Product> {
         return productRepository.findById(id).orElse(null);
     }
 
-    public List<Product> findByPriceRangeAndCategory(Long categoryId, Integer minPrice, Integer maxPrice) {
+    public List<Product> findByPriceRangeAndCategory(Long categoryId, BigDecimal minPrice, BigDecimal maxPrice) {
         if (categoryId == null) {
             return productRepository.findByPriceBetween(minPrice, maxPrice);
         } else {
