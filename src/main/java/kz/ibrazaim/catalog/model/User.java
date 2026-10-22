@@ -28,7 +28,9 @@ public class User {
 
     String name;
 
-    String role;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    Role role;
 
     String surname;
 

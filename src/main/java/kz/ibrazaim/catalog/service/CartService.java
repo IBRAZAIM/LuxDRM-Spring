@@ -1,6 +1,6 @@
 package kz.ibrazaim.catalog.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.repository.CartItemRepository;

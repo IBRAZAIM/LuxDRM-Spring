@@ -44,7 +44,7 @@ public class UserService {
 
         user.setLogin(login);
         user.setPassword(encoder.encode(password));
-        user.setRole(Role.USER.getServiceName());
+        user.setRole(Role.USER);
         user.setName(trimNullable(user.getName()));
         user.setSurname(trimNullable(user.getSurname()));
         user.setRegistrationDate(LocalDateTime.now());
@@ -107,9 +107,8 @@ public class UserService {
             return false;
         }
 
-        String actualRole = user.getRole().trim();
         for (Role role : roles) {
-            if (role != null && actualRole.equalsIgnoreCase(role.getServiceName())) {
+            if (user.getRole() == role) {
                 return true;
             }
         }
