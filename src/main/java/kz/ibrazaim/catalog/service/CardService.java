@@ -31,7 +31,6 @@ public class CardService {
         card.setCardHolder(cardEncryption.encrypt(cardHolderName));
         card.setMonth(cardEncryption.encrypt(expiryMonth));
         card.setYear(cardEncryption.encrypt(expiryYear));
-        card.setCvv(null);
 
         cardRepository.save(card);
     }
@@ -53,7 +52,6 @@ public class CardService {
         decrypted.setCardHolder(cardEncryption.decrypt(card.getCardHolder()));
         decrypted.setMonth(cardEncryption.decrypt(card.getMonth()));
         decrypted.setYear(cardEncryption.decrypt(card.getYear()));
-        decrypted.setCvv(null);
         return decrypted;
     }
 }

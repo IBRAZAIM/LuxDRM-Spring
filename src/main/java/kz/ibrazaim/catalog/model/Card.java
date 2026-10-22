@@ -43,6 +43,4 @@ public class Card {
     @Column(name = "card_year", nullable = false, columnDefinition = "TEXT")
     String year;
 
-    @Column(name = "cvv_code", columnDefinition = "TEXT")
-    String cvv;
 }
