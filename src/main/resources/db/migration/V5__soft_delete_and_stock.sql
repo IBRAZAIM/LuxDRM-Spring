@@ -4,3 +4,4 @@ ALTER TABLE products
 
 CREATE INDEX IF NOT EXISTS idx_products_deleted ON products (deleted);
 CREATE INDEX IF NOT EXISTS idx_products_name ON products (name);
+

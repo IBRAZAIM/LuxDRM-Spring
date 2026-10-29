@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URI;
 
@@ -21,6 +22,9 @@ public class LoginController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
+        if (userService.getUser() != null) {
+            return "redirect:/";
+        }
         model.addAttribute("user", new User());
         return "registerForm";
     }
@@ -28,14 +32,18 @@ public class LoginController {
     @PostMapping("/register")
     public String registerUser(
             @ModelAttribute("user") User user,
+            @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
             BindingResult result,
+            RedirectAttributes redirectAttributes,
             Model model
     ) {
         if (result.hasErrors()) {
             return "registerForm";
         }
         try {
-            userService.create(user);
+            userService.create(user, confirmPassword);
+            redirectAttributes.addFlashAttribute("successMessage", "Регистрация прошла успешно! Теперь вы можете войти.");
+            return "redirect:/login";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "registerForm";
@@ -43,7 +51,6 @@ public class LoginController {
             model.addAttribute("error", "Регистрация не удалась. Попробуйте снова.");
             return "registerForm";
         }
-        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -53,6 +60,13 @@ public class LoginController {
             HttpServletRequest request,
             Model model
     ) {
+        if (userService.getUser() != null) {
+            if (isSafeInternalRedirect(redirect)) {
+                return "redirect:" + redirect;
+            }
+            return "redirect:/";
+        }
+
         if (redirect == null || redirect.isBlank()) {
             redirect = extractRedirectFromReferer(request.getHeader("Referer"));
         }
@@ -73,7 +87,7 @@ public class LoginController {
         try {
             URI uri = URI.create(referer);
             String path = uri.getPath();
-            if (path == null || path.isBlank() || "/login".equals(path)) {
+            if (path == null || path.isBlank() || "/login".equals(path) || "/register".equals(path)) {
                 return null;
             }
 

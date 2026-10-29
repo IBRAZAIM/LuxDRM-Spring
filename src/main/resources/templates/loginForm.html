@@ -13,6 +13,10 @@
     <p class="brand">UXD</p>
     <h2>Вход</h2>
 
+    <div th:if="${successMessage}" class="success" style="background: #e8f5e9; color: #2e7d32; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; border: 1px solid #c8e6c9; text-align: center;">
+        <span th:text="${successMessage}"></span>
+    </div>
+
     <div th:if="${loginError}" class="error">
         Неверный логин или пароль
     </div>
@@ -33,6 +37,13 @@
             <input type="password" id="password" name="password"
                    placeholder="Ваш пароль"
                    autocomplete="current-password" required/>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin: 12px 0 18px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; color: #555;">
+                <input type="checkbox" name="remember-me" style="cursor: pointer; width: 16px; height: 16px;">
+                <span>Запомнить меня</span>
+            </label>
         </div>
 
         <button type="submit">Войти</button>

@@ -62,7 +62,8 @@ public class SecurityConfig {
                                 "/products/create/**",
                                 "/products/update/**",
                                 "/products/delete/**",
-                                "/categories/create",
+                                "/categories",
+                                "/categories/**",
                                 "/reviews",
                                 "/reviews/**",
                                 "/sales",
@@ -87,11 +88,16 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                         .permitAll()
                 )
+                .rememberMe(remember -> remember
+                        .key("LuxDRM-unique-remember-me-key-2026")
+                        .tokenValiditySeconds(86400 * 30)
+                        .rememberMeParameter("remember-me")
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
+                        .deleteCookies("JSESSIONID", "remember-me")
                         .permitAll()
                 );
 

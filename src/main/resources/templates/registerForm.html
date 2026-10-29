@@ -15,7 +15,7 @@
 
     <div th:if="${error}" class="error" th:text="${error}"></div>
 
-    <form th:action="@{/register}" th:object="${user}" method="post" autocomplete="off">
+    <form th:action="@{/register}" th:object="${user}" method="post" autocomplete="off" onsubmit="return validatePasswords();">
         <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
 
         <div class="field">
@@ -33,13 +33,23 @@
                    placeholder="не менее 8 символов"
                    required minlength="8" maxlength="72"
                    autocomplete="new-password"
-                   oninput="strength(this.value)"/>
+                   oninput="strength(this.value); checkMatch();"/>
             <div class="strength">
                 <div class="s" id="s1"></div>
                 <div class="s" id="s2"></div>
                 <div class="s" id="s3"></div>
                 <div class="s" id="s4"></div>
             </div>
+        </div>
+
+        <div class="field">
+            <label for="confirmPassword">Повторите пароль</label>
+            <input type="password" id="confirmPassword" name="confirmPassword"
+                   placeholder="повторите введенный пароль"
+                   required minlength="8" maxlength="72"
+                   autocomplete="new-password"
+                   oninput="checkMatch();"/>
+            <span id="matchError" style="display:none; color: #e24b4a; font-size: 12px; margin-top: 4px;">Пароли не совпадают</span>
         </div>
 
         <div class="row">
@@ -55,10 +65,10 @@
             </div>
         </div>
 
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit" id="submitBtn">Зарегистрироваться</button>
     </form>
 
-    <p class="foot">Уже есть аккаунт? <a th:href="@{/login(redirect=${currentRequestPath})}">Войти</a></p>
+    <p class="foot">Уже есть аккаунт? <a th:href="@{/login}">Войти</a></p>
 </div>
 
 <script>
@@ -75,7 +85,29 @@
         for (var i = 1; i <= 4; i++)
             document.getElementById('s' + i).style.background = i <= l ? col : 'var(--border)';
     }
+
+    function checkMatch() {
+        var p = document.getElementById('password').value;
+        var cp = document.getElementById('confirmPassword').value;
+        var err = document.getElementById('matchError');
+        if (cp && p !== cp) {
+            err.style.display = 'block';
+            return false;
+        } else {
+            err.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePasswords() {
+        var p = document.getElementById('password').value;
+        var cp = document.getElementById('confirmPassword').value;
+        if (p !== cp) {
+            document.getElementById('matchError').style.display = 'block';
+            return false;
+        }
+        return true;
+    }
 </script>
 </body>
 </html>
-

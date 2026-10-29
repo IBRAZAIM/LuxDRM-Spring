@@ -63,7 +63,6 @@ public class PublicSeoController {
         xml.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
         appendUrl(xml, baseUrl + "/", lastMod);
         appendUrl(xml, baseUrl + "/products", lastMod);
-        appendUrl(xml, baseUrl + "/categories", lastMod);
         appendUrl(xml, baseUrl + "/delivery", lastMod);
         appendUrl(xml, baseUrl + "/contact", lastMod);
 

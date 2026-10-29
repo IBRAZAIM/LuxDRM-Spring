@@ -33,6 +33,14 @@ public class UserService {
     private final PasswordEncoder encoder;
 
     @Transactional
+    public void create(User user, String confirmPassword) {
+        if (confirmPassword == null || !confirmPassword.equals(user.getPassword())) {
+            throw new IllegalArgumentException("Пароли не совпадают.");
+        }
+        create(user);
+    }
+
+    @Transactional
     public void create(User user) {
         String login = normalizeLogin(user.getLogin());
         String password = normalizePassword(user.getPassword());
