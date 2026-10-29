@@ -38,7 +38,7 @@
                     <!-- Название и количество -->
                     <span class="product-name" th:text="${orderProduct.product.name}"></span>
                     <span class="product-quantity" th:text="'x ' + ${orderProduct.quantity}"></span>
-                    <span class="product-price" th:text="${orderProduct.product.price} + ' ₸'"></span>
+                    <span class="product-price" th:text="${orderProduct.unitPrice} + ' ₸'"></span>
                 </div>
             </div>
         </div>

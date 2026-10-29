@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,6 +7,11 @@
 <body>
 <div class="filter-container">
     <form method="get" action="#" th:action="@{/products}" th:fragment="filter-div" class="filter-form" onsubmit="return validateFilterForm(event);">
+        <div class="form-group">
+            <label for="search">Поиск:</label>
+            <input type="text" id="search" name="search"
+                   th:value="${search}" placeholder="Поиск по названию..." title="Поиск товаров">
+        </div>
         <div class="form-group">
             <label for="minPrice">Минимальная цена:</label>
             <input type="number" id="minPrice" name="minPrice" step="100" min="0"

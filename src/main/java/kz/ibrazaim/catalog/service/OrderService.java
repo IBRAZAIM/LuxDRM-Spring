@@ -4,9 +4,11 @@ import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.Order;
 import kz.ibrazaim.catalog.model.OrderProduct;
 import kz.ibrazaim.catalog.model.OrderStatus;
+import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.repository.OrderProductRepository;
 import kz.ibrazaim.catalog.repository.OrderRepository;
+import kz.ibrazaim.catalog.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
+    private final ProductRepository productRepository;
     private final CartService cartService;
 
     @Transactional
@@ -40,6 +43,21 @@ public class OrderService {
             List<CartItem> safeCartItems = cartItems == null ? List.of() : cartItems;
             if (safeCartItems.isEmpty()) {
                 throw new IllegalArgumentException("Cart is empty");
+            }
+
+            // Проверяем и списываем остатки на складе
+            for (CartItem cartItem : safeCartItems) {
+                Product product = cartItem.getProduct();
+                if (product != null) {
+                    if (product.isDeleted()) {
+                        throw new IllegalArgumentException("Товар '" + product.getName() + "' больше недоступен для заказа.");
+                    }
+                    if (product.getStock() < cartItem.getQuantity()) {
+                        throw new IllegalArgumentException("Недостаточно товара '" + product.getName() + "' на складе. В наличии: " + product.getStock() + " шт.");
+                    }
+                    product.setStock(product.getStock() - cartItem.getQuantity());
+                    productRepository.save(product);
+                }
             }
 
             Order order = new Order();
@@ -98,9 +116,38 @@ public class OrderService {
         return orderRepository.getOrderById(id);
     }
 
+    @Transactional
     public void updateOrderStatus(Long orderId, String status) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
-        order.setStatus(OrderStatus.fromValue(status));
+        OrderStatus newStatus = OrderStatus.fromValue(status);
+        OrderStatus oldStatus = order.getStatus();
+
+        // Возврат остатков на склад при отмене заказа
+        if (oldStatus != OrderStatus.CANCELED && newStatus == OrderStatus.CANCELED) {
+            if (order.getOrderProducts() != null) {
+                for (OrderProduct op : order.getOrderProducts()) {
+                    if (op.getProduct() != null) {
+                        Product p = op.getProduct();
+                        p.setStock(p.getStock() + op.getQuantity());
+                        productRepository.save(p);
+                    }
+                }
+            }
+        }
+        // Повторное списание со склада, если заказ восстанавливают из отмененного
+        else if (oldStatus == OrderStatus.CANCELED && newStatus != OrderStatus.CANCELED) {
+            if (order.getOrderProducts() != null) {
+                for (OrderProduct op : order.getOrderProducts()) {
+                    if (op.getProduct() != null) {
+                        Product p = op.getProduct();
+                        p.setStock(Math.max(0, p.getStock() - op.getQuantity()));
+                        productRepository.save(p);
+                    }
+                }
+            }
+        }
+
+        order.setStatus(newStatus);
         orderRepository.save(order);
     }
 

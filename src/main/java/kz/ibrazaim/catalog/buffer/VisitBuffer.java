@@ -35,8 +35,11 @@ public class VisitBuffer {
     @Scheduled(fixedDelay = 10000)
     public void flush() {
         if (buffer.isEmpty()) return;
-        visitRepository.saveAll(buffer.values());
-        buffer.clear();
+        // Атомарно забираем текущие визиты и очищаем буфер,
+        // чтобы новые визиты, пришедшие во время saveAll, не потерялись
+        Map<String, Visit> snapshot = new ConcurrentHashMap<>(buffer);
+        buffer.keySet().removeAll(snapshot.keySet());
+        visitRepository.saveAll(snapshot.values());
     }
 }
 

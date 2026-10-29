@@ -6,6 +6,10 @@ import kz.ibrazaim.catalog.model.Role;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,25 +32,32 @@ public class ProductController {
 
     @GetMapping
     public String findAll(
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
             Model model
     ) {
         User user = userService.getUser();
 
         if (minPrice == null) minPrice = BigDecimal.ZERO;
         if (maxPrice == null) maxPrice = new BigDecimal("9999999999.99");
+        if (page < 0) page = 0;
+        if (size <= 0 || size > 100) size = 12;
 
-        List<Product> products;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Product> productsPage = productService.searchProducts(search, categoryId, minPrice, maxPrice, pageable);
 
-        if (categoryId == null && minPrice.compareTo(BigDecimal.ZERO) == 0 && maxPrice.compareTo(new BigDecimal("9999999999.99")) == 0) {
-            products = productService.findAll();
-        } else {
-            products = productService.findByPriceRangeAndCategory(categoryId, minPrice, maxPrice);
-        }
-
-        model.addAttribute("products", products);
+        model.addAttribute("products", productsPage.getContent());
+        model.addAttribute("productsPage", productsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productsPage.getTotalPages());
+        model.addAttribute("totalElements", productsPage.getTotalElements());
+        model.addAttribute("search", search != null ? search.trim() : "");
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
@@ -89,14 +100,11 @@ public class ProductController {
             );
             return "redirect:/products";
         } catch (Exception e) {
-            // Логируем ошибку, чтобы видеть её в консоли
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Ошибка при создании: " + e.getMessage());
             return "redirect:/products/create?categoryId=" + categoryId;
         }
     }
-
-
 
     @GetMapping("create/chooseCategory")
     public String chooseCategory(Model model) {
@@ -113,7 +121,7 @@ public class ProductController {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
         model.addAttribute("options", productService.getOptions(product));
-        int cartItemsCount = cartService.getCartItemsCountByUser(user); // Метод для получения количества товаров в корзине
+        int cartItemsCount = cartService.getCartItemsCountByUser(user);
         model.addAttribute("cartItemsCount", cartItemsCount);
         return "update-product";
     }
@@ -121,11 +129,13 @@ public class ProductController {
     @PostMapping("/update/{id}")
     public String updateProduct(
             @PathVariable long id,
-            String name, BigDecimal price,
-            @RequestParam List<Long> optionIds,
-            @RequestParam List<String> values
+            @RequestParam String name,
+            @RequestParam BigDecimal price,
+            @RequestParam(value = "stock", required = false, defaultValue = "100") Integer stock,
+            @RequestParam(value = "optionIds", required = false) List<Long> optionIds,
+            @RequestParam(value = "values", required = false) List<String> values
     ) {
-        productService.update(id, name, price, optionIds, values);
+        productService.update(id, name, price, stock, optionIds, values);
         return "redirect:/products";
     }
 
@@ -152,12 +162,16 @@ public class ProductController {
     ) {
         User user = userService.getUser();
         Product product = productService.getProductById(id);
+        if (product == null) {
+            return "redirect:/products";
+        }
         model.addAttribute("product", product);
         model.addAttribute("products", productService.findAll());
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
         model.addAttribute("imageUrls", productImageService.findAllByProduct(product));
         model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
+
         List<ProductSize> sizes = productSizeService.findByProduct(product);
         model.addAttribute("sizes", sizes);
 
@@ -168,8 +182,6 @@ public class ProductController {
         }
         return "product-page";
     }
-
-
 
     @PostMapping("/addComment")
     public String addReview(

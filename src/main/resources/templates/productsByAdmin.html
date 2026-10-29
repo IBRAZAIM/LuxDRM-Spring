@@ -5,7 +5,7 @@
     <link rel="stylesheet" th:href="@{/productList.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <title>Каталог</title>
+    <title>Каталог (Панель управления)</title>
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
@@ -18,6 +18,7 @@
                 <th>ID</th>
                 <th>Название</th>
                 <th>Цена</th>
+                <th>Остаток</th>
                 <th>Категория</th>
                 <th></th>
                 <th></th>
@@ -27,14 +28,35 @@
             <tr th:each="product : ${products}">
                 <td th:text="${product.getId()}"></td>
                 <td><a th:href="@{'/products/' + ${product.getId()}}" th:text="${product.getName()}" class="product-name"></a></td>
-                <td th:text="${product.getPrice()}"></td>
-                <td th:text="${product.category.getName()}"></td>
-                <td><a th:href="@{'/products/update/' + ${product.getId()}}" class="icon-edit"><i class="fa-regular fa-pen-to-square"></i></a></td>
-                <td><a th:href="@{'/products/delete/' + ${product.getId()}}" class="icon-delete"><i class="fa-regular fa-trash-can"></i></a></td>
+                <td th:text="${product.getPrice()} + ' ₸'"></td>
+                <td>
+                    <span th:text="${product.stock} + ' шт.'"
+                          th:style="${product.stock > 0 ? 'color: #2e7d32; font-weight: 500;' : 'color: #d32f2f; font-weight: 600;'}">
+                    </span>
+                </td>
+                <td th:text="${product.category != null ? product.category.getName() : '-'}"></td>
+                <td><a th:href="@{'/products/update/' + ${product.getId()}}" class="icon-edit" title="Редактировать"><i class="fa-regular fa-pen-to-square"></i></a></td>
+                <td><a th:href="@{'/products/delete/' + ${product.getId()}}" class="icon-delete" title="Удалить"><i class="fa-regular fa-trash-can"></i></a></td>
             </tr>
             </tbody>
         </table>
-        <a th:href="@{'/products/create/chooseCategory'}" class="add-product-btn"><i class="fas fa-plus"></i></a>
+
+        <!-- Пагинация -->
+        <div class="pagination" th:if="${totalPages != null and totalPages > 1}" style="display: flex; gap: 8px; justify-content: center; align-items: center; margin: 25px 0;">
+            <a th:if="${currentPage > 0}"
+               th:href="@{/products(page=${currentPage - 1}, search=${search}, categoryId=${selectedCategoryId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+               style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #333;">« Назад</a>
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:href="@{/products(page=${i}, search=${search}, categoryId=${selectedCategoryId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                   th:text="${i + 1}"
+                   th:style="${i == currentPage ? 'padding: 6px 12px; background: #333; color: #fff; border-radius: 4px; text-decoration: none;' : 'padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #333;'}">1</a>
+            </span>
+            <a th:if="${currentPage < totalPages - 1}"
+               th:href="@{/products(page=${currentPage + 1}, search=${search}, categoryId=${selectedCategoryId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+               style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #333;">Вперед »</a>
+        </div>
+
+        <a th:href="@{'/products/create/chooseCategory'}" class="add-product-btn" title="Добавить товар"><i class="fas fa-plus"></i></a>
     </div>
 </main>
 <div th:insert="~{footer :: footer-code}"></div>
@@ -42,4 +64,3 @@
 <script th:src="@{/js/navbar-component.js}" defer></script>
 </body>
 </html>
-

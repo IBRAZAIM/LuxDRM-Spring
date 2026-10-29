@@ -1,7 +1,7 @@
 package kz.ibrazaim.catalog.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import kz.ibrazaim.catalog.exception.EntityNotFoundException;
 import kz.ibrazaim.catalog.exception.ProductCreateException;
 import kz.ibrazaim.catalog.exception.UserNotFoundException;
 import org.springframework.ui.Model;

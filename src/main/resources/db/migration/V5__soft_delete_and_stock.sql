@@ -1,0 +1,6 @@
+ALTER TABLE products
+  ADD COLUMN IF NOT EXISTS deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS stock INT NOT NULL DEFAULT 100;
+
+CREATE INDEX IF NOT EXISTS idx_products_deleted ON products (deleted);
+CREATE INDEX IF NOT EXISTS idx_products_name ON products (name);

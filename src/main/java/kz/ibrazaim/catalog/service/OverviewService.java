@@ -4,7 +4,6 @@ import kz.ibrazaim.catalog.dto.OverviewMetrics;
 import kz.ibrazaim.catalog.dto.PeriodRange;
 import kz.ibrazaim.catalog.dto.SalesDashboardResponse;
 import kz.ibrazaim.catalog.model.Period;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -30,7 +29,6 @@ public class OverviewService {
         this.orderService = orderService;
     }
 
-    @Cacheable(value = "overviewMetrics", key = "#period")
     public OverviewMetrics getOverviewMetrics(Period period) {
         RangeContext range = resolveRange(period, null, null);
         VisitService.Aggregation aggregation = aggregationFor(

@@ -5,15 +5,12 @@ import kz.ibrazaim.catalog.model.*;
 import kz.ibrazaim.catalog.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -28,6 +25,7 @@ public class ProductService implements AbstractService<Product> {
     private final ProductImageRepository productImageRepository;
     private final ReviewRepository reviewRepository;
     private final OrderProductRepository orderProductRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Override
     public void create(Product product) {
@@ -36,17 +34,17 @@ public class ProductService implements AbstractService<Product> {
 
     @Override
     public void deleteById(long id) {
-        productRepository.deleteById(id);
+        deleteProductById(id);
     }
 
     @Transactional
     @Override
     public void deleteProductById(long productId) {
-        productImageRepository.deleteByProductId(productId);
-        valueRepository.deleteAllByProductId(productId);
-        reviewRepository.deleteAllByProductId(productId);
-        orderProductRepository.deleteAllByProductId(productId);
-        deleteById(productId);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + productId + " не найден"));
+        product.setDeleted(true);
+        productRepository.save(product);
+        cartItemRepository.deleteAllByProductId(productId);
     }
 
     @Transactional
@@ -57,19 +55,26 @@ public class ProductService implements AbstractService<Product> {
         product.setCategory(category);
 
         // Устанавливаем рейтинг и скидку по умолчанию
-        product.setRating(5.0);      // рейтинг как double
-        product.setDiscount(BigDecimal.ZERO);    // скидка в процентах, например 10% = 10.0
+        if (product.getRating() <= 0) {
+            product.setRating(5.0);
+        }
+        if (product.getDiscount() == null) {
+            product.setDiscount(BigDecimal.ZERO);
+        }
+        if (product.getStock() < 0) {
+            product.setStock(0);
+        }
 
         // Сохраняем продукт, чтобы получить ID
         Product savedProduct = productRepository.save(product);
 
         // Создаем характеристики
-        if (!optionsIds.isEmpty()) {
-            createValues(savedProduct, values, optionsIds);
+        if (optionsIds != null && !optionsIds.isEmpty()) {
+            createValues(savedProduct, values != null ? values : List.of(), optionsIds);
         }
 
         // Создаем изображения
-        if (!imageUrls.isEmpty()) {
+        if (imageUrls != null && !imageUrls.isEmpty()) {
             productImageService.create(savedProduct, imageUrls);
         }
 
@@ -79,12 +84,10 @@ public class ProductService implements AbstractService<Product> {
         }
     }
 
-
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
         List<Option> options = optionRepository.findAllById(optionsIds);
 
         for (int i = 0; i < options.size(); i++) {
-            // Проверка, чтобы индекс values не вышел за границы, если юзер что-то не ввел
             String valueText = (i < values.size()) ? values.get(i) : "";
 
             Value value = new Value();
@@ -97,32 +100,38 @@ public class ProductService implements AbstractService<Product> {
 
     @Override
     public List<Product> findAll() {
-        return productRepository.findAll();
+        return productRepository.findByDeletedFalse();
     }
 
     @Override
     public Product findById(long id) {
-        return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id + "не найден"));
+        return productRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id + " не найден"));
     }
 
-    public void update(long id, String name, BigDecimal price, List<Long> optionIds, List<String> values) {
+    public void update(long id, String name, BigDecimal price, Integer stock, List<Long> optionIds, List<String> values) {
         Product existingProduct = findById(id);
         existingProduct.setName(name);
         existingProduct.setPrice(price);
+        if (stock != null) {
+            existingProduct.setStock(Math.max(0, stock));
+        }
 
         productRepository.save(existingProduct);
 
-        for (int i = 0; i < optionIds.size(); i++) {
-            long optionId = optionIds.get(i);
-            Option option = optionRepository.findById(optionId).orElseThrow();
-            Value value = valueRepository.findByProductAndOption(existingProduct, option).orElseGet(() -> {
-                Value newValue = new Value();
-                newValue.setProduct(existingProduct);
-                newValue.setOption(option);
-                return newValue;
-            });
-            value.setName(values.get(i));
-            valueRepository.save(value);
+        if (optionIds != null && values != null) {
+            for (int i = 0; i < optionIds.size(); i++) {
+                long optionId = optionIds.get(i);
+                Option option = optionRepository.findById(optionId).orElseThrow();
+                Value value = valueRepository.findByProductAndOption(existingProduct, option).orElseGet(() -> {
+                    Value newValue = new Value();
+                    newValue.setProduct(existingProduct);
+                    newValue.setOption(option);
+                    return newValue;
+                });
+                value.setName(i < values.size() ? values.get(i) : "");
+                valueRepository.save(value);
+            }
         }
     }
 
@@ -145,7 +154,8 @@ public class ProductService implements AbstractService<Product> {
     }
 
     public Product getProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+        if (id == null) return null;
+        return productRepository.findByIdAndDeletedFalse(id).orElse(null);
     }
 
     public List<Product> findByPriceRangeAndCategory(Long categoryId, BigDecimal minPrice, BigDecimal maxPrice) {
@@ -156,5 +166,8 @@ public class ProductService implements AbstractService<Product> {
         }
     }
 
-
+    public Page<Product> searchProducts(String search, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+        String query = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
+        return productRepository.searchProducts(query, categoryId, minPrice, maxPrice, pageable);
+    }
 }

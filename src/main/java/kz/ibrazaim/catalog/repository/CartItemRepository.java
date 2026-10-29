@@ -33,6 +33,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     // Удалить все товары пользователя
     void deleteAllByUser(User user);
 
+    void deleteAllByProductId(long productId);
+
     // Посчитать количество строк корзины пользователя
     int countByUser(User user);
 }

@@ -4,6 +4,7 @@ import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.Review;
 import kz.ibrazaim.catalog.model.ReviewStatus;
 import kz.ibrazaim.catalog.model.User;
+import kz.ibrazaim.catalog.repository.ProductRepository;
 import kz.ibrazaim.catalog.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public void create(Product product, User user, int estimation, String text) {
@@ -30,10 +32,25 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+    @Transactional
     public void updateReviewStatus(long reviewId, String status) {
         Review review = reviewRepository.findById(reviewId).orElseThrow();
         review.setStatus(ReviewStatus.fromValue(status));
         reviewRepository.save(review);
+
+        // Динамический пересчет рейтинга товара
+        recalculateProductRating(review.getProduct());
+    }
+
+    public void recalculateProductRating(Product product) {
+        if (product == null) return;
+        Double avgRating = reviewRepository.findAverageRatingByProductAndStatus(product, ReviewStatus.APPROVED);
+        if (avgRating != null && avgRating > 0) {
+            product.setRating(Math.round(avgRating * 10.0) / 10.0);
+        } else {
+            product.setRating(5.0);
+        }
+        productRepository.save(product);
     }
 
     public List<Review> getCommentsForProduct(Product product) {

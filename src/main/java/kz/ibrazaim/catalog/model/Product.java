@@ -31,8 +31,14 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     String description;
 
+    @Column(name = "stock", nullable = false)
+    int stock = 100;
+
+    @Column(name = "deleted", nullable = false)
+    boolean deleted = false;
+
     @ManyToOne
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     Category category;
 
     @OneToMany(mappedBy = "product")
@@ -42,5 +48,5 @@ public class Product {
     private List<ProductImage> images;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ProductSize> sizes; // Добавлено для хранения размеров
+    List<ProductSize> sizes;
 }

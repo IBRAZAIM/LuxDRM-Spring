@@ -135,7 +135,14 @@ public class OrderController {
         }
 
         Order order = orderService.getOrderById(id);
-        if (order == null || order.getUser().getId() != user.getId()) {
+        if (order == null) {
+            return "redirect:/orders";
+        }
+
+        // Разрешаем просмотр только владельцу заказа или администратору/модератору
+        boolean isOwner = order.getUser() != null && order.getUser().getId() == user.getId();
+        boolean isStaff = userService.hasAnyRole(user, Role.ADMIN, Role.MODER);
+        if (!isOwner && !isStaff) {
             return "redirect:/orders";
         }
 
