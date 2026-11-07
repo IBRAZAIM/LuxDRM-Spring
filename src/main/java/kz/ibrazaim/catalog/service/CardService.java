@@ -17,19 +17,22 @@ public class CardService {
     private final CardEncryption cardEncryption;
 
     @Transactional
-    public void saveCard(User user, String cardNumber, String cardHolderName, String expiryMonth, String expiryYear, String cvv) {
+    public void saveCard(User user, String cardNumber, String cardHolderName, String expiryMonth, String expiryYear) {
         if (user == null) {
             throw new IllegalStateException("User is not authenticated.");
         }
         if (cardNumber == null || cardNumber.isBlank()
                 || cardHolderName == null || cardHolderName.isBlank()
                 || expiryMonth == null || expiryMonth.isBlank()
-                || expiryYear == null || expiryYear.isBlank()
-                || cvv == null || cvv.isBlank()) {
-            throw new IllegalArgumentException("Payment details are required.");
+                || expiryYear == null || expiryYear.isBlank()) {
+            return;
         }
 
-        // Обновляем существующую карту или создаём новую
+        String digits = cardNumber.replaceAll("\\D", "");
+        String last4 = digits.length() >= 4 ? digits.substring(digits.length() - 4) : digits;
+        String maskedCard = "**** **** **** " + last4;
+
+        // Обновляем существующую карту или создаём новую (храним только маску последних 4 цифр)
         List<Card> existingCards = cardRepository.findAllByUser(user);
         Card card;
         if (!existingCards.isEmpty()) {
@@ -41,10 +44,10 @@ public class CardService {
             card = new Card();
             card.setUser(user);
         }
-        card.setCardNumber(cardEncryption.encrypt(cardNumber));
-        card.setCardHolder(cardEncryption.encrypt(cardHolderName));
-        card.setMonth(cardEncryption.encrypt(expiryMonth));
-        card.setYear(cardEncryption.encrypt(expiryYear));
+        card.setCardNumber(cardEncryption.encrypt(maskedCard));
+        card.setCardHolder(cardEncryption.encrypt(cardHolderName.trim()));
+        card.setMonth(cardEncryption.encrypt(expiryMonth.trim()));
+        card.setYear(cardEncryption.encrypt(expiryYear.trim()));
 
         cardRepository.save(card);
     }

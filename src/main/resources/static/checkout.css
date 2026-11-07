@@ -1,559 +1,690 @@
-.checkout-container {
-    width: 100%;
-    user-select: none;
+:root {
+    --c-navy: #0C0C3D;
+    --c-crimson: #9A073D;
+    --c-crimson-h: #7A0530;
+    --c-gold: #D4AF37;
+    --c-bg: #F6F5F2;
+    --c-surface: #FFFFFF;
+    --c-surface-alt: #FAF9F6;
+    --c-border: #E2DFD9;
+    --c-ink: #141414;
+    --c-muted: #66625B;
+    --c-success: #2D6A4F;
+    --f-serif: 'Cormorant Garamond', Georgia, serif;
+    --f-sans: 'Montserrat', sans-serif;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border-radius: 0 !important;
+}
+
+body {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--f-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ─── BREADCRUMBS ─── */
+.checkout-bc {
     display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 48px;
+    background: var(--c-surface);
+    border-bottom: 1px solid var(--c-border);
+    font-size: 12px;
+    color: var(--c-muted);
+}
+.checkout-bc a {
+    color: var(--c-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.checkout-bc a:hover {
+    color: var(--c-crimson);
+}
+.checkout-bc .bc-cur {
+    color: var(--c-navy);
+    font-weight: 600;
 }
 
-.left-part {
-    flex: 1;
-    min-width: 300px;
-    margin-left: 73px;
+/* ─── PAGE SHELL ─── */
+.checkout-page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 36px 48px 80px;
 }
 
-h2 {
-    font-family: "Montserrat SemiBold", sans-serif;
-    font-size: 30px;
+.checkout-header {
+    margin-bottom: 28px;
+}
+.checkout-eyebrow {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-crimson);
+    margin-bottom: 6px;
+}
+.checkout-title {
+    font-family: var(--f-serif);
+    font-size: clamp(32px, 4vw, 46px);
+    font-weight: 500;
+    color: var(--c-navy);
+    line-height: 1.08;
+}
+
+/* ─── TWO-COLUMN GRID ─── */
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.checkout-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ─── STEP CARDS ─── */
+.step-card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    padding: 28px 32px;
+}
+
+.step-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
     margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--c-border);
 }
 
-.option {
-    font-family: "Montserrat Medium", sans-serif;
-    font-style: italic;
-    font-size: 19px;
-    margin-bottom: 10px;
-    color: #545454;
+.step-num {
+    font-family: var(--f-serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--c-gold);
+    line-height: 1;
+    padding-top: 2px;
 }
 
-.inputs {
-    margin-top: 12px;
+.step-title {
+    font-family: var(--f-serif);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--c-navy);
+    line-height: 1.15;
+    margin-bottom: 4px;
 }
 
-.inputs input.name {
+.step-sub {
+    font-size: 12px;
+    color: var(--c-muted);
+}
+
+/* ─── FORM FIELDS ─── */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.field-full {
+    grid-column: 1 / -1;
+}
+
+.field-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-navy);
+}
+
+.field-input {
     width: 100%;
-    max-width: calc(745px - 28px);
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid var(--c-border);
+    background: var(--c-surface-alt);
+    font-family: var(--f-sans);
+    font-size: 14px;
+    color: var(--c-ink);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+}
+.field-input::placeholder {
+    color: #9E9A93;
+}
+.field-input:focus {
+    border-color: var(--c-navy);
+    background: var(--c-surface);
 }
 
-.checkbox-line {
+.card-mono {
+    letter-spacing: 0.08em;
+    font-weight: 500;
+}
+
+/* ─── CHOICE CARDS (DELIVERY & PAYMENT) ─── */
+.choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.choice-card {
     display: flex;
-    flex-wrap: wrap;
-    gap: 50px;
-}
-
-.input-block input {
-    width: calc(350px - 28px);
-    height: 40px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 0.5px solid #9b9b9b;
-    font-family: "Montserrat Light", sans-serif;
-    font-style: italic;
-    font-size: 17px;
-    color: #0c0c3d;
-    padding-left: 28px;
-}
-
-.inputs input:nth-child(1), .address{
-    margin-right: 20px;
-}
-
-.input-block input::placeholder {
-    font-family: "Montserrat Light", sans-serif;
-    font-style: italic;
-    font-size: 17px;
-    color: #545454;
-    opacity: 0.6;
-}
-
-.checkbox-option {
-    margin-top: 12px;
-    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 1px solid var(--c-border);
+    background: var(--c-surface-alt);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
     user-select: none;
+}
+.choice-card:hover {
+    border-color: var(--c-navy);
 }
 
 .checkbox-input {
     display: none;
 }
 
-.checkbox-icon {
-    width: 20px;
-    height: 20px;
-    border: 1px solid #0c0c3d;
-    border-radius: 5px;
-    margin-right: 12px;
-    transition: all 0.3s ease;
+.choice-indicator {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--c-navy);
+    background: var(--c-surface);
+    flex-shrink: 0;
+    margin-top: 2px;
     position: relative;
+    transition: background 0.2s, border-color 0.2s;
 }
 
-.checkbox-icon.private-policy {
-    margin-top: 33px;
+.checkbox-input:checked + .choice-indicator {
+    background: var(--c-crimson);
+    border-color: var(--c-crimson);
 }
-
-.checkbox-input:checked + .checkbox-icon {
-    border-color: #0c0c3d;
-}
-
-.checkbox-input:checked + .checkbox-icon::after {
+.checkbox-input:checked + .choice-indicator::after {
     content: '';
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     width: 5px;
-    height: 10px;
-    border: solid #0c0c3d;
+    height: 9px;
+    border: solid #fff;
     border-width: 0 2px 2px 0;
-    transform: translate(-50%, -50%) rotate(30deg);
+    transform: translate(-50%, -50%) rotate(40deg);
 }
 
-.checkbox-input:focus-visible + .checkbox-icon {
-    outline: 2px solid #0c0c3d;
-    outline-offset: 3px;
-    border-color: #0c0c3d;
+.choice-card:has(.checkbox-input:checked) {
+    border-color: var(--c-navy);
+    background: var(--c-surface);
+    box-shadow: inset 3px 0 0 var(--c-crimson);
 }
 
-.checkbox-details {
+.choice-body {
+    flex: 1;
     display: flex;
-    justify-content: space-between;
-    gap: 40px;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.checkbox-text {
-    font-family: "Montserrat", sans-serif;
-    font-style: italic;
-    font-size: 15px;
-    color: #545454;
-    opacity: 0.8;
-    transition: color 0.2s ease;
-}
-
-.checkbox-input:checked ~ .checkbox-details .checkbox-text {
-    color: #000000;
-    font-size: 16px;
-}
-
-.private-policy {
-    margin-top: 33px;
-    font-family: "Montserrat", sans-serif;
-    font-size: 14px;
-    font-style: italic;
-    color: #545454;
-    opacity: 0.7;
-}
-
-.payment-button {
-    border: 2px solid #0c0c3d;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-    margin-top: 16px;
-    margin-bottom: 46px;
-    width: 420px;
-    height: 55px;
+.choice-top {
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    box-sizing: border-box;
-    margin-left: 73px;
+    justify-content: space-between;
+    gap: 8px;
 }
 
-.pay-btn {
-    font-family: "Montserrat SemiBold", sans-serif;
-    font-size: 22px;
-    color: #0c0c3d;
+.choice-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-navy);
 }
 
-.payment-button:hover {
-    background-color: #0c0c3d;
-    .pay-btn{
-        color: #FFFFFF;
-    }
+.choice-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    background: rgba(12, 12, 61, 0.08);
+    color: var(--c-navy);
+}
+.choice-badge--free {
+    background: #EAF4EE;
+    color: var(--c-success);
 }
 
-.payment-button:active {
-    transform: translateY(1px);
+.choice-desc {
+    font-size: 12px;
+    color: var(--c-muted);
 }
 
-button {
-    border: none;
-    background: none;
-    outline: none;
-    cursor: pointer;
+/* ─── INTERACTIVE CREDIT CARD PANEL ─── */
+.card-payment-panel {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--c-border);
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 28px;
+    align-items: center;
 }
 
-button:focus {
-    outline: none;
+.card-visual-wrap {
+    perspective: 1000px;
+    height: 195px;
 }
 
-button:active {
-    transform: scale(0.95);
-}
-
-.right-part {
-    width: 40%;
-}
-
-.card-container {
-    background-color: #0c0c3d;
-    width: 500px;
-    height: 450px;
-    top: 0;
-    right: 0;
-    margin-top: 70px;
-    position: absolute;
-}
-
-.card-div{
-    height: 50%;
+.card-div {
+    width: 100%;
+    height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.6s;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card, .card-back{
-    font-family: "Montserrat SemiBold", sans-serif;
-    font-style: italic;
-    color: #0c0c3d;
-    width: 300px;
-    height: 185px;
-    background: linear-gradient(135deg, #F2F2F2, #E5E5E5, #FFFFFF);
-    margin-top: 50px;
-    margin-left: 31px;
+.card-div.flipped {
+    transform: rotateY(180deg);
+}
+
+.card, .card-back {
     position: absolute;
+    inset: 0;
     backface-visibility: hidden;
-    border-radius: 14px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border: 1px solid #DCDCDC;
+    background: linear-gradient(135deg, #0C0C3D 0%, #161654 60%, #9A073D 100%);
+    color: #FFFFFF;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    box-shadow: 0 12px 28px rgba(12, 12, 61, 0.18);
+}
+
+.card-back {
+    transform: rotateY(180deg);
+    padding: 18px 0;
 }
 
 .card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0;
 }
 
-.visa {
-    margin-left: 15px;
+.card-brand-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--c-gold);
 }
 
 .nfc {
-    margin-right: 15px;
+    color: rgba(255, 255, 255, 0.75);
 }
 
 .card-number {
-    margin: 36px 0 36px 0;
-    text-align: center;
-    font-size: 16px;
-    letter-spacing: 2px;
-}
-
-.card-number-text {
-    font-weight: bold;
+    margin: 14px 0;
+    font-size: 17px;
+    letter-spacing: 2.5px;
+    font-weight: 600;
+    color: #FFFFFF;
 }
 
 .card-down {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
-    margin-top: 10px;
+    align-items: flex-end;
+    gap: 12px;
 }
 
-.card-name {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 0 0 20px 16px;
+.card-meta-caption {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2px;
 }
 
-.card-date {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 0 27px 20px 0;
+.card-name, .card-date {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #FFFFFF;
 }
 
-
-.card-back {
-    transform: rotateY(180deg);
-}
-
-.card-div.flipped {
-    transform: rotateY(180deg);
-}
 .black-stripe {
-    background-color: #000;
-    height: 30px;
-    margin: 15px 10px;
-    border-radius: 5px;
+    background: #050517;
+    height: 36px;
+    width: 100%;
 }
 
 .cvv-block {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 15px;
-    padding: 10px;
-    background-color: #E5E5E5;
-    border-radius: 5px;
-    border: 1px solid #DCDCDC;
+    margin: 10px 20px 0;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .cvv-label {
-    font-size: 12px;
-    color: #545454;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .cvv-value {
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--c-gold);
 }
 
 .signature-block {
-    margin: 10px 15px 20px 15px;
-    padding: 10px;
-    background-color: #F8F8F8;
-    border-radius: 5px;
-    border: 1px solid #DCDCDC;
+    margin: 0 20px;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.card-fields-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.card-subfields {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    gap: 16px;
+}
+
+.expiry-pair {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.expiry-inp {
+    width: 68px;
     text-align: center;
 }
 
-.signature-label {
-    font-size: 12px;
-    color: #545454;
-    margin-bottom: 5px;
-    display: block;
+.expiry-slash {
+    color: var(--c-muted);
+    font-weight: 600;
 }
 
-.signature {
-    height: 20px;
-    background-color: #FFF;
-    border: 1px dashed #9b9b9b;
-    border-radius: 3px;
+/* ─── RIGHT COLUMN: ORDER SUMMARY ─── */
+.checkout-summary {
+    position: sticky;
+    top: 90px;
 }
 
-
-
-/* Общая зона ввода */
-.card-input-zone {
-    margin-left: 31px;
-    color: #FFFFFF;
+.summary-box {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-top: 3px solid var(--c-navy);
+    padding: 28px;
 }
 
-/* Заголовки для полей */
-.input-title {
-    font-family: "Montserrat", sans-serif;
-    font-style: italic;
-    font-size: 14px;
-    margin: 26px 0 13px;
-    display: block;
-}
-
-/* Контейнер для нижних элементов */
-.cart-container-down{
+.summary-head {
     display: flex;
-    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-@media (max-width: 1024px) {
-    .left-part {
-        margin-left: 20px;
-        margin-right: 20px;
+.summary-title {
+    font-family: var(--f-serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--c-navy);
+}
+
+.summary-edit-link {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-crimson);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+.summary-edit-link:hover {
+    border-color: var(--c-crimson);
+}
+
+.summary-items {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.summary-item-img {
+    width: 52px;
+    height: 64px;
+    object-fit: cover;
+    background: var(--c-surface-alt);
+    border: 1px solid var(--c-border);
+    flex-shrink: 0;
+}
+
+.summary-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.summary-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-navy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.summary-item-meta {
+    display: flex;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--c-muted);
+    margin-top: 3px;
+}
+
+.summary-item-price {
+    font-family: var(--f-serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--c-ink);
+    white-space: nowrap;
+}
+
+.summary-divider {
+    height: 1px;
+    background: var(--c-border);
+    margin: 18px 0;
+}
+
+.summary-totals {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--c-muted);
+}
+
+.summary-row--discount {
+    color: var(--c-crimson);
+    font-weight: 600;
+}
+
+.shipping-free {
+    color: var(--c-success);
+    font-weight: 600;
+}
+
+.summary-total-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+.summary-total-row span:first-child {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-navy);
+}
+
+.summary-final-val {
+    font-family: var(--f-serif);
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--c-crimson);
+    line-height: 1;
+}
+
+/* ─── POLICY & CTA ─── */
+.policy-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0 18px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.policy-text {
+    font-size: 11.5px;
+    color: var(--c-muted);
+    line-height: 1.45;
+}
+.policy-text a {
+    color: var(--c-navy);
+    text-decoration: underline;
+}
+
+.pay-btn {
+    width: 100%;
+    height: 54px;
+    background: var(--c-crimson);
+    color: #FFFFFF;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--f-sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+.pay-btn:hover {
+    background: var(--c-navy);
+}
+.pay-btn:active {
+    transform: translateY(1px);
+}
+
+.checkout-guarantees {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--c-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cg-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--c-muted);
+}
+.cg-item svg {
+    color: var(--c-navy);
+    flex-shrink: 0;
+}
+
+/* ─── ERROR MESSAGE ─── */
+.error-message {
+    display: none;
+    padding: 10px 14px;
+    background: #FDF2F4;
+    border: 1px solid var(--c-crimson);
+    color: var(--c-crimson);
+    font-size: 12px;
+    font-weight: 600;
+}
+.error-message.show {
+    display: block;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1100px) {
+    .checkout-page {
+        padding: 28px 24px 64px;
     }
-    .right-part {
-        width: 100%;
-        margin-left: 20px;
-        margin-right: 20px;
+    .checkout-bc {
+        padding: 12px 24px;
     }
-    .payment-button {
-        justify-content: center;
-        margin-left: 0;
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+    .checkout-summary {
+        position: static;
     }
 }
 
 @media (max-width: 768px) {
-    .checkout-container {
-        flex-direction: column;
+    .step-card {
+        padding: 20px;
     }
-    .input-block input {
-        width: 100%;
-        margin-right: 0;
-    }
-    .inputs input.name, .address {
-        width: 100%;
-    }
-    .inputs input:nth-child(1), .address {
-        margin-right: 0;
+    .form-grid,
+    .choice-grid,
+    .card-payment-panel {
+        grid-template-columns: 1fr;
     }
 }
-
-.card-input {
-    all: unset;
-    font-family: "Montserrat Medium", sans-serif;
-    font-style: italic;
-    box-sizing: border-box;
-    border-bottom: 1px solid #FFFFFF;
-    background-color: transparent;
-    transition: border-color 0.3s ease;
-    padding-bottom: 9px; /* Сместить линию вниз */
-}
-
-.card-month-input, .card-year-input {
-    all: unset;
-    font-family: "Montserrat Medium", sans-serif;
-    font-style: italic;
-    font-size: 14px;
-    box-sizing: border-box;
-    border-bottom: 1px solid #FFFFFF;
-    background-color: transparent;
-    transition: border-color 0.3s ease;
-    width: 45px; /* Небольшая корректировка ширины */
-    text-align: center; /* Центрирование ввода */
-    padding-bottom: 9px;
-}
-
-.card-number-input,
-.card-name-input {
-    width: 230px;
-    font-size: 16px;
-}
-
-.card-name-input {
-    margin-right: 15px;
-}
-
-.cvv-input, .card-date-input {
-    font-size: 14px;
-}
-
-.cvv-input {
-    width: 50px;
-    margin-right: 28px;
-    text-align: center;
-}
-
-.cvv-input label {
-    text-align: center;
-}
-
-.cvv-input input {
-    width: 100%;
-}
-
-.card-date-input {
-    width: auto;
-    text-align: center;
-    margin-right: 37px;
-}
-
-/* Убираем стрелки для полей типа number */
-input[type="text"] {
-    -moz-appearance: textfield; /* Firefox */
-    -webkit-appearance: none; /* Chrome, Safari, Edge */
-    appearance: none; /* Современные браузеры */
-}
-
-/* Для мобильных устройств */
-input[type="text"]::-webkit-inner-spin-button,
-input[type="text"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"]::placeholder {
-    color: #FFFFFF;
-}
-
-/* Container for the card expiry input */
-.card-expiry-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    max-width: 400px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-    flex-wrap: wrap;
-    position: relative; /* Needed for error message positioning */
-}
-
-/* Error message styling */
-.error-message {
-    font-family: 'Montserrat', sans-serif;
-    position: fixed;
-    bottom: -100px; /* Initially hidden off the screen */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #d32f2f; /* Dark background for contrast */
-    color: #fff; /* White text */
-    font-size: 14px;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: bottom 0.3s ease-out, opacity 0.3s ease-out;
-    z-index: 1000;
-    opacity: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
-    max-width: 90%; /* Restrict width to avoid stretching */
-    word-wrap: break-word;
-}
-
-
-/* When the error message becomes visible */
-.error-message.show {
-    bottom: 20px;
-    opacity: 1;
-    animation: slideIn 0.4s ease-out forwards;
-}
-
-/* Smooth slide-in animation for the error message */
-@keyframes slideIn {
-    0% {
-        bottom: -100px;
-        opacity: 0;
-    }
-    100% {
-        bottom: 20px;
-        opacity: 1;
-    }
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Hover effect for interactivity */
-.error-message:hover {
-    background-color: #333; /* Slightly darker red on hover */
-    cursor: pointer;
-}
-
-
-/* Общий стиль для отображения карты */
-.card-number-text span {
-    display: inline-block;
-    font-size: 17px;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    transform: translateY(0);
-}
-
-/* Эффект для скрытия элемента */
-.fade-out {
-    transform: translateY(-20px); /* Двигаем элемент вверх */
-    opacity: 0; /* Прячем элемент */
-}
-
-/* Эффект для появления элемента */
-.fade-in {
-    transform: translateY(0); /* Элемент на своем месте */
-    opacity: 1; /* Полностью видимый */
-}
-
-
-

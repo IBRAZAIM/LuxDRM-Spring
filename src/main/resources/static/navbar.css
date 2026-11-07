@@ -89,7 +89,7 @@ body {
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
     backdrop-filter: blur(3px);
-    z-index: 1000;
+    z-index: 10000;
 }
 .overlay.active { opacity: 1; visibility: visible; }
 
@@ -115,7 +115,7 @@ body {
     transition: transform 0.3s cubic-bezier(.22,1,.36,1);
     display: flex;
     flex-direction: column;
-    z-index: 1001;
+    z-index: 10001;
     border-right: 1px solid var(--border);
 }
 .sidebar.active { transform: translateX(0); }
@@ -291,4 +291,142 @@ body {
         border-left: 1px solid var(--border);
     }
     .sidebar.active { transform: translateX(0); }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   GLOBAL UI/UX OVERRIDES (подключается на всех страницах с навбаром)
+   ════════════════════════════════════════════════════════════ */
+
+/* 1. Логотип без подчёркивания */
+.logo,
+.logo:hover,
+.logo:focus,
+.logo:visited,
+a.logo {
+    text-decoration: none !important;
+}
+
+/* 3. Закреплённая шапка: всегда под рукой при прокрутке.
+      body получает отступ равный высоте шапки, раскладка страниц не смещается. */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #FFFFFF;
+    z-index: 1100;
+}
+
+body {
+    padding-top: 70px;
+}
+
+html {
+    scroll-padding-top: 86px;
+}
+
+/* 4. Кнопка меню — удобная зона клика */
+.menu-icon {
+    cursor: pointer;
+    padding: 8px 0;
+    user-select: none;
+}
+
+.menu-icon:hover { color: #0c0c3d; }
+
+/* 5. Видимый фокус для клавиатуры */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid #9A073D;
+    outline-offset: 2px;
+}
+
+/* 6. Состояние отправки формы (защита от двойного клика) */
+button.is-submitting,
+input[type="submit"].is-submitting {
+    opacity: 0.65;
+    cursor: progress !important;
+    pointer-events: none;
+}
+
+button:disabled,
+input:disabled,
+select:disabled {
+    cursor: not-allowed;
+}
+
+/* 7. Автоскрывающиеся уведомления */
+.alert {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.alert.is-hiding {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+/* 8. Кнопка «Наверх» */
+.back-to-top {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0c0c3d;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease, background 0.2s ease;
+    z-index: 900;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover { background: #9A073D; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* Гарантированный z-index для боковой панели навбара поверх всех элементов */
+.overlay {
+    z-index: 999998 !important;
+}
+.sidebar {
+    z-index: 999999 !important;
+}
+.sidebar.active {
+    transform: translateX(0) !important;
+}
+.overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+.menu-icon {
+    cursor: pointer !important;
+    user-select: none !important;
+}
+.menu-icon * {
+    pointer-events: none !important;
 }

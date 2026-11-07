@@ -19,12 +19,11 @@
         <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
 
         <div class="field">
-            <label for="login">Логин</label>
-            <input type="text" id="login" th:field="*{login}"
-                   placeholder="от 3 до 50 символов"
-                   required minlength="3" maxlength="50"
-                   pattern="[A-Za-z0-9._-]{3,50}"
-                   autocomplete="username"/>
+            <label for="email">Email</label>
+            <input type="email" id="email" th:field="*{email}"
+                   placeholder="Ваш email"
+                   required maxlength="255"
+                   autocomplete="email"/>
         </div>
 
         <div class="field">

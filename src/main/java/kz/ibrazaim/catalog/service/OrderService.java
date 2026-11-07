@@ -105,11 +105,11 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        return orderRepository.findAllByOrderByDateDescIdDesc();
     }
 
     public List<Order> getOrdersForUser(User user) {
-        return orderRepository.findByUser(user);
+        return orderRepository.findByUserOrderByDateDescIdDesc(user);
     }
 
     public Order getOrderById(long id) {

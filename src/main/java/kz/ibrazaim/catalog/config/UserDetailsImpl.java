@@ -13,6 +13,10 @@ import java.util.List;
 public class UserDetailsImpl implements UserDetails {
     private final User user;
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (user.getRole() == null) {
@@ -28,6 +32,9 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            return user.getEmail();
+        }
         return user.getLogin();
     }
 

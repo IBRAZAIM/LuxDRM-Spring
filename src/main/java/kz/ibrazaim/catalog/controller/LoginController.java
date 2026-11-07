@@ -57,6 +57,7 @@ public class LoginController {
     public String login(
             @RequestParam(value = "redirect", required = false) String redirect,
             @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "email", required = false) String email,
             HttpServletRequest request,
             Model model
     ) {
@@ -73,8 +74,9 @@ public class LoginController {
         if (isSafeInternalRedirect(redirect)) {
             model.addAttribute("redirect", redirect);
         }
-        if (error != null) {
-            model.addAttribute("loginError", true);
+        model.addAttribute("loginError", error != null);
+        if (email != null && !email.isBlank()) {
+            model.addAttribute("email", email.trim());
         }
         return "loginForm";
     }

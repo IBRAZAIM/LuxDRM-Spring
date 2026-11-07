@@ -32,10 +32,15 @@ public class OrderProduct {
     BigDecimal unitPrice;
 
     @Column(name = "discount_percent")
-    int discountPercent;
+    Integer discountPercent = 0;
 
     @Column(name = "line_total", precision = 12, scale = 2)
     BigDecimal lineTotal;
 
     int quantity;
+
+    /** Старые записи в БД могут содержать NULL — всегда отдаём 0. */
+    public Integer getDiscountPercent() {
+        return discountPercent == null ? 0 : discountPercent;
+    }
 }

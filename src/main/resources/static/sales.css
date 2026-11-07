@@ -618,3 +618,9 @@ body {
         transition: none !important;
     }
 }
+
+
+/* Строгая геометрия: без скруглений */
+*, *::before, *::after {
+    border-radius: 0 !important;
+}

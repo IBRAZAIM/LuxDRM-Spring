@@ -23,7 +23,9 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private static final Pattern LOGIN_PATTERN = Pattern.compile("^[A-Za-z0-9._-]{3,50}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    );
     private static final int PASSWORD_MIN_LENGTH = 8;
     private static final int PASSWORD_MAX_LENGTH = 72;
 
@@ -42,15 +44,17 @@ public class UserService {
 
     @Transactional
     public void create(User user) {
-        String login = normalizeLogin(user.getLogin());
+        String email = normalizeEmail(user.getEmail() != null ? user.getEmail() : user.getLogin());
         String password = normalizePassword(user.getPassword());
 
-        userRepository.lockLoginForRegistration(login);
-        if (userRepository.existsByLoginCaseInsensitive(login)) {
-            throw new IllegalArgumentException("Пользователь с таким логином уже существует.");
+        userRepository.lockEmailForRegistration(email);
+        if (userRepository.existsByEmailCaseInsensitive(email)
+                || userRepository.existsByLoginCaseInsensitive(email)) {
+            throw new IllegalArgumentException("Пользователь с таким email уже существует.");
         }
 
-        user.setLogin(login);
+        user.setEmail(email);
+        user.setLogin(email);
         user.setPassword(encoder.encode(password));
         user.setRole(Role.USER);
         user.setName(trimNullable(user.getName()));
@@ -92,11 +96,19 @@ public class UserService {
     public User getUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
-        String login = authentication != null ? authentication.getName() : null;
-        if (login == null || login.isBlank()) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
-        return userRepository.findByLoginCaseInsensitive(login).orElse(null);
+        if (authentication.getPrincipal() instanceof kz.ibrazaim.catalog.config.UserDetailsImpl userDetails) {
+            return userDetails.getUser();
+        }
+        String principal = authentication.getName();
+        if (principal == null || principal.isBlank() || "anonymousUser".equals(principal)) {
+            return null;
+        }
+        return userRepository.findByEmailCaseInsensitive(principal)
+                .or(() -> userRepository.findByLoginCaseInsensitive(principal))
+                .orElse(null);
     }
 
     public List<CartItem> findCartItemsByUser(User user) {
@@ -123,15 +135,15 @@ public class UserService {
         return false;
     }
 
-    private String normalizeLogin(String rawLogin) {
-        String login = rawLogin == null ? "" : rawLogin.trim().toLowerCase(Locale.ROOT);
-        if (login.isBlank()) {
-            throw new IllegalArgumentException("Введите логин.");
+    private String normalizeEmail(String rawEmail) {
+        String email = rawEmail == null ? "" : rawEmail.trim().toLowerCase(Locale.ROOT);
+        if (email.isBlank()) {
+            throw new IllegalArgumentException("Введите email.");
         }
-        if (!LOGIN_PATTERN.matcher(login).matches()) {
-            throw new IllegalArgumentException("Логин: 3-50 символов, только латиница, цифры, '.', '_' или '-'.");
+        if (email.length() > 255 || !EMAIL_PATTERN.matcher(email).matches()) {
+            throw new IllegalArgumentException("Введите корректный email.");
         }
-        return login;
+        return email;
     }
 
     private String normalizePassword(String rawPassword) {

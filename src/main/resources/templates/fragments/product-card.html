@@ -1,0 +1,70 @@
+<article th:fragment="productCard(product)" class="uxd-card" th:with="
+            rawPrice=${product.price != null ? product.price : T(java.math.BigDecimal).ZERO},
+            rawDisc=${product.discount != null ? product.discount : T(java.math.BigDecimal).ZERO},
+            discInt=${rawDisc.intValue()},
+            hasDisc=${discInt > 0},
+            finalPrice=${product.finalPrice},
+            catName=${product.category != null and product.category.name != null ? product.category.name : 'Коллекция UXD'},
+            img=${(product.images != null and !#lists.isEmpty(product.images) and product.images[0] != null and product.images[0].image != null and !#strings.isEmpty(product.images[0].image)) ? product.images[0].image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80'},
+            hasCustomSizes=${product.sizes != null and !#lists.isEmpty(product.sizes)}
+         " th:attr="
+            data-id=${product.id},
+            data-name=${product.name},
+            data-cat=${catName},
+            data-price=${rawPrice},
+            data-final-price=${finalPrice},
+            data-disc=${discInt},
+            data-rating=${product.rating > 0 ? product.rating : 4.9}
+         ">
+
+    <!-- ── ФОТО + БЕЙДЖ ── -->
+    <a th:href="@{'/products/' + ${product.id}}" class="uxd-card__media" th:attr="aria-label=${product.name}">
+        <img th:src="${img}" th:alt="${product.name}" class="uxd-card__img" loading="lazy">
+        <span class="uxd-card__badge" th:if="${hasDisc}" th:text="'−' + ${discInt} + '%'">−15%</span>
+    </a>
+
+    <!-- ── ИНФОРМАЦИЯ ── -->
+    <div class="uxd-card__body">
+        <span class="uxd-card__category" th:text="${catName}">Пижамы</span>
+
+        <a th:href="@{'/products/' + ${product.id}}" class="uxd-card__title" th:text="${product.name}">Название
+            модели</a>
+
+        <div class="uxd-card__price" th:classappend="${hasDisc} ? 'uxd-card__price--sale' : ''">
+            <span class="uxd-card__price-current"
+                th:text="${#numbers.formatInteger(finalPrice.intValue(), 1, 'WHITESPACE')} + ' ₸'">18 900 ₸</span>
+            <span class="uxd-card__price-old" th:if="${hasDisc}"
+                th:text="${#numbers.formatInteger(rawPrice.intValue(), 1, 'WHITESPACE')} + ' ₸'">22 000 ₸</span>
+        </div>
+
+        <button type="button" class="uxd-card__cart" aria-expanded="false"
+            th:attr="aria-controls='uxd-sizes-' + ${product.id}">
+            В корзину
+        </button>
+    </div>
+
+    <!-- ── ПОПОВЕР ВЫБОРА РАЗМЕРА ── -->
+    <div class="uxd-card__sizes" th:id="'uxd-sizes-' + ${product.id}" role="dialog" aria-label="Выберите размер">
+        <div class="uxd-card__sizes-head">
+            <span>Выберите размер</span>
+            <button type="button" class="uxd-card__sizes-close" aria-label="Закрыть">×</button>
+        </div>
+
+        <form th:action="@{'/cart/' + ${product.id}}" method="post">
+            <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="size" value="">
+
+            <div class="uxd-card__sizes-grid">
+                <th:block th:if="${hasCustomSizes}">
+                    <button type="button" class="uxd-card__size" th:each="sz : ${product.sizes}" th:text="${sz.size}"
+                        th:attr="data-size=${sz.size}">41</button>
+                </th:block>
+                <th:block th:unless="${hasCustomSizes}">
+                    <button type="button" class="uxd-card__size" th:each="s : ${'XS,S,M,L,XL'.split(',')}"
+                        th:text="${s}" th:attr="data-size=${s}">M</button>
+                </th:block>
+            </div>
+        </form>
+    </div>
+</article>

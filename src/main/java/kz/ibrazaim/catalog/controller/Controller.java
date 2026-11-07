@@ -26,12 +26,12 @@ public class Controller {
     }
 
     @GetMapping
-    public String getProducts(Model model) {
+    public String getProducts(Model model, jakarta.servlet.http.HttpSession session) {
         User user = userService.getUser();
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
-        int cartItemsCount = cartService.getCartItemsCountByUser(user); // Метод для получения количества товаров в корзине
-        model.addAttribute("cartItemsCount", cartItemsCount); // Передаем количество в модель
+        int cartItemsCount = cartService.getCartItemsCount(user, session);
+        model.addAttribute("cartItemsCount", cartItemsCount);
         return "LUXDRM";
     }
 }

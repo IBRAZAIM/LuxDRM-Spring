@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор категории — UXD Admin</title>
     <link rel="stylesheet" th:href="@{/chooseForm.css}">
 </head>
 <body>
     <div class="choose">
+        <div style="margin-bottom: 16px;">
+            <a th:href="@{/products}" style="color: #6b6b85; text-decoration: none; font-size: 13px; font-weight: 600;">← Назад к списку товаров</a>
+        </div>
         <h1>Выберите категорию</h1>
+        <p style="text-align: center; color: #6b6b85; font-size: 13px; margin-top: -10px; margin-bottom: 20px;">
+            Категория определит набор характеристик создаваемого товара
+        </p>
         <form action="/products/create" method="get">
             <select name="categoryId">
                 <option th:each="category : ${categories}"
@@ -15,7 +22,7 @@
                     [[${category.getName()}]]
                 </option>
             </select>
-            <button type="submit">Выбрать</button>
+            <button type="submit">Продолжить →</button>
         </form>
     </div>
 </body>

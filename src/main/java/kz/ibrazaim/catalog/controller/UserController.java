@@ -24,19 +24,30 @@ public class UserController {
     private final CartService cartService;
 
     @GetMapping("/cart")
-    public String getCartPage(Model model) {
+    public String getCartPage(Model model, jakarta.servlet.http.HttpSession session) {
         User user = userService.getUser();
-        if (user == null) {
-            return "redirect:/login";
+        List<CartItem> cartItems;
+        if (user != null) {
+            cartService.mergeGuestCartToUser(session, user);
+            cartItems = userService.findCartItemsByUser(user);
+        } else {
+            cartItems = cartService.getGuestCartItems(session);
         }
 
-        List<CartItem> cartItems = userService.findCartItemsByUser(user);
-        int cartItemsCount = cartService.getCartItemsCountByUser(user);
+        int cartItemsCount = cartItems.stream()
+                .mapToInt(item -> Math.max(0, item.getQuantity()))
+                .sum();
         int cartRowsCount = cartItems.size();
         BigDecimal subtotalPrice = cartService.subtotal(cartItems);
         BigDecimal discountAmount = cartService.discountAmount(cartItems);
-        int discountPercent = cartService.discountPercent(cartItems);
-        BigDecimal finalPrice = cartService.finalPrice(cartItems);
+        int discountPercent = subtotalPrice.compareTo(BigDecimal.ZERO) > 0
+                ? discountAmount.multiply(BigDecimal.valueOf(100))
+                        .divide(subtotalPrice, 0, java.math.RoundingMode.HALF_UP)
+                        .intValue()
+                : 0;
+        BigDecimal finalPrice = subtotalPrice.subtract(discountAmount)
+                .max(BigDecimal.ZERO)
+                .setScale(2, java.math.RoundingMode.HALF_UP);
 
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("cartItemsCount", cartItemsCount);
@@ -54,16 +65,30 @@ public class UserController {
     }
 
     @PostMapping("/cart/{productId}")
-    public String addItemToCart(
+    public Object addItemToCart(
             @PathVariable long productId,
             @RequestParam("quantity") int quantity,
-            @RequestParam("size") String size
+            @RequestParam("size") String size,
+            jakarta.servlet.http.HttpServletRequest request,
+            jakarta.servlet.http.HttpSession session
     ) {
         User user = userService.getUser();
-        if (user == null) {
-            return "redirect:/login";
+        if (user != null) {
+            cartService.mergeGuestCartToUser(session, user);
+            userService.addItemToCart(productId, quantity, size);
+        } else {
+            cartService.addGuestItem(session, productId, quantity, size);
         }
-        userService.addItemToCart(productId, quantity, size);
+
+        int cartItemsCount = cartService.getCartItemsCount(user, session);
+        String requestedWith = request.getHeader("X-Requested-With");
+        String accept = request.getHeader("Accept");
+        if ("XMLHttpRequest".equalsIgnoreCase(requestedWith)
+                || (accept != null && accept.contains("application/json"))) {
+            return org.springframework.http.ResponseEntity.ok(
+                    java.util.Map.of("ok", true, "cartItemsCount", cartItemsCount)
+            );
+        }
         return "redirect:/cart";
     }
 

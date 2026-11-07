@@ -2,6 +2,7 @@ package kz.ibrazaim.catalog.repository;
 
 import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     // Найти все элементы корзины для пользователя
+    @EntityGraph(attributePaths = {"product", "product.category"})
     List<CartItem> findByUser(User user);
 
     // Найти конкретный товар пользователя

@@ -4,13 +4,14 @@
 }
 
 body {
-    background-color: #f7f7f8;
+    background-color: #F6F5F3;
     color: #0c0c3d;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 20px;
+    padding: 36px 20px;
+    margin: 0;
 }
 
 .container {
@@ -18,14 +19,17 @@ body {
     max-width: 760px;
     background: #ffffff;
     padding: 36px 40px;
-    border: 1px solid #e5e5ea;
+    border: 1px solid #e4e2dd;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(12, 12, 61, 0.05);
 }
 
 h1 {
     text-align: center;
     margin-bottom: 8px;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 600;
+    color: #0c0c3d;
 }
 
 .subtitle {
@@ -39,39 +43,51 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-top: 6px;
+    margin-top: 12px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
+    gap: 6px;
     margin-bottom: 6px;
 }
 
 label {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: #4a4a68;
 }
 
-input[type="text"], textarea {
+input[type="text"],
+input[type="number"],
+select,
+textarea {
     padding: 12px 14px;
     border: 1px solid #dcdce3;
+    border-radius: 6px;
     font-size: 14px;
     color: #0c0c3d;
     width: 100%;
     transition: all 0.2s ease;
 }
 
-input[type="text"]:focus, textarea:focus{
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
     outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+    border-color: #0c0c3d;
+    box-shadow: 0 0 0 3px rgba(12, 12, 61, 0.08);
 }
 
-input[type="text"]:hover, textarea:hover{
-    border-color: #4CAF50;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.1);
+input[type="text"]:hover,
+input[type="number"]:hover,
+select:hover,
+textarea:hover {
+    border-color: #0c0c3d;
 }
 
 .options-list {
@@ -80,14 +96,11 @@ input[type="text"]:hover, textarea:hover{
     gap: 10px;
 }
 
-.options-list.empty {
+.options-list.empty,
+.items-list {
     padding: 16px;
     border: 1px dashed #dcdce3;
-}
-
-.items-list{
-    padding: 16px;
-    border: 1px dashed #dcdce3;
+    border-radius: 8px;
 }
 
 .section-header {
@@ -99,11 +112,6 @@ input[type="text"]:hover, textarea:hover{
 .hint {
     font-size: 12px;
     color: #8a8aa0;
-}
-
-.options-list.empty {
-    padding: 16px;
-    border: 1px dashed #dcdce3;
 }
 
 .empty-text {
@@ -126,21 +134,22 @@ input[type="text"]:hover, textarea:hover{
 .option-name {
     font-size: 14px;
     font-weight: 500;
-    min-width: 120px;
+    min-width: 130px;
 }
 
 .remove-btn {
     border: none;
     background: #f5f5f5;
     color: #c0392b;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .remove-btn:hover {
@@ -152,24 +161,25 @@ input[type="text"]:hover, textarea:hover{
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
     background-color: white;
-    color: #4CAF50;
-    border: 2px solid #4CAF50;
+    color: #0c0c3d;
+    border: 2px solid #0c0c3d;
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
 }
 
 .add-product-btn:hover {
-    background-color: #4CAF50;
+    background-color: #9A073D;
+    border-color: #9A073D;
     color: white;
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .add-product-btn i {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .form-actions {
@@ -189,13 +199,15 @@ input[type="text"]:hover, textarea:hover{
     background-color: #0c0c3d;
     color: #ffffff;
     border: none;
+    border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .btn-primary:hover {
-    background-color: #1a1a5e;
+    background-color: #9A073D;
 }
 
 .error {
@@ -204,7 +216,6 @@ input[type="text"]:hover, textarea:hover{
     margin-top: 4px;
 }
 
-/* Стили только для размеров */
 #sizes {
     display: flex;
     flex-wrap: wrap;
@@ -218,9 +229,15 @@ input[type="text"]:hover, textarea:hover{
 }
 
 #sizes .option-row input {
-    width: 60px;
-    height: 30px;
+    width: 72px;
+    height: 34px;
     padding: 0 8px;
     font-size: 14px;
     text-align: center;
+}
+
+
+/* Строгая геометрия: без скруглений */
+*, *::before, *::after {
+    border-radius: 0 !important;
 }

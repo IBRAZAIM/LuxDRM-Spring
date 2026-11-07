@@ -22,13 +22,19 @@ public class VisitBuffer {
 
     /** Добавляем визит в буфер только если его ещё нет */
     public void addVisit(Visit visit) {
-        String key;
-        if (visit.getUserId() != null) {
-            key = "U:" + visit.getUserId() + ":" + visit.getVisitDate();
-        } else {
-            key = "S:" + visit.getSessionId() + ":" + visit.getVisitDate();
-        }
+        String key = buildKey(visit.getUserId(), visit.getSessionId(), visit.getVisitDate());
         buffer.putIfAbsent(key, visit); // уникально
+    }
+
+    public boolean contains(Long userId, String sessionId, java.time.LocalDate visitDate) {
+        return buffer.containsKey(buildKey(userId, sessionId, visitDate));
+    }
+
+    private String buildKey(Long userId, String sessionId, java.time.LocalDate visitDate) {
+        if (userId != null) {
+            return "U:" + userId + ":" + visitDate;
+        }
+        return "S:" + sessionId + ":" + visitDate;
     }
 
     /** Батчевое сохранение каждые 10 секунд */

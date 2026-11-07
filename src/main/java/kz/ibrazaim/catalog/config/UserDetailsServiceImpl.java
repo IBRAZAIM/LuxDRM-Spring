@@ -16,11 +16,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        String normalizedLogin = login == null ? "" : login.trim().toLowerCase(Locale.ROOT);
-        User user = userRepository.findByLoginCaseInsensitive(normalizedLogin)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        String normalized = username == null ? "" : username.trim().toLowerCase(Locale.ROOT);
+        User user = userRepository.findByEmailCaseInsensitive(normalized)
+                .or(() -> userRepository.findByLoginCaseInsensitive(normalized))
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "Пользователь с login=" + normalizedLogin + " не найден."
+                        "Пользователь с email=" + normalized + " не найден."
                 ));
 
         return new UserDetailsImpl(user);

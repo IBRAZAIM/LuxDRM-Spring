@@ -1,0 +1,291 @@
+:root {
+    --uxd-accent: #9A073D;
+    /* цвет кнопки «В корзину» и цены со скидкой */
+    --uxd-accent-h: #7c0531;
+    --uxd-text: #181826;
+    --uxd-muted: #6b6661;
+    --uxd-border: #E5E7EB;
+    --uxd-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─── КАРТОЧКА ─── */
+.uxd-card,
+.uxd-card *,
+.uxd-card *::before,
+.uxd-card *::after {
+    box-sizing: border-box;
+}
+
+.uxd-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border: 1px solid var(--uxd-border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s var(--uxd-ease),
+        box-shadow 0.3s var(--uxd-ease),
+        border-color 0.3s var(--uxd-ease);
+}
+
+.uxd-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(12, 12, 61, 0.08);
+    border-color: #d1d5db;
+}
+
+/* ─── ФОТО ─── */
+.uxd-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    background: #f5f5f4;
+    overflow: hidden;
+}
+
+.uxd-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s var(--uxd-ease);
+}
+
+.uxd-card:hover .uxd-card__img {
+    transform: scale(1.03);
+}
+
+.uxd-card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--uxd-accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+}
+
+/* ─── ТЕЛО ─── */
+.uxd-card__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    padding: 14px 16px 16px;
+}
+
+.uxd-card__category {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--uxd-muted);
+}
+
+.uxd-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--uxd-text);
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.8em;
+    transition: color 0.2s ease;
+}
+
+.uxd-card__title:hover {
+    color: var(--uxd-accent);
+}
+
+/* ─── ЦЕНА ─── */
+.uxd-card__price {
+    margin-top: auto;
+    padding-top: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.uxd-card__price-current {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--uxd-text);
+}
+
+.uxd-card__price--sale .uxd-card__price-current {
+    color: var(--uxd-accent);
+}
+
+.uxd-card__price-old {
+    font-size: 13px;
+    color: #9ca3af;
+    text-decoration: line-through;
+}
+
+/* ─── КНОПКА «В КОРЗИНУ» ─── */
+.uxd-card__cart {
+    margin-top: 6px;
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    background: var(--uxd-accent);
+    color: #fff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.uxd-card__cart:hover {
+    background: var(--uxd-accent-h);
+}
+
+.uxd-card__cart:active {
+    transform: scale(0.98);
+}
+
+/* ─── ПОПОВЕР ВЫБОРА РАЗМЕРА ─── */
+.uxd-card__sizes {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 14px 16px 16px;
+    background: #fff;
+    border-top: 1px solid var(--uxd-border);
+    box-shadow: 0 -8px 20px rgba(12, 12, 61, 0.06);
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.35s var(--uxd-ease),
+        opacity 0.25s ease,
+        visibility 0.35s;
+}
+
+.uxd-card__sizes.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.uxd-card__sizes-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--uxd-text);
+}
+
+.uxd-card__sizes-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--uxd-muted);
+    cursor: pointer;
+    padding: 0 2px;
+}
+
+.uxd-card__sizes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.uxd-card__size {
+    height: 36px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--uxd-text);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.uxd-card__size:hover {
+    border-color: var(--uxd-accent);
+    color: var(--uxd-accent);
+}
+
+.uxd-card__size.is-selected {
+    background: var(--uxd-accent);
+    border-color: var(--uxd-accent);
+    color: #fff;
+}
+
+.uxd-card__size:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* ─── ТОСТ КАРТОЧКИ ─── */
+.uxd-card-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #181826;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(12, 12, 61, 0.18);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.uxd-card-toast.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ─── АДАПТИВ ─── */
+@media (max-width: 480px) {
+    .uxd-card__body {
+        padding: 11px 12px 12px;
+    }
+
+    .uxd-card__title {
+        font-size: 13px;
+    }
+
+    .uxd-card__price-current {
+        font-size: 15px;
+    }
+
+    .uxd-card__cart {
+        height: 36px;
+        font-size: 11px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .uxd-card,
+    .uxd-card__img,
+    .uxd-card__sizes {
+        transition: none;
+    }
+}

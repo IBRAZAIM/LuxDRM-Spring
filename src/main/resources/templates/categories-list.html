@@ -3,39 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Категории товаров — UXD</title>
+    <title>Категории товаров — UXD Admin</title>
     <meta name="description" content="Категории товаров UXD: пижамы, домашняя одежда, детские коллекции и lounge-позиции." />
     <link rel="canonical" th:href="${canonicalUrl}" />
-    <meta property="og:title" content="Категории товаров — UXD" />
-    <meta property="og:description" content="Категории товаров UXD: пижамы, домашняя одежда, детские коллекции и lounge-позиции." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" th:content="${canonicalUrl}" />
-    <link rel="stylesheet" th:href="@{/categoryList.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/categoryList.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
+
+<main class="admin-shell">
     <div class="container">
-        <h1>Список категорий</h1>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="category : ${categories}">
-                <td th:text="${category.id}"></td>
-                <td th:text="${category.name}"></td>
-            </tr>
-            </tbody>
-        </table>
-        <a th:href="@{'/categories/create'}" class="add-product-btn"><i class="fas fa-plus"></i></a>
+
+        <div class="admin-topbar">
+            <nav class="admin-breadcrumb" aria-label="Навигация">
+                <a th:href="@{/}">Главная</a>
+                <span class="sep">/</span>
+                <span>Администрирование</span>
+                <span class="sep">/</span>
+                <span class="cur">Категории</span>
+            </nav>
+
+            <div class="admin-nav-pills">
+                <a th:href="@{/products}" class="admin-pill">
+                    <i class="fas fa-boxes-stacked"></i> Товары
+                </a>
+                <a th:href="@{/orders}" class="admin-pill">
+                    <i class="fas fa-clipboard-list"></i> Заказы
+                </a>
+                <a th:href="@{/categories}" class="admin-pill active">
+                    <i class="fas fa-folder"></i> Категории
+                </a>
+                <a th:href="@{/reviews}" class="admin-pill">
+                    <i class="fas fa-star"></i> Отзывы
+                </a>
+                <a th:href="@{/sales}" class="admin-pill">
+                    <i class="fas fa-chart-line"></i> Аналитика
+                </a>
+            </div>
+        </div>
+
+        <header class="admin-header">
+            <div>
+                <span class="admin-eyebrow">Панель управления UXD</span>
+                <h1>Категории товаров</h1>
+            </div>
+            <div class="header-actions">
+                <span class="total-badge" th:text="'Всего: ' + ${categories != null ? #lists.size(categories) : 0}"></span>
+                <a th:href="@{'/categories/create'}" class="btn-create-category">
+                    <i class="fas fa-plus"></i> Добавить категорию
+                </a>
+            </div>
+        </header>
+
+        <div class="table-wrap" th:if="${categories != null and !#lists.isEmpty(categories)}">
+            <table>
+                <thead>
+                <tr>
+                    <th style="width: 90px;">ID</th>
+                    <th>Название категории</th>
+                    <th style="text-align: right;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${categories}">
+                    <td class="cell-id" th:text="'#' + ${category.id}">#1</td>
+                    <td class="cell-name">
+                        <strong th:text="${category.name}"></strong>
+                    </td>
+                    <td class="cell-actions">
+                        <a th:href="@{/products(categoryId=${category.id})}" class="action-link">
+                            <i class="fas fa-boxes-stacked"></i> Товары категории
+                        </a>
+                        <a th:href="@{/products/create(categoryId=${category.id})}" class="action-link action-link--primary">
+                            <i class="fas fa-plus"></i> Создать товар
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
-    <div th:insert="~{footer :: footer-code}"></div>
-    <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
-    <script th:src="@{/js/navbar-component.js}" defer></script>
+</main>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/navbar-component.js}" defer></script>
 </body>
 </html>

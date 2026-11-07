@@ -1,58 +1,131 @@
-body{
-    user-select: none;
+/* ════════════════════════════════════════════════════════════
+   UXD — myOrders.css (Customer Orders Page)
+   ════════════════════════════════════════════════════════════ */
+
+:root {
+    --navy: #0C0C3D;
+    --crimson: #9A073D;
+    --gold: #D4AF37;
+    --bg: #F6F5F3;
+    --surf: #FFFFFF;
+    --surf-2: #FAFAFA;
+    --ink: #111111;
+    --muted: #5A5A6E;
+    --dim: #8E8EA0;
+    --border: #E4E2DD;
+    --f-display: 'Cormorant Garamond', Georgia, serif;
+    --f-ui: 'Montserrat', sans-serif;
+    --t: 0.18s cubic-bezier(.4, 0, .2, 1);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--f-ui);
+    background-color: var(--bg);
+    color: var(--ink);
+    margin: 0;
+    padding: 0;
+}
+
+.my-orders-shell {
+    min-height: calc(100vh - 70px);
+    padding: 36px 0 80px;
 }
 
 .container {
-    width: 90%;
-    padding: 50px;
-    justify-self: center;
+    width: 92%;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 20px;
+}
+
+.breadcrumb a {
+    color: var(--dim);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--navy);
+}
+
+.breadcrumb .cur {
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.eyebrow {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 6px;
 }
 
 .title {
-    font-size: 36px;
-    color: #0c0c3d;
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
+    font-family: var(--f-display);
+    font-size: clamp(32px, 3.2vw, 44px);
+    color: var(--navy);
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.05;
 }
 
 .filters {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    margin-bottom: 30px;
-}
-
-.filters label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #9A073D;
+    gap: 10px;
 }
 
 .filters select {
-    padding: 6px 20px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    background-color: #fff;
-    color: #0c0c3d;
-    transition: all 0.3s ease;
-}
-
-.filters select:hover {
-    border-color: #9A073D;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-family: var(--f-ui);
+    font-size: 13px;
+    font-weight: 500;
+    background-color: var(--surf);
+    color: var(--navy);
+    cursor: pointer;
 }
 
 .filters .download-invoice {
-    font-family: Montserrat, sans-serif;
-    font-weight: bold;
-    background-color: #9A073D;
+    font-family: var(--f-ui);
+    font-weight: 600;
+    font-size: 12px;
+    background-color: var(--crimson);
     color: #fff;
-    padding: 12px 30px;
-    border-radius: 8px;
+    padding: 11px 22px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--t);
     border: none;
-    margin-left: 20px;
 }
 
 .filters .download-invoice:hover {
@@ -62,153 +135,223 @@ body{
 .table-container {
     overflow-x: auto;
     width: 100%;
+    background: var(--surf);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(12, 12, 61, 0.04);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 30px;
-    min-width: 600px; /* Ensures it scrolls instead of squishing */
+    min-width: 720px;
 }
 
 th, td {
-    padding: 12px;
-    text-align: center;
+    padding: 16px 20px;
+    text-align: left;
 }
 
 th {
-    background-color: #0c0c3d;
+    background-color: var(--navy);
     color: #fff;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--f-ui);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 td {
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    font-family: 'Poppins', sans-serif;
+    background-color: var(--surf);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: middle;
 }
 
-.order-number {
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
-    font-weight: bold;
-    color: #0c0c3d;
-    text-align: center;
-    padding: 10px;
+.order-item:last-child td {
+    border-bottom: none;
+}
+
+.order-item:hover td {
+    background-color: #FAF9F6;
+}
+
+.order-num-link {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    text-decoration: none;
+    display: block;
+}
+
+.order-num-link:hover {
+    color: var(--crimson);
+}
+
+.serial-sub {
+    display: inline-block;
+    margin-top: 3px;
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--dim);
+}
+
+.preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.preview-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--ink);
+}
+
+.preview-chip small {
+    color: var(--muted);
+}
+
+.preview-chip strong {
+    color: var(--navy);
+}
+
+.preview-more {
+    font-size: 11px;
+    color: var(--muted);
+    align-self: center;
 }
 
 .status {
-    text-align: center;
-    text-transform: uppercase; /* Добавляет солидность */
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
-.status[data-status="В ожидании"] {
-    color: #EF6C00; /* Темно-оранжевый текст */
+.status--pending {
+    background: #FEF3C7;
+    color: #B45309;
 }
 
-.status[data-status="Оформлено"] {
-    color: #0f0f6e;
+.status--shipped {
+    background: #DBEAFE;
+    color: #1D4ED8;
 }
 
-.status[data-status="Отменено"] {
-    color: #C62828; /* Бордовый текст */
+.status--delivered {
+    background: #DCFCE7;
+    color: #15803D;
 }
 
-.status[data-status="Отправлено"] {
-    color: #2E7D32;
+.status--canceled {
+    background: #FEE2E2;
+    color: #B91C1C;
 }
 
-.status[data-status="Доставлено"] {
-    color: #119b08;
+.total {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    white-space: nowrap;
 }
 
-.total{
-    font-family: "Montserrat", sans-serif;
-    font-size: 18px;
-    color: #4CAF50;
+.date {
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
 }
 
-.date, .status {
-    font-family: "Montserrat", sans-serif;
-    font-size: 16px;
-}
-
-.order-item:hover {
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transform: translateY(-2px);
+.order-detail {
+    text-align: right;
+    white-space: nowrap;
 }
 
 .view-order-btn {
     display: inline-block;
-    padding: 8px 16px;
-    background-color: #0c0c3d; /* Ваш основной цвет */
-    color: #FFFFFF; /* Цвет текста */
+    padding: 9px 16px;
+    background-color: var(--navy);
+    color: #FFFFFF;
     text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    transition: background-color 0.3s ease;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background-color var(--t);
 }
 
 .view-order-btn:hover {
-    border: 1px #0c0c3d;
-    background-color: #FFFFFF;
-    color: #0c0c3d;
-    cursor: pointer;
+    background-color: var(--crimson);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 64px 24px;
+    background: var(--surf);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.empty-icon {
+    font-size: 40px;
+    color: var(--dim);
+    margin-bottom: 14px;
+}
+
+.empty-state h2 {
+    font-family: var(--f-display);
+    font-size: 28px;
+    color: var(--navy);
+    margin: 0 0 8px;
+}
+
+.empty-state p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 24px;
 }
 
 .actions {
-    width: 50%;
-    margin-top: 20px;
+    margin-top: 24px;
     display: flex;
-    justify-content: space-between;
 }
 
 .continue-btn {
-    background-color: #0c0c3d;
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--navy);
     color: white;
-    font-family: "Montserrat SemiBold", sans-serif;
-    font-style: italic;
-    font-size: 16px;
-    border: none;
-    padding: 15px 32px 15px 32px;
-    margin: 35px 0 0 0;
-    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 13px 26px;
     text-decoration: none;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: background-color var(--t);
 }
 
 .continue-btn:hover {
-    background-color: #0a0a33;
+    background-color: var(--crimson);
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: 30px;
-    }
-
-    .title {
-        font-size: 30px;
-    }
-
-    .filters {
+    .page-head {
         flex-direction: column;
-        gap: 15px;
+        align-items: flex-start;
     }
-
-    th, td {
-        font-size: 14px;
-    }
-
-    .filters select, .filters .download-invoice {
+    .filters {
         width: 100%;
     }
+    .filters select {
+        flex: 1;
+    }
 }
-
-
-

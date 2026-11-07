@@ -17,7 +17,7 @@
         <span th:text="${successMessage}"></span>
     </div>
 
-    <div th:if="${loginError}" class="error">
+    <div th:if="${loginError == true or param.error != null}" class="error" role="alert">
         Неверный логин или пароль
     </div>
 
@@ -26,9 +26,10 @@
         <input type="hidden" name="redirect" th:value="${redirect}"/>
 
         <div class="field">
-            <label for="username">Логин</label>
-            <input type="text" id="username" name="username"
-                   placeholder="Ваш логин"
+            <label for="email">Email или логин</label>
+            <input type="text" id="email" name="email"
+                   th:value="${email}"
+                   placeholder="email или логин"
                    autocomplete="username" required/>
         </div>
 

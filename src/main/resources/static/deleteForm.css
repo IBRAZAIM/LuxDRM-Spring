@@ -1,53 +1,85 @@
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    background-color: #F6F5F3;
     margin: 0;
-    padding: 0;
+    padding: 60px 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .form {
-    width: 400px;
-    margin: 50px auto;
-    padding: 20px;
+    width: 100%;
+    max-width: 460px;
+    padding: 32px 36px;
     background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e4e2dd;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(12, 12, 61, 0.06);
+    text-align: center;
 }
 
 h1 {
-    font-size: 24px;
+    font-size: 22px;
     color: #0c0c3d;
-    margin-bottom: 20px;
+    margin: 0 0 14px;
 }
 
 p {
-    font-size: 16px;
-    color: #0c0c3d;
+    font-size: 14px;
+    color: #5A5A6E;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
 
 .delete-button {
-    background-color: #ff0000;
+    background-color: #B91C1C;
     color: #ffffff;
     border: none;
-    padding: 10px 20px;
-    border-radius: 3px;
+    padding: 11px 22px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
 }
 
 .delete-button:hover {
-    background-color: #cc0000;
+    background-color: #991B1B;
 }
 
 .cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 22px;
+    border: 1px solid #dcdce3;
+    border-radius: 6px;
     color: #0c0c3d;
+    font-size: 13px;
+    font-weight: 600;
     text-decoration: none;
-    margin-left: 10px;
-    transition: color 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .cancel:hover {
-    color: #666666;
+    border-color: #0c0c3d;
+    background: rgba(12, 12, 61, 0.04);
 }
 
 
+/* Строгая геометрия: без скруглений */
+*, *::before, *::after {
+    border-radius: 0 !important;
+}

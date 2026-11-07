@@ -13,6 +13,7 @@
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" th:href="@{/productsByUser.css}">
+    <link rel="stylesheet" th:href="@{/product-card.css}">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -25,28 +26,21 @@
 </nav>
 
 <section class="hero">
-    <svg class="hero-bg-line" viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-        <line x1="0" y1="0" x2="900" y2="360" stroke="rgba(201,169,110,0.03)" stroke-width="1"/>
-        <line x1="900" y1="0" x2="0" y2="360" stroke="rgba(201,169,110,0.03)" stroke-width="1"/>
-    </svg>
-    <div class="hero-deco"></div>
-
     <div class="hero-inner">
         <div>
             <div class="hero-eyebrow">
                 <span class="hero-eyebrow-line"></span>
-                <span class="hero-eyebrow-text">Основная коллекция</span>
+                <span class="hero-eyebrow-text">Коллекция UXD · Доставка по всему Казахстану</span>
             </div>
-            <h1 class="hero-title">Каталог <em>товаров</em></h1>
-            <p class="hero-sub">Тщательно отобранные позиции для вашего стиля</p>
-            <div class="hero-divider"></div>
+            <h1 class="hero-title">Премиальная одежда и бельё <em>для дома и отдыха</em></h1>
+            <p class="hero-sub">Натуральные ткани, выверенный крой и бесплатная доставка от 50 000 ₸. Обмен и возврат — 14 дней без лишних вопросов.</p>
         </div>
     </div>
 
     <div class="hero-nums">
         <div class="hero-n">
             <span class="hero-n-val" id="totalCount">0</span>
-            <span class="hero-n-label">Товаров</span>
+            <span class="hero-n-label">Моделей в наличии</span>
         </div>
         <div class="hero-n">
             <span class="hero-n-val" id="catCount">0</span>
@@ -54,14 +48,17 @@
         </div>
         <div class="hero-n">
             <span class="hero-n-val" id="maxDisc">0%</span>
-            <span class="hero-n-label">Макс. скидка</span>
+            <span class="hero-n-label">Выгода до</span>
         </div>
     </div>
 </section>
 
 <div class="toolbar">
-    <p class="count">Показано <strong id="shownCount">0</strong> товаров</p>
+    <p class="count">Найдено <strong id="shownCount">0</strong> моделей</p>
     <div class="tr-right">
+        <div class="catalog-search-wrap">
+            <input type="search" id="catalogSearch" class="catalog-search-inp" placeholder="Быстрый поиск модели..." oninput="applyAll()" aria-label="Поиск товаров">
+        </div>
         <button class="mob-filter-btn" onclick="catalogToggleSidebar()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="4" y1="6" x2="20" y2="6"/>
@@ -71,12 +68,12 @@
             Фильтры
         </button>
         <select class="sort-sel" id="sortSel" onchange="applyAll()">
-            <option value="default">По умолчанию</option>
-            <option value="price_asc">Цена ↑</option>
-            <option value="price_desc">Цена ↓</option>
-            <option value="discount">Скидка ↓</option>
-            <option value="name_asc">Название А–Я</option>
-            <option value="rating">Рейтинг ↓</option>
+            <option value="default">Сначала популярные</option>
+            <option value="price_asc">Сначала дешевле</option>
+            <option value="price_desc">Сначала дороже</option>
+            <option value="discount">По размеру скидки</option>
+            <option value="name_asc">По названию (А–Я)</option>
+            <option value="rating">По высокому рейтингу</option>
         </select>
         <div class="grid-btns">
             <button class="g-btn act" id="gb4" onclick="setGrid(4)" title="4 колонки">
@@ -180,48 +177,55 @@
     </aside>
 
     <main class="prod-area">
-        <div class="prod-grid" id="grid"></div>
+        <!-- ЕДИНЫЙ КОМПОНЕНТ КАРТОЧКИ ТОВАРА UXD -->
+        <div class="prod-grid" id="grid">
+            <th:block th:each="product : ${products}">
+                <div th:replace="~{fragments/product-card :: productCard(product=${product})}"></div>
+            </th:block>
+        </div>
+
+        <div class="empty" id="emptyState" style="display:none">
+            <span class="empty-ico">◎</span>
+            <h2 class="empty-t">Ничего не найдено</h2>
+            <p class="empty-s">Попробуйте изменить параметры фильтрации или сбросить фильтры</p>
+        </div>
+
         <div class="lm-wrap" id="lmWrap" style="display:none">
             <button class="lm-btn" onclick="loadMore()"><span>Показать ещё</span></button>
         </div>
     </main>
 </div>
 
-<div id="toast"></div>
-
 <div th:insert="~{footer :: footer-code}"></div>
 <script th:src="@{/js/navbar-component.js}" defer></script>
-<script th:inline="javascript">
-    const RAW = [];
-    /*[# th:each="p : ${products}"]*/
-    RAW.push({
-        id:      [[${p.id}]],
-        name:    [[${p.name}]],
-        cat:     [[${p.category != null ? p.category.name : 'Без категории'}]],
-        price:   [[${p.price}]],
-        disc:    [[${p.discount}]],
-        rating:  [[${p.rating}]],
-        reviews: 0,
-        img:     [[${(p.images != null and !#lists.isEmpty(p.images) and p.images[0] != null and p.images[0].image != null) ? p.images[0].image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80'}]]
-    });
-    /*[/]*/
+<script th:src="@{/js/product-card.js}" defer></script>
+<script>
+    const gridEl = document.getElementById('grid');
+    const emptyEl = document.getElementById('emptyState');
+
+    const RAW = Array.from(gridEl.querySelectorAll('.uxd-card')).map((el, idx) => ({
+        el:     el,
+        idx:    idx,
+        id:     Number(el.dataset.id || 0),
+        name:   String(el.dataset.name || ''),
+        cat:    String(el.dataset.cat || 'Коллекция UXD'),
+        price:  Number(el.dataset.price || 0),
+        final:  Number(el.dataset.finalPrice || el.dataset.price || 0),
+        disc:   Number(el.dataset.disc || 0),
+        rating: Number(el.dataset.rating || 4.9)
+    }));
 
     let cols = 4, activeDisc = null, activeRating = null, page = 8;
     const PER = 8;
     let filtered = [...RAW];
-    const RANGE_MAX = Math.max(500000, ...RAW.map(p => Math.round(p.price * (1 - p.disc / 100))));
+    const RANGE_MAX = Math.max(500000, ...RAW.map(p => Math.round(p.final)));
 
     function esc(s) {
         return String(s)
             .replaceAll("&","&amp;").replaceAll("<","&lt;")
             .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
     }
-    function fmt(n) { return Number(n).toLocaleString('ru-KZ') + ' ₸'; }
-    function stars(r) {
-        let s = '';
-        for (let i = 1; i <= 5; i++) s += `<span class="cstar${i <= Math.round(r) ? '' : ' e'}">★</span>`;
-        return s;
-    }
+    function fmt(n) { return Math.round(Number(n) || 0).toLocaleString('ru-RU') + '\u00a0₸'; }
 
     function initStats() {
         document.getElementById('totalCount').textContent = RAW.length;
@@ -239,41 +243,26 @@
             ).join('');
     }
 
-    function card(p, delay) {
-        const final = Math.round(p.price * (1 - p.disc / 100));
-        const url = `/products/${p.id}`;
-        return `<div class="p-card" onclick="window.location.href='${url}'" style="animation-delay:${delay}ms">
-    <div class="card-img">
-      <img src="${p.img}" alt="${esc(p.name)}" loading="lazy">
-      ${p.disc > 0 ? `<span class="c-badge">−${p.disc}%</span>` : ''}
-      <button class="c-wish" onclick="event.stopPropagation();wishlist(this,${p.id})" aria-label="Избранное">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-      </button>
-    </div>
-    <div class="card-body">
-      <p class="c-cat">${esc(p.cat)}</p>
-      <a class="c-name" href="${url}" onclick="event.stopPropagation()">${esc(p.name)}</a>
-      <div class="c-rating"><div class="c-stars">${stars(p.rating)}</div><span class="c-rct">(${p.reviews})</span></div>
-      <div class="c-prices">
-        <span class="price-f">${fmt(final)}</span>
-        ${p.disc > 0 ? `<span class="price-o">${fmt(p.price)}</span><span class="price-s">−${p.disc}%</span>` : ''}
-      </div>
-    </div>
-  </div>`;
-    }
-
     function render() {
-        const grid = document.getElementById('grid');
+        gridEl.className = 'prod-grid cols-' + cols;
+
+        RAW.forEach(item => {
+            item.el.style.display = 'none';
+        });
+
         const slice = filtered.slice(0, page);
-        grid.className = 'prod-grid cols-' + cols;
         if (!slice.length) {
-            grid.innerHTML = `<div class="empty"><span class="empty-ico">◎</span><h2 class="empty-t">Ничего не найдено</h2><p class="empty-s">Попробуйте изменить фильтры</p></div>`;
+            if (emptyEl) emptyEl.style.display = 'block';
             document.getElementById('lmWrap').style.display = 'none';
         } else {
-            grid.innerHTML = slice.map((p, i) => card(p, i * 40)).join('');
+            if (emptyEl) emptyEl.style.display = 'none';
+            slice.forEach(item => {
+                gridEl.appendChild(item.el);
+                item.el.style.display = '';
+            });
             document.getElementById('lmWrap').style.display = filtered.length > page ? 'flex' : 'none';
         }
-        document.getElementById('shownCount').textContent = Math.min(slice.length, filtered.length);
+        document.getElementById('shownCount').textContent = filtered.length;
         updateTags();
     }
 
@@ -285,21 +274,24 @@
         if (minV > maxV) { err.classList.add('show'); return; }
         err.classList.remove('show');
         const sort = document.getElementById('sortSel').value;
+        const q = (document.getElementById('catalogSearch')?.value || '').trim().toLowerCase();
 
         filtered = RAW.filter(p => {
+            if (q && !p.name.toLowerCase().includes(q) && !p.cat.toLowerCase().includes(q)) return false;
             if (cats.length && !cats.includes(p.cat)) return false;
-            const fp = Math.round(p.price * (1 - p.disc / 100));
+            const fp = Math.round(p.final);
             if (fp < minV || fp > maxV) return false;
             if (activeDisc   && p.disc   < activeDisc)   return false;
             if (activeRating && p.rating < activeRating) return false;
             return true;
         });
 
-        if (sort === 'price_asc')  filtered.sort((a,b) => Math.round(a.price*(1-a.disc/100)) - Math.round(b.price*(1-b.disc/100)));
-        else if (sort === 'price_desc') filtered.sort((a,b) => Math.round(b.price*(1-b.disc/100)) - Math.round(a.price*(1-a.disc/100)));
+        if (sort === 'price_asc')       filtered.sort((a,b) => a.final - b.final);
+        else if (sort === 'price_desc') filtered.sort((a,b) => b.final - a.final);
         else if (sort === 'discount')   filtered.sort((a,b) => b.disc - a.disc);
         else if (sort === 'name_asc')   filtered.sort((a,b) => a.name.localeCompare(b.name,'ru'));
         else if (sort === 'rating')     filtered.sort((a,b) => b.rating - a.rating);
+        else                            filtered.sort((a,b) => a.idx - b.idx);
 
         page = PER;
         render();
@@ -384,6 +376,8 @@
         document.querySelectorAll('.disc-btn').forEach(b=>b.classList.remove('act'));
         document.querySelectorAll('.rat-btn').forEach(b=>b.classList.remove('act'));
         document.getElementById('sortSel').value = 'default';
+        const sInp = document.getElementById('catalogSearch');
+        if (sInp) sInp.value = '';
         activeDisc = null; activeRating = null;
         syncRange();
     }
@@ -415,20 +409,6 @@
 
     function loadMore() { page += PER; render(); }
 
-    function toast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.transform = 'translateY(0)'; t.style.opacity = '1';
-        setTimeout(() => { t.style.transform = 'translateY(70px)'; t.style.opacity = '0'; }, 2400);
-    }
-
-    function wishlist(btn, id) {
-        const liked = btn.dataset.liked === '1';
-        btn.dataset.liked = liked ? '0' : '1';
-        toast(liked ? 'Удалено из избранного' : 'Добавлено в избранное ♡');
-    }
-
-    /* Debounced resize */
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
@@ -439,7 +419,6 @@
         }, 150);
     });
 
-    /* Close sidebar on Escape */
     document.addEventListener('keydown', e => { if (e.key === 'Escape') catalogCloseSidebar(); });
 
     buildCategories();
@@ -447,7 +426,24 @@
     document.getElementById('tMax').max   = RANGE_MAX;
     document.getElementById('tMax').value = RANGE_MAX;
     document.getElementById('tMin').max   = RANGE_MAX;
-    document.getElementById('pMax').placeholder = RANGE_MAX.toLocaleString('ru-KZ');
+    document.getElementById('pMax').placeholder = RANGE_MAX.toLocaleString('ru-RU');
+
+    const urlCat = new URLSearchParams(window.location.search).get('category');
+    if (urlCat) {
+        const lowerCat = urlCat.trim().toLowerCase();
+        let matched = false;
+        document.querySelectorAll('input[name="cat"]').forEach(cb => {
+            if (cb.value.toLowerCase() === lowerCat) {
+                cb.checked = true;
+                matched = true;
+            }
+        });
+        if (!matched) {
+            const sInp = document.getElementById('catalogSearch');
+            if (sInp) sInp.value = urlCat.trim();
+        }
+    }
+
     setGrid(getAutoCols());
     syncRange();
 </script>

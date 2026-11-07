@@ -3,6 +3,7 @@ package kz.ibrazaim.catalog.repository;
 import kz.ibrazaim.catalog.model.Product;
 import kz.ibrazaim.catalog.model.Review;
 import kz.ibrazaim.catalog.model.ReviewStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +13,14 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    @Override
+    @EntityGraph(attributePaths = {"user", "product"})
+    List<Review> findAll();
+
+    @EntityGraph(attributePaths = {"user", "product"})
+    List<Review> findAllByOrderByDateDescIdDesc();
+
+    @EntityGraph(attributePaths = {"user"})
     List<Review> findByProductAndStatus(Product product, ReviewStatus status);
 
     void deleteAllByProductId(long productId);

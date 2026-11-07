@@ -23,12 +23,15 @@ public class User {
     @Column(nullable = false)
     String login;
 
+    @Column(unique = true)
+    String email;
+
     @Column(nullable = false)
     String password;
 
     String name;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = RoleConverter.class)
     @Column(length = 50)
     Role role;
 

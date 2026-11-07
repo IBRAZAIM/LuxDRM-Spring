@@ -49,4 +49,17 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ProductSize> sizes;
+
+    public BigDecimal getFinalPrice() {
+        BigDecimal safePrice = price != null && price.compareTo(BigDecimal.ZERO) > 0 ? price : BigDecimal.ZERO;
+        BigDecimal safeDisc = discount != null && discount.compareTo(BigDecimal.ZERO) > 0
+                ? discount.min(BigDecimal.valueOf(100))
+                : BigDecimal.ZERO;
+        if (safeDisc.compareTo(BigDecimal.ZERO) == 0) {
+            return safePrice.setScale(2, java.math.RoundingMode.HALF_UP);
+        }
+        BigDecimal discAmount = safePrice.multiply(safeDisc)
+                .divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
+        return safePrice.subtract(discAmount).max(BigDecimal.ZERO).setScale(2, java.math.RoundingMode.HALF_UP);
+    }
 }

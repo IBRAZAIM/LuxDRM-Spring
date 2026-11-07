@@ -268,3 +268,4 @@ BEGIN
             CHECK (publication_status IN ('PENDING', 'APPROVED'));
     END IF;
 END $$;
+

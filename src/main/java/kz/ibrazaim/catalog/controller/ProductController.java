@@ -38,6 +38,7 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
+            jakarta.servlet.http.HttpSession session,
             Model model
     ) {
         User user = userService.getUser();
@@ -47,25 +48,29 @@ public class ProductController {
         if (page < 0) page = 0;
         if (size <= 0 || size > 100) size = 12;
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Product> productsPage = productService.searchProducts(search, categoryId, minPrice, maxPrice, pageable);
-
-        model.addAttribute("products", productsPage.getContent());
-        model.addAttribute("productsPage", productsPage);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", productsPage.getTotalPages());
-        model.addAttribute("totalElements", productsPage.getTotalElements());
-        model.addAttribute("search", search != null ? search.trim() : "");
-        model.addAttribute("minPrice", minPrice);
-        model.addAttribute("maxPrice", maxPrice);
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("selectedCategoryId", categoryId);
-        model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
-
         if (userService.hasAnyRole(user, Role.ADMIN, Role.MODER)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+            Page<Product> productsPage = productService.searchProducts(search, categoryId, minPrice, maxPrice, pageable);
+
+            model.addAttribute("products", productsPage.getContent());
+            model.addAttribute("productsPage", productsPage);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", productsPage.getTotalPages());
+            model.addAttribute("totalElements", productsPage.getTotalElements());
+            model.addAttribute("search", search != null ? search.trim() : "");
+            model.addAttribute("minPrice", minPrice);
+            model.addAttribute("maxPrice", maxPrice);
+            model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("selectedCategoryId", categoryId);
+            model.addAttribute("cartItemsCount", cartService.getCartItemsCount(user, session));
             return "productsByAdmin";
         }
 
+        List<Product> allProducts = productService.findAll();
+        model.addAttribute("products", allProducts);
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("cartItemsCount", cartService.getCartItemsCount(user, session));
         return "productsByUser";
     }
 
@@ -158,6 +163,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public String productCard(
             @PathVariable Long id,
+            jakarta.servlet.http.HttpSession session,
             Model model
     ) {
         User user = userService.getUser();
@@ -166,11 +172,11 @@ public class ProductController {
             return "redirect:/products";
         }
         model.addAttribute("product", product);
-        model.addAttribute("products", productService.findAll());
+        model.addAttribute("products", productService.findSimilarProducts(product));
         model.addAttribute("options", productService.getOptions(product));
         model.addAttribute("reviews", reviewService.getCommentsForProduct(product));
         model.addAttribute("imageUrls", productImageService.findAllByProduct(product));
-        model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
+        model.addAttribute("cartItemsCount", cartService.getCartItemsCount(user, session));
 
         List<ProductSize> sizes = productSizeService.findByProduct(product);
         model.addAttribute("sizes", sizes);

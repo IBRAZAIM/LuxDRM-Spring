@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Удаление продукта</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Удаление товара — UXD Admin</title>
     <link rel="stylesheet" th:href="@{/deleteForm.css}">
 </head>
 <body>
 <div class="form">
-    <h1>Удаление продукта</h1>
-    <p>Вы уверены, что хотите удалить продукт с ID: <span th:text="${product.getId()}"></span>?</p>
-    <form th:action="@{'/products/delete/' + ${product.id}}" method="post">
+    <h1>Удаление товара</h1>
+    <p>Вы действительно хотите удалить товар <strong th:text="${product.getName()}"></strong> (ID: <span th:text="${product.getId()}"></span>)?</p>
+    <form th:action="@{'/products/delete/' + ${product.id}}" method="post" class="delete-actions">
         <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
         <input type="hidden" name="_method" value="DELETE"/>
-        <input type="submit" value="Удалить" class="delete-button"><a href="/products" class="cancel">Отмена</a>
+        <a th:href="@{/products}" class="cancel">Отмена</a>
+        <input type="submit" value="Да, удалить" class="delete-button">
     </form>
 </div>
 </body>
 </html>
-
-

@@ -28,7 +28,7 @@ public class Order {
     @Column(name = "serial_number")
     String serialNumber;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = OrderStatusConverter.class)
     @Column(nullable = false, length = 255)
     OrderStatus status;
 

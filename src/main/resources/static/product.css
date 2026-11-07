@@ -2692,3 +2692,72 @@ header {
     background: rgba(154, 7, 61, .12);
     color: var(--c-navy);
 }
+
+
+/* ══════════════════════════════════════
+   CRO / UX IMPROVEMENTS & SHARP GEOMETRY
+══════════════════════════════════════ */
+*, *::before, *::after {
+    border-radius: 0 !important;
+}
+
+.product-bc {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 40px;
+    background: var(--c-surface);
+    border-bottom: 1px solid var(--c-border);
+    font-size: 12px;
+    color: var(--c-muted);
+}
+.product-bc a {
+    color: var(--c-muted);
+    text-decoration: none;
+    transition: color var(--t-fast);
+}
+.product-bc a:hover {
+    color: var(--c-crimson);
+}
+.product-bc .bc-sep {
+    color: var(--c-dim);
+}
+.product-bc .bc-cur {
+    color: var(--c-navy);
+    font-weight: 600;
+}
+
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--c-success-bg);
+    border: 1px solid rgba(45, 106, 79, .22);
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--c-success);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+.stock-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--c-success);
+    display: inline-block;
+}
+
+.size-subtitle {
+    font-family: var(--f-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--c-navy);
+    margin: 20px 0 10px;
+}
+
+@media (max-width: 768px) {
+    .product-bc {
+        padding: 10px 20px;
+    }
+}

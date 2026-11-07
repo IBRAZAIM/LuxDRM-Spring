@@ -1,134 +1,286 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Title</title>
+    <title th:text="'Заказ №00' + ${order.id} + ' — UXD'">Детали заказа — UXD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/orderPage.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}"></div>
-<div class="order-title">
-    <label th:text=" 'Заказ 00' + ${order.getId()}"></label>
-    <div class="icon">
-        <svg fill="#4CAF50" height="40px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 492.308 492.308" xml:space="preserve">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-                <g> <g>
-                <polygon points="379.077,145.933 199.519,325.49 113.221,239.192 99.298,253.115 199.519,353.337 393,159.856 "></polygon>
-                </g> </g> <g> <g>
-                <path d="M246.154,0C110.423,0,0,110.423,0,246.154s110.423,246.154,246.154,246.154s246.154-110.423,246.154-246.154 S381.885,0,246.154,0z M246.154,472.615c-124.875,0-226.462-101.587-226.462-226.462S121.279,19.692,246.154,19.692 s226.462,101.587,226.462,226.462S371.029,472.615,246.154,472.615z"></path>
-            </g>
-            </g>
-            </g>
-        </svg>
-    </div>
-</div>
-<main>
-    <div class="left">
-        <div th:each="orderProduct : ${order.orderProducts}" class="products-list">
-            <!-- Проход по всем продуктам в заказе -->
-            <div class="product-item">
-                <div class="product">
-                    <!-- Изображение продукта -->
-                    <img th:src="${orderProduct.product.images[0].image}" alt="Product Image" class="product-image">
-                    <!-- Название и количество -->
-                    <span class="product-name" th:text="${orderProduct.product.name}"></span>
-                    <span class="product-quantity" th:text="'x ' + ${orderProduct.quantity}"></span>
-                    <span class="product-price" th:text="${orderProduct.unitPrice} + ' ₸'"></span>
+
+<main class="order-detail-shell"
+      th:with="stName=${order.status != null ? order.status.name() : 'PENDING'},
+               stDisplay=${order.status != null ? order.status.displayName : 'В ожидании'}">
+    <div class="order-detail-container">
+
+        <!-- Breadcrumb & Back Link -->
+        <div class="detail-topbar">
+            <nav class="breadcrumb" aria-label="Навигация">
+                <a th:href="@{/}">Главная</a>
+                <span class="sep">/</span>
+                <a th:href="@{/orders}" sec:authorize="hasAnyRole('admin', 'moder')">Все заказы</a>
+                <a th:href="@{/orders}" sec:authorize="!hasAnyRole('admin', 'moder')">Мои заказы</a>
+                <span class="sep">/</span>
+                <span class="cur" th:text="'Заказ №00' + ${order.id}">Заказ №001</span>
+            </nav>
+
+            <a th:href="@{/orders}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>К списку заказов</span>
+            </a>
+        </div>
+
+        <!-- Flash Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success" role="status">
+            <div class="alert-content">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">✕</button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error" role="alert">
+            <div class="alert-content">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">✕</button>
+        </div>
+
+        <!-- Order Header Card -->
+        <header class="order-hero-card">
+            <div class="hero-left">
+                <div class="hero-eyebrow">
+                    <span th:if="${order.serialNumber != null}" class="serial-tag" th:text="${order.serialNumber}">ORD-XXXX</span>
+                    <span class="order-date-tag" th:if="${order.date != null}"
+                          th:text="'от ' + ${#temporals.format(order.date, 'dd.MM.yyyy HH:mm')}"></span>
+                </div>
+                <div class="order-title">
+                    <label th:text="'Заказ № 00' + ${order.id}">Заказ № 001</label>
+                    <span class="status-pill"
+                          th:classappend="'status-pill--' + ${#strings.toLowerCase(stName)}"
+                          th:text="${stDisplay}">В ожидании</span>
                 </div>
             </div>
-        </div>
-        <div class="total-price">
-            <span th:text="'Итого: ' + ${order.totalPrice} + ' ₸'"></span>
-        </div>
-        <div class="actions">
-        <a th:href="@{'/'}" class="continue">Продолжить покупки</a>
-        </div>
-    </div>
-    <div class="right">
-        <div class="info-block">
-            <div class="pole">
-                <div class="full-name">
-                    <span class="option">ФИО:</span>
-                    <span class="value" th:text="${order.fullName}"></span>
-                </div>
-                <div class="address">
-                    <span class="option">Адрес:</span>
-                    <span class="value" th:text="${order.country} + ' ' +  ${order.city} + ' ' + ${order.address}"></span>
-                </div>
-                <div class="phone">
-                    <span class="option">Телефон:</span>
-                    <span class="value" th:text="${order.phone}"></span>
-                </div>
-                <div class="email">
-                    <span class="option">Email:</span>
-                    <span class="value" th:text="${order.email}"></span>
-                </div>
-                <div class="date">
-                    <span class="option">Дата оформления:</span>
-                    <span class="value" id="date" th:text="${order.date}"></span>
-                </div>
-                <div class="order-serial">
-                    <span class="option">Серийный номер заказа:</span>
-                    <span class="value" th:text="${order.serialNumber}"></span>
-                </div>
-                <div class="status">
-                    <span class="option">Статус:</span>
-                    <span class="value" th:text="${order.status}"></span>
-                </div>
-                <div class="delivery" th:if="${order.deliveryMethod != null}">
-                    <span class="option">Способ доставки:</span>
-                    <span class="value" th:text="${order.deliveryMethod}"></span>
-                </div>
-                <div class="payment" th:if="${order.paymentMethod != null}">
-                    <span class="option">Способ оплаты:</span>
-                    <span class="value" th:text="${order.paymentMethod}"></span>
+
+            <!-- Admin Status Update Control on Order Detail Page -->
+            <div class="hero-admin-box" sec:authorize="hasAnyRole('admin', 'moder')">
+                <span class="admin-box-label">Управление статусом (Админ)</span>
+                <form th:action="@{/orders/updateStatus}" method="post" class="detail-status-form">
+                    <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+                    <input type="hidden" name="orderId" th:value="${order.id}">
+                    <input type="hidden" name="redirectTo" th:value="'/orders/' + ${order.id}">
+                    <select name="status" class="detail-status-select">
+                        <option th:each="s : ${T(kz.ibrazaim.catalog.model.OrderStatus).values()}"
+                                th:value="${s.name()}"
+                                th:text="${s.displayName}"
+                                th:selected="${order.status == s}">
+                        </option>
+                    </select>
+                    <button type="submit" class="detail-status-btn">Обновить статус</button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Order Progress Stepper (hidden if canceled) -->
+        <section class="status-stepper" th:if="${stName != 'CANCELED'}" aria-label="Этапы выполнения заказа">
+            <div class="step active">
+                <div class="step-circle"><i class="fas fa-clock"></i></div>
+                <div class="step-info">
+                    <span class="step-title">Оформлен / В ожидании</span>
+                    <span class="step-sub">Заказ принят в обработку</span>
                 </div>
             </div>
+            <div class="step-line" th:classappend="${stName == 'SHIPPED' or stName == 'DELIVERED'} ? ' active' : ''"></div>
+            <div class="step" th:classappend="${stName == 'SHIPPED' or stName == 'DELIVERED'} ? ' active' : ''">
+                <div class="step-circle"><i class="fas fa-truck"></i></div>
+                <div class="step-info">
+                    <span class="step-title">Отправлено</span>
+                    <span class="step-sub">Передан в службу доставки</span>
+                </div>
+            </div>
+            <div class="step-line" th:classappend="${stName == 'DELIVERED'} ? ' active' : ''"></div>
+            <div class="step" th:classappend="${stName == 'DELIVERED'} ? ' active' : ''">
+                <div class="step-circle"><i class="fas fa-check"></i></div>
+                <div class="step-info">
+                    <span class="step-title">Доставлено</span>
+                    <span class="step-sub">Заказ успешно вручён</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Canceled Banner -->
+        <section class="canceled-banner" th:if="${stName == 'CANCELED'}">
+            <i class="fas fa-ban"></i>
+            <div>
+                <strong>Заказ отменён</strong>
+                <p>Данный заказ был отменён, зарезервированные товары возвращены на склад.</p>
+            </div>
+        </section>
+
+        <!-- Two-Column Main Content -->
+        <div class="order-grid">
+
+            <!-- Left Column: Order Items -->
+            <div class="left">
+                <div class="panel-card">
+                    <div class="panel-card-head">
+                        <h2 class="panel-title">Состав заказа</h2>
+                        <span class="items-count-badge"
+                              th:text="${order.orderProducts != null ? #lists.size(order.orderProducts) + ' поз.' : '0 поз.'}"></span>
+                    </div>
+
+                    <div class="products-list" th:if="${order.orderProducts != null and !#lists.isEmpty(order.orderProducts)}">
+                        <div th:each="orderProduct : ${order.orderProducts}" class="product-item">
+                            <div class="product">
+                                <!-- Safe Thumbnail Image -->
+                                <a th:href="${orderProduct.product != null ? '/products/' + orderProduct.product.id : '#'}"
+                                   class="product-img-wrap">
+                                    <img th:src="${(orderProduct.product != null and orderProduct.product.images != null and !#lists.isEmpty(orderProduct.product.images) and orderProduct.product.images[0] != null and orderProduct.product.images[0].image != null) ? orderProduct.product.images[0].image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&q=80'}"
+                                         alt="Фото товара"
+                                         class="product-image"
+                                         loading="lazy">
+                                </a>
+
+                                <!-- Product Info -->
+                                <div class="product-details">
+                                    <a th:if="${orderProduct.product != null}"
+                                       th:href="@{'/products/' + ${orderProduct.product.id}}"
+                                       class="product-name"
+                                       th:text="${orderProduct.product.name}">Название товара</a>
+                                    <span th:if="${orderProduct.product == null}" class="product-name">Товар удалён</span>
+
+                                    <div class="product-chips">
+                                        <span class="chip" th:if="${orderProduct.size != null and !orderProduct.size.isEmpty()}"
+                                              th:text="'Размер: ' + ${orderProduct.size}">Размер: M</span>
+                                        <span class="chip" th:if="${orderProduct.product != null and orderProduct.product.category != null}"
+                                              th:text="${orderProduct.product.category.name}">Категория</span>
+                                        <span class="chip chip--discount" th:if="${orderProduct.discountPercent != null and orderProduct.discountPercent > 0}"
+                                              th:text="'Скидка −' + ${orderProduct.discountPercent} + '%'"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Quantity & Price -->
+                                <div class="product-pricing">
+                                    <span class="product-quantity" th:text="${orderProduct.quantity} + ' шт.'">1 шт.</span>
+                                    <span class="product-unit-price js-money"
+                                          th:attr="data-raw=${orderProduct.unitPrice != null ? orderProduct.unitPrice : 0}"
+                                          th:text="${(orderProduct.unitPrice != null ? orderProduct.unitPrice : 0) + ' ₸'}">0 ₸</span>
+                                    <span class="product-line-total js-money"
+                                          th:if="${orderProduct.lineTotal != null and orderProduct.quantity > 1}"
+                                          th:attr="data-raw=${orderProduct.lineTotal}"
+                                          th:text="'Итого: ' + ${orderProduct.lineTotal} + ' ₸'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Footer -->
+                    <div class="order-summary-footer">
+                        <div class="summary-row">
+                            <span>Доставка</span>
+                            <span th:text="${order.deliveryMethod == 'premium' ? 'Премиум+ (5 600 ₸)' : 'Стандартная (Бесплатно)'}">Бесплатно</span>
+                        </div>
+                        <div class="summary-row total-price">
+                            <span>Итого к оплате</span>
+                            <strong class="js-money"
+                                    th:attr="data-raw=${order.totalPrice != null ? order.totalPrice : 0}"
+                                    th:text="${(order.totalPrice != null ? order.totalPrice : 0) + ' ₸'}">0 ₸</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a th:href="@{/orders}" class="btn-secondary">← Все заказы</a>
+                    <a th:href="@{/products}" class="continue">Перейти в каталог</a>
+                </div>
+            </div>
+
+            <!-- Right Column: Customer & Shipping Info -->
+            <div class="right">
+                <div class="info-block">
+                    <h2 class="info-title">Информация о заказе</h2>
+                    <div class="info-divider"></div>
+
+                    <div class="pole">
+                        <div class="info-row full-name">
+                            <span class="option"><i class="fas fa-user"></i> Получатель</span>
+                            <span class="value" th:text="${order.fullName != null and !order.fullName.isEmpty() ? order.fullName : (order.user != null ? order.user.name : '—')}"></span>
+                        </div>
+
+                        <div class="info-row phone">
+                            <span class="option"><i class="fas fa-phone-alt"></i> Телефон</span>
+                            <span class="value" th:text="${order.phone != null and !order.phone.isEmpty() ? order.phone : '—'}"></span>
+                        </div>
+
+                        <div class="info-row email">
+                            <span class="option"><i class="fas fa-envelope"></i> Email</span>
+                            <span class="value" th:text="${order.email != null and !order.email.isEmpty() ? order.email : (order.user != null ? order.user.login : '—')}"></span>
+                        </div>
+
+                        <div class="info-row address">
+                            <span class="option"><i class="fas fa-map-marker-alt"></i> Адрес доставки</span>
+                            <span class="value"
+                                  th:text="${(order.country != null ? order.country + ', ' : '') + (order.city != null ? order.city + ', ' : '') + (order.address != null ? order.address : '—') + (order.postalCode != null and !order.postalCode.isEmpty() ? ' (' + order.postalCode + ')' : '')}"></span>
+                        </div>
+
+                        <div class="info-row date">
+                            <span class="option"><i class="fas fa-calendar-alt"></i> Дата оформления</span>
+                            <span class="value" id="date"
+                                  th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : '—'}"></span>
+                        </div>
+
+                        <div class="info-row order-serial" th:if="${order.serialNumber != null}">
+                            <span class="option"><i class="fas fa-barcode"></i> Серийный номер</span>
+                            <span class="value mono" th:text="${order.serialNumber}"></span>
+                        </div>
+
+                        <div class="info-row status">
+                            <span class="option"><i class="fas fa-info-circle"></i> Статус</span>
+                            <span class="value" th:text="${stDisplay}"></span>
+                        </div>
+
+                        <div class="info-row delivery" th:if="${order.deliveryMethod != null}">
+                            <span class="option"><i class="fas fa-shipping-fast"></i> Способ доставки</span>
+                            <span class="value"
+                                  th:text="${order.deliveryMethod == 'premium' ? 'Премиум+ (3–5 дней)' : 'Стандарт (5–7 дней)'}"></span>
+                        </div>
+
+                        <div class="info-row payment" th:if="${order.paymentMethod != null}">
+                            <span class="option"><i class="fas fa-credit-card"></i> Способ оплаты</span>
+                            <span class="value"
+                                  th:text="${order.paymentMethod == 'card' ? 'Банковская карта' : 'Другой способ'}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </main>
+
 <div th:insert="~{footer :: footer-code}"></div>
-</body>
 <script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const dateElements = document.querySelectorAll("#date");
-
-        dateElements.forEach(function(dateElement) {
-            const dateStr = dateElement.textContent.trim();
-
-            if (dateStr) {
-                const date = new Date(dateStr);
-
-                const day = ("0" + date.getDate()).slice(-2);
-                const month = ("0" + (date.getMonth() + 1)).slice(-2);
-                const year = date.getFullYear();
-                const hours = ("0" + date.getHours()).slice(-2);
-                const minutes = ("0" + date.getMinutes()).slice(-2);
-
-                const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
-                dateElement.textContent = formattedDate;
+        document.querySelectorAll('.js-money').forEach(function(el) {
+            const raw = parseFloat(el.getAttribute('data-raw'));
+            if (!isNaN(raw)) {
+                const prefix = el.classList.contains('product-line-total') ? 'Сумма: ' : '';
+                el.textContent = prefix + Math.round(raw).toLocaleString('ru-RU') + '\u00a0₸';
             }
         });
     });
-</script>
-<script>
-    // Функция для открытия/закрытия боковой панели
-    function togglePanel() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('overlay');
 
-        sidebar.classList.toggle('open');  // Открыть или закрыть панель
-        overlay.classList.toggle('show');  // Показать или скрыть фон
-    }
+    fetch('/analytics/register', { method: 'GET' }).catch(() => {});
 </script>
-<script>
-    // Регистрируем визит при заходе на страницу
-    fetch('/analytics/register', { method: 'GET' });
-</script>
+</body>
 </html>

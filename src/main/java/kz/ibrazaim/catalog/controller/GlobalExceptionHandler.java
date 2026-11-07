@@ -11,7 +11,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @ControllerAdvice
+@lombok.RequiredArgsConstructor
 public class GlobalExceptionHandler {
+    private final kz.ibrazaim.catalog.service.CartService cartService;
+    private final kz.ibrazaim.catalog.service.UserService userService;
+
+    @ModelAttribute("cartItemsCount")
+    public int populateCartItemsCount(jakarta.servlet.http.HttpSession session) {
+        kz.ibrazaim.catalog.model.User user = userService.getUser();
+        return cartService.getCartItemsCount(user, session);
+    }
+
     @ModelAttribute("currentRequestPath")
     public String currentRequestPath(HttpServletRequest request) {
         String path = request.getRequestURI();

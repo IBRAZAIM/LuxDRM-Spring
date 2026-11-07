@@ -86,6 +86,7 @@ public class ProductService implements AbstractService<Product> {
 
     private void createValues(Product product, List<String> values, List<Long> optionsIds) {
         List<Option> options = optionRepository.findAllById(optionsIds);
+        List<Value> toSave = new ArrayList<>(options.size());
 
         for (int i = 0; i < options.size(); i++) {
             String valueText = (i < values.size()) ? values.get(i) : "";
@@ -94,13 +95,34 @@ public class ProductService implements AbstractService<Product> {
             value.setName(valueText);
             value.setProduct(product);
             value.setOption(options.get(i));
-            valueRepository.save(value);
+            toSave.add(value);
         }
+        valueRepository.saveAll(toSave);
     }
 
     @Override
     public List<Product> findAll() {
         return productRepository.findByDeletedFalse();
+    }
+
+    public List<Long> findAllActiveIds() {
+        return productRepository.findAllActiveIds();
+    }
+
+    public List<Product> findSimilarProducts(Product product) {
+        if (product == null) {
+            return List.of();
+        }
+        if (product.getCategory() != null) {
+            List<Product> sameCategory = productRepository.findTop8ByCategoryIdAndIdNotAndDeletedFalseOrderByIdDesc(
+                    product.getCategory().getId(),
+                    product.getId()
+            );
+            if (!sameCategory.isEmpty()) {
+                return sameCategory;
+            }
+        }
+        return productRepository.findTop8ByIdNotAndDeletedFalseOrderByIdDesc(product.getId());
     }
 
     @Override
@@ -109,6 +131,7 @@ public class ProductService implements AbstractService<Product> {
                 .orElseThrow(() -> new EntityNotFoundException("Товар с указанным id=" + id + " не найден"));
     }
 
+    @Transactional
     public void update(long id, String name, BigDecimal price, Integer stock, List<Long> optionIds, List<String> values) {
         Product existingProduct = findById(id);
         existingProduct.setName(name);
@@ -119,19 +142,34 @@ public class ProductService implements AbstractService<Product> {
 
         productRepository.save(existingProduct);
 
-        if (optionIds != null && values != null) {
+        if (optionIds != null && values != null && !optionIds.isEmpty()) {
+            Map<Long, Option> optionsById = new HashMap<>();
+            for (Option option : optionRepository.findAllById(optionIds)) {
+                optionsById.put(option.getId(), option);
+            }
+            Map<Long, Value> existingValuesByOptionId = new HashMap<>();
+            for (Value v : valueRepository.findByProduct(existingProduct)) {
+                if (v.getOption() != null) {
+                    existingValuesByOptionId.put(v.getOption().getId(), v);
+                }
+            }
+            List<Value> toSave = new ArrayList<>(optionIds.size());
             for (int i = 0; i < optionIds.size(); i++) {
                 long optionId = optionIds.get(i);
-                Option option = optionRepository.findById(optionId).orElseThrow();
-                Value value = valueRepository.findByProductAndOption(existingProduct, option).orElseGet(() -> {
+                Option option = optionsById.get(optionId);
+                if (option == null) {
+                    throw new NoSuchElementException("Option not found: " + optionId);
+                }
+                Value value = existingValuesByOptionId.computeIfAbsent(optionId, k -> {
                     Value newValue = new Value();
                     newValue.setProduct(existingProduct);
                     newValue.setOption(option);
                     return newValue;
                 });
                 value.setName(i < values.size() ? values.get(i) : "");
-                valueRepository.save(value);
+                toSave.add(value);
             }
+            valueRepository.saveAll(toSave);
         }
     }
 
@@ -142,8 +180,15 @@ public class ProductService implements AbstractService<Product> {
 
         options.sort(Comparator.comparing(Option::getId));
 
+        Map<Long, Value> valuesByOptionId = new HashMap<>();
+        for (Value value : valueRepository.findByProduct(product)) {
+            if (value.getOption() != null) {
+                valuesByOptionId.put(value.getOption().getId(), value);
+            }
+        }
+
         for (Option option : options) {
-            Optional<Value> optionalValue = valueRepository.findByProductAndOption(product, option);
+            Optional<Value> optionalValue = Optional.ofNullable(valuesByOptionId.get(option.getId()));
             if (optionalValue.isPresent() && result.containsValue(optionalValue)) {
                 throw new HibernateException("Найдено более одной строки с данным идентификатором.");
             }

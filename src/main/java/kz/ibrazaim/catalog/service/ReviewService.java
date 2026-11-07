@@ -58,6 +58,6 @@ public class ReviewService {
     }
 
     public List<Review> findALl() {
-        return reviewRepository.findAll();
+        return reviewRepository.findAllByOrderByDateDescIdDesc();
     }
 }

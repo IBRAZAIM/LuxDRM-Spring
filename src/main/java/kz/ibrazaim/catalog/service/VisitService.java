@@ -51,6 +51,15 @@ public class VisitService {
     public void recordVisit(Long userId, HttpSession session) {
         String sessionId = session.getId();
         LocalDate today = LocalDate.now();
+        String sessionMarkerKey = "visit_recorded:" + today + ":" + (userId != null ? userId : "anon");
+
+        if (Boolean.TRUE.equals(session.getAttribute(sessionMarkerKey))) {
+            return;
+        }
+        if (visitBuffer.contains(userId, sessionId, today)) {
+            session.setAttribute(sessionMarkerKey, Boolean.TRUE);
+            return;
+        }
 
         // проверка уникальности визита
         boolean exists = (userId != null)
@@ -66,5 +75,6 @@ public class VisitService {
             // добавляем в буфер (или сразу сохраняем)
             visitBuffer.addVisit(visit);
         }
+        session.setAttribute(sessionMarkerKey, Boolean.TRUE);
     }
 }

@@ -65,10 +65,13 @@ h2 {
 .error {
     font-size: 13px;
     color: var(--error);
-    border-left: 2px solid var(--error);
-    padding-left: 10px;
+    background: #fdecea;
+    border: 1px solid #f5c6cb;
+    border-left: 3px solid var(--error);
+    padding: 10px 12px;
     margin-bottom: 24px;
     line-height: 1.5;
+    border-radius: 4px;
 }
 
 /* ── Field ── */
@@ -92,6 +95,7 @@ label {
 }
 
 input[type="text"],
+input[type="email"],
 input[type="password"] {
     width: 100%;
     height: 48px;
@@ -187,4 +191,10 @@ button[type="submit"]:active { transform: scale(.99); }
 @media (max-width: 480px) {
     .card { padding: 40px 28px 36px; }
     .row  { grid-template-columns: 1fr; gap: 0; }
+}
+
+
+/* Строгая геометрия: без скруглений */
+*, *::before, *::after {
+    border-radius: 0 !important;
 }

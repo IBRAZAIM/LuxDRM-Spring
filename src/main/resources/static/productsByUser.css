@@ -879,3 +879,140 @@ body {
     .c-qadd { transform: translateY(0); }
     .p-card:hover { transform: none; }
 }
+
+
+/* ─── UX / CRO OVERRIDES & NEW ELEMENTS ─── */
+*, *::before, *::after {
+    border-radius: 0 !important;
+}
+
+.hero {
+    min-height: 200px;
+    border-bottom: 1px solid rgba(201,169,110,0.2);
+}
+.hero-inner {
+    padding: 36px var(--pad-x);
+    max-width: 720px;
+}
+.hero-title {
+    font-size: clamp(30px, 4.2vw, 48px);
+    font-weight: 400;
+}
+.hero-sub {
+    color: rgba(255,255,255,0.72);
+    font-size: 13.5px;
+    max-width: 60ch;
+}
+
+.toolbar {
+    top: 69px;
+    padding: 12px var(--pad-x);
+}
+.cat-sidebar {
+    top: 128px;
+}
+
+.catalog-search-wrap {
+    position: relative;
+}
+.catalog-search-inp {
+    width: 220px;
+    padding: 7px 12px;
+    border: 1px solid var(--g2);
+    background: var(--g1);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--navy);
+    outline: none;
+    transition: border-color var(--tr), background var(--tr), width var(--tr);
+}
+.catalog-search-inp:focus {
+    border-color: var(--navy);
+    background: var(--w);
+    width: 260px;
+}
+
+.p-card {
+    border: 1px solid var(--g2);
+}
+.p-card:hover {
+    border-color: var(--navy);
+}
+
+.c-meta-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.c-meta-top .c-cat {
+    margin-bottom: 0;
+}
+.c-meta-top .c-rating {
+    margin-bottom: 0;
+    gap: 3px;
+}
+.c-meta-top .c-rct {
+    font-weight: 600;
+    color: var(--navy);
+}
+
+.c-prices {
+    margin-bottom: 12px;
+}
+
+.c-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--g1);
+    color: var(--navy);
+    border: 1px solid var(--g2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background var(--tr), color var(--tr), border-color var(--tr);
+}
+.p-card:hover .c-cta {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+}
+.c-cta:hover {
+    background: var(--crimson) !important;
+    border-color: var(--crimson) !important;
+    color: #fff !important;
+}
+
+@media (max-width: 900px) {
+    .cat-sidebar {
+        top: 0;
+    }
+}
+@media (max-width: 640px) {
+    .catalog-search-inp,
+    .catalog-search-inp:focus {
+        width: 150px;
+    }
+}
+
+
+/* Поддержка боковой панели фильтров на мобильных */
+@media (max-width: 900px) {
+    .f-overlay.open {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        z-index: 99998 !important;
+    }
+    .cat-sidebar.open {
+        transform: translateX(0) !important;
+        z-index: 99999 !important;
+    }
+}

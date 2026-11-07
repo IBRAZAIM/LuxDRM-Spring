@@ -1,9 +1,8 @@
 package kz.ibrazaim.catalog.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,7 +38,7 @@ public class Review {
     @JoinColumn(name = "product_id")
     Product product;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ReviewStatusConverter.class)
     @Column(name = "publication_status", nullable = false, length = 255)
     ReviewStatus status;
 

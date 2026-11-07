@@ -2,6 +2,7 @@ package kz.ibrazaim.catalog.repository;
 
 import kz.ibrazaim.catalog.model.Order;
 import kz.ibrazaim.catalog.model.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +13,20 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    @Override
+    @EntityGraph(attributePaths = {"user", "orderProducts", "orderProducts.product"})
+    List<Order> findAll();
+
+    @EntityGraph(attributePaths = {"user", "orderProducts", "orderProducts.product"})
+    List<Order> findAllByOrderByDateDescIdDesc();
+
+    @EntityGraph(attributePaths = {"user", "orderProducts", "orderProducts.product"})
     List<Order> findByUser(User user);
+
+    @EntityGraph(attributePaths = {"user", "orderProducts", "orderProducts.product"})
+    List<Order> findByUserOrderByDateDescIdDesc(User user);
+
+    @EntityGraph(attributePaths = {"user", "orderProducts", "orderProducts.product"})
     Order getOrderById(long id);
 
     // Количество заказов за период

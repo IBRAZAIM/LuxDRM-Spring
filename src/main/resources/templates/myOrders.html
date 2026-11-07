@@ -1,89 +1,152 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои Заказы</title>
-    <link rel="stylesheet" th:href="@{/myOrders.css}">
+    <title>Мои заказы — UXD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/myOrders.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Роскошные шрифты -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}"></div>
-<div class="container">
-    <h1 class="title">Мои Заказы</h1>
 
-    <div class="filters">
-        <div>
-            <select id="order-filter" title="Выберите статус заказа">
-                <option value="all">Все</option>
-                <option value="completed">Завершенные</option>
-                <option value="pending">Ожидающие</option>
-                <option value="cancelled">Отмененные</option>
-            </select>
+<main class="my-orders-shell">
+    <div class="container">
+
+        <nav class="breadcrumb" aria-label="Навигация">
+            <a th:href="@{/}">Главная</a>
+            <span class="sep">/</span>
+            <span class="cur">Мои заказы</span>
+        </nav>
+
+        <header class="page-head">
+            <div>
+                <span class="eyebrow">Личный кабинет</span>
+                <h1 class="title">Мои заказы</h1>
+            </div>
+
+            <div class="filters" th:if="${orders != null and !#lists.isEmpty(orders)}">
+                <select id="order-filter" title="Выберите статус заказа" onchange="filterUserOrders()">
+                    <option value="ALL">Все статусы</option>
+                    <option value="PENDING">В ожидании</option>
+                    <option value="SHIPPED">Отправлено</option>
+                    <option value="DELIVERED">Доставлено</option>
+                    <option value="CANCELED">Отменено</option>
+                </select>
+                <button type="button" class="download-invoice" onclick="filterUserOrders()">
+                    Применить
+                </button>
+            </div>
+        </header>
+
+        <!-- Таблица заказов -->
+        <div class="order-list table-container" th:if="${orders != null and !#lists.isEmpty(orders)}">
+            <table id="userOrdersTable">
+                <thead>
+                <tr class="orders-param">
+                    <th class="param">Номер заказа</th>
+                    <th class="param">Товары</th>
+                    <th class="param">Дата оформления</th>
+                    <th class="param">Статус</th>
+                    <th class="param">Сумма</th>
+                    <th class="param"></th>
+                </tr>
+                </thead>
+                <tbody id="userOrdersBody">
+                <tr th:each="order : ${orders}"
+                    class="order-item"
+                    th:with="stName=${order.status != null ? order.status.name() : 'PENDING'},
+                             stDisplay=${order.status != null ? order.status.displayName : 'В ожидании'}"
+                    th:attr="data-status=${stName}">
+                    <td class="order-number">
+                        <a th:href="@{/orders/{id}(id=${order.id})}" class="order-num-link" th:text="'№ 00' + ${order.id}">№ 001</a>
+                        <span class="serial-sub" th:if="${order.serialNumber != null}" th:text="${order.serialNumber}"></span>
+                    </td>
+                    <td class="order-items-preview">
+                        <div th:if="${order.orderProducts != null and !#lists.isEmpty(order.orderProducts)}" class="preview-list">
+                            <span th:each="op, iter : ${order.orderProducts}" th:if="${iter.index < 3}" class="preview-chip">
+                                <span th:text="${op.product != null ? op.product.name : 'Товар'}"></span>
+                                <small th:if="${op.size != null and !op.size.isEmpty()}" th:text="'(' + ${op.size} + ')'"></small>
+                                <strong th:text="'×' + ${op.quantity}"></strong>
+                            </span>
+                            <span th:if="${#lists.size(order.orderProducts) > 3}"
+                                  class="preview-more"
+                                  th:text="'+' + (${#lists.size(order.orderProducts)} - 3) + ' ещё'"></span>
+                        </div>
+                    </td>
+                    <td class="date" th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : '—'}"></td>
+                    <td class="status-cell">
+                        <span class="status"
+                              th:classappend="'status--' + ${#strings.toLowerCase(stName)}"
+                              th:attr="data-status=${stDisplay}"
+                              th:text="${stDisplay}">В ожидании</span>
+                    </td>
+                    <td class="total js-money"
+                        th:attr="data-raw=${order.totalPrice != null ? order.totalPrice : 0}"
+                        th:text="${(order.totalPrice != null ? order.totalPrice : 0) + ' ₸'}">0 ₸</td>
+                    <td class="order-detail">
+                        <a th:href="@{/orders/{id}(id=${order.id})}" class="view-order-btn">Посмотреть заказ</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div id="emptyUserFilter" class="empty-state" style="display: none;">
+                <p>Заказов с выбранным статусом не найдено.</p>
+            </div>
         </div>
-        <button class="download-invoice">
-            Фильтр
-        </button>
-    </div>
 
-    <div class="order-list table-container">
-        <table>
-            <thead>
-            <tr class="orders-param">
-                <th class="param">Номер заказа</th>
-                <th class="param">Статус</th>
-                <th class="param">Дата оформления</th>
-                <th class="param">Сумма</th>
-                <th class="param"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="order : ${orders}" class="order-item">
-                <td class="order-number" th:text="'№ 00' + ${order.id}"></td> <!-- Серийный номер заказа -->
-                <td class="status" th:text="${order.status}" th:attr="data-status=${order.status}"></td>
-                <td class="date" th:text="${order.date}"></td>
-                <td class="total" th:text="${order.totalPrice} + ' ₸'"></td>
-                <td class="order-detail">
-                    <a th:href="@{/orders/{id}(id=${order.id})}" class="view-order-btn">Посмотреть заказ</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <!-- Пустое состояние -->
+        <div class="empty-state" th:if="${orders == null or #lists.isEmpty(orders)}">
+            <div class="empty-icon"><i class="fas fa-shopping-bag"></i></div>
+            <h2 th:text="${message != null ? message : 'У вас пока нет заказов'}">У вас пока нет заказов</h2>
+            <p>Перейдите в каталог, чтобы выбрать товары и оформить свой первый заказ.</p>
+            <a th:href="@{/products}" class="continue-btn">Перейти в каталог</a>
+        </div>
+
+        <div class="actions" th:if="${orders != null and !#lists.isEmpty(orders)}">
+            <a th:href="@{/products}" class="continue-btn">Продолжить покупки</a>
+        </div>
     </div>
-    <div class="actions">
-        <a th:href="@{'/'}" class="continue-btn">Продолжить покупки</a>
-    </div>
-</div>
+</main>
+
 <div th:insert="~{footer :: footer-code}"></div>
-</body>
 <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 <script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
+    function filterUserOrders() {
+        const val = document.getElementById('order-filter')?.value || 'ALL';
+        const rows = document.querySelectorAll('#userOrdersBody tr.order-item');
+        let visible = 0;
+        rows.forEach(row => {
+            const st = row.getAttribute('data-status');
+            const match = (val === 'ALL' || st === val);
+            row.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+        const emptyEl = document.getElementById('emptyUserFilter');
+        const tableEl = document.getElementById('userOrdersTable');
+        if (emptyEl && tableEl) {
+            emptyEl.style.display = visible === 0 ? 'block' : 'none';
+            tableEl.style.display = visible === 0 ? 'none' : 'table';
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
-        const dateElements = document.querySelectorAll('.date');
-
-        dateElements.forEach(function(dateElement) {
-            const dateStr = dateElement.textContent.trim();
-
-            if (dateStr) {
-                const date = new Date(dateStr);
-
-                const day = ("0" + date.getDate()).slice(-2);
-                const month = ("0" + (date.getMonth() + 1)).slice(-2);
-                const year = date.getFullYear();
-                const hours = ("0" + date.getHours()).slice(-2);
-                const minutes = ("0" + date.getMinutes()).slice(-2);
-
-                const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
-                dateElement.textContent = formattedDate;
+        document.querySelectorAll('.js-money').forEach(function(el) {
+            const raw = parseFloat(el.getAttribute('data-raw'));
+            if (!isNaN(raw)) {
+                el.textContent = Math.round(raw).toLocaleString('ru-RU') + '\u00a0₸';
             }
         });
     });
+
+    fetch('/analytics/register', { method: 'GET' }).catch(() => {});
 </script>
-<script>
-    // Регистрируем визит при заходе на страницу
-    fetch('/analytics/register', { method: 'GET' });
-</script>
+</body>
 </html>

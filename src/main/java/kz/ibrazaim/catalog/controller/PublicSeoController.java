@@ -66,9 +66,9 @@ public class PublicSeoController {
         appendUrl(xml, baseUrl + "/delivery", lastMod);
         appendUrl(xml, baseUrl + "/contact", lastMod);
 
-        List<Product> products = productService.findAll();
-        for (Product product : products) {
-            appendUrl(xml, baseUrl + "/products/" + product.getId(), lastMod);
+        List<Long> productIds = productService.findAllActiveIds();
+        for (Long productId : productIds) {
+            appendUrl(xml, baseUrl + "/products/" + productId, lastMod);
         }
 
         xml.append("</urlset>");
