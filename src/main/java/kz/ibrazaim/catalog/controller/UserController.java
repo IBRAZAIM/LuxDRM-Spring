@@ -3,6 +3,7 @@ package kz.ibrazaim.catalog.controller;
 import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.CartService;
+import kz.ibrazaim.catalog.service.PromoCodeService;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final CartService cartService;
+    private final PromoCodeService promoCodeService;
 
     @GetMapping("/cart")
     public String getCartPage(Model model, jakarta.servlet.http.HttpSession session) {
@@ -45,7 +47,14 @@ public class UserController {
                         .divide(subtotalPrice, 0, java.math.RoundingMode.HALF_UP)
                         .intValue()
                 : 0;
-        BigDecimal finalPrice = subtotalPrice.subtract(discountAmount)
+        BigDecimal afterProductDiscount = subtotalPrice.subtract(discountAmount)
+                .max(BigDecimal.ZERO)
+                .setScale(2, java.math.RoundingMode.HALF_UP);
+        PromoCodeService.PromoInfo activePromo = cartItems.isEmpty()
+                ? null
+                : promoCodeService.getActivePromo(session);
+        BigDecimal promoDiscount = promoCodeService.calculatePromoDiscount(afterProductDiscount, activePromo);
+        BigDecimal finalPrice = afterProductDiscount.subtract(promoDiscount)
                 .max(BigDecimal.ZERO)
                 .setScale(2, java.math.RoundingMode.HALF_UP);
 
@@ -58,6 +67,11 @@ public class UserController {
         model.addAttribute("discountAmount", discountAmount);
         model.addAttribute("discountPercent", discountPercent);
         model.addAttribute("averageDiscount", discountPercent);
+        model.addAttribute("afterProductDiscount", afterProductDiscount);
+        model.addAttribute("promoCode", activePromo != null ? activePromo.getCode() : null);
+        model.addAttribute("promoPercent", activePromo != null ? activePromo.getPercent() : 0);
+        model.addAttribute("promoDescription", activePromo != null ? activePromo.getDescription() : null);
+        model.addAttribute("promoDiscount", promoDiscount);
         model.addAttribute("finalPrice", finalPrice);
         model.addAttribute("cartItemsLabel", cartItemsCount + " " + pluralize(cartItemsCount, "товар", "товара", "товаров"));
 
@@ -69,6 +83,7 @@ public class UserController {
             @PathVariable long productId,
             @RequestParam("quantity") int quantity,
             @RequestParam("size") String size,
+            @RequestParam(value = "buyNow", required = false, defaultValue = "false") boolean buyNow,
             jakarta.servlet.http.HttpServletRequest request,
             jakarta.servlet.http.HttpSession session
     ) {
@@ -81,15 +96,16 @@ public class UserController {
         }
 
         int cartItemsCount = cartService.getCartItemsCount(user, session);
+        String redirectUrl = buyNow ? "/checkout" : "/cart";
         String requestedWith = request.getHeader("X-Requested-With");
         String accept = request.getHeader("Accept");
         if ("XMLHttpRequest".equalsIgnoreCase(requestedWith)
                 || (accept != null && accept.contains("application/json"))) {
             return org.springframework.http.ResponseEntity.ok(
-                    java.util.Map.of("ok", true, "cartItemsCount", cartItemsCount)
+                    java.util.Map.of("ok", true, "cartItemsCount", cartItemsCount, "redirectUrl", redirectUrl)
             );
         }
-        return "redirect:/cart";
+        return "redirect:" + redirectUrl;
     }
 
     private String pluralize(int value, String one, String few, String many) {

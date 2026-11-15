@@ -1,0 +1,3 @@
+ALTER TABLE IF EXISTS wishlist
+    ALTER COLUMN product_id TYPE BIGINT;
+

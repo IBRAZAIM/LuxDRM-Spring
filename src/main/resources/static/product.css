@@ -6,8 +6,8 @@
 /* ОПТИМИЗАЦИЯ: все CSS-переменные сгруппированы в одном месте */
 :root {
     /* Цвета */
-    --c-navy: #0C0C3D;
-    --c-crimson: #9A073D;
+    --c-navy: #0a0a2e;
+    --c-crimson: #8b1a3a;
     --c-crimson-h: #7B0530;
     --c-gold: #D4AF37;
     --c-bg: #F5F5F5;
@@ -27,9 +27,9 @@
     --f-ui: 'Montserrat', sans-serif;
 
     /* Радиусы */
-    --r-xs: 2px;
-    --r-sm: 4px;
-    --r-md: 8px;
+    --r-xs: 0;
+    --r-sm: 0;
+    --r-md: 0;
 
     /* Тени */
     --sh-soft: 0 1px 3px rgba(12, 12, 61, .04), 0 4px 16px rgba(12, 12, 61, .06);
@@ -347,14 +347,14 @@ header {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: #EBF5FB;
-    border: 1px solid #B3D4E8;
-    border-radius: 20px;
+    background: transparent;
+    border: 1px solid var(--c-border);
+    border-radius: 0;
     padding: 4px 12px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .05em;
-    color: #1A6A8A;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    color: var(--c-navy);
     text-transform: uppercase;
 }
 
@@ -364,26 +364,41 @@ header {
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--c-border);
+    position: relative;
+}
+
+.product-title-block::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 48px;
+    height: 2px;
+    background: var(--c-crimson);
 }
 
 .product-name {
     font-family: var(--f-display);
-    font-size: 36px;
-    font-weight: 500;
-    line-height: 1.15;
+    font-size: 42px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.08;
     color: var(--c-navy);
     letter-spacing: -.01em;
 }
 
 .discount-badge {
     flex-shrink: 0;
-    background: var(--c-gold);
+    background: var(--c-crimson);
     color: #fff;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: .05em;
+    letter-spacing: .14em;
+    text-transform: uppercase;
     padding: 6px 12px;
-    border-radius: var(--r-sm);
+    border-radius: 0;
     margin-top: 4px;
     white-space: nowrap;
 }
@@ -557,19 +572,20 @@ header {
     font-family: var(--f-ui);
     font-size: 15px;
     font-weight: 500;
+    letter-spacing: .04em;
     color: var(--c-navy);
     cursor: pointer;
     transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast), transform var(--t-fast);
     user-select: none;
     background: var(--c-surface);
-    border-radius: var(--r-sm);
+    border-radius: 4px;
     -webkit-tap-highlight-color: transparent;
 }
 
 .size-label-btn:hover {
     border-color: var(--c-crimson);
     color: var(--c-crimson);
-    background: #FFF5F7;
+    background: #FFF7F9;
 }
 
 .size-label-btn:active {
@@ -720,7 +736,7 @@ header {
     background: var(--c-crimson);
     color: #fff;
     border: none;
-    border-radius: var(--r-sm);
+    border-radius: 4px;
     font-family: var(--f-ui);
     font-size: 13px;
     font-weight: 700;
@@ -740,7 +756,7 @@ header {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, .2);
+    background: rgba(255, 255, 255, .12);
     opacity: 0;
     transition: opacity var(--t-fast);
 }
@@ -807,6 +823,47 @@ header {
 .add-to-cart.is-success {
     background: var(--c-success);
     pointer-events: none;
+}
+
+.buy-now-btn {
+    width: 100%;
+    height: 48px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--c-navy, #0C0C3D);
+    color: #fff;
+    border: 1px solid var(--c-navy, #0C0C3D);
+    border-radius: 4px;
+    font-family: var(--f-ui);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast), opacity var(--t-fast);
+}
+
+.buy-now-btn:hover:not(:disabled) {
+    background: #1a1a5e;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.buy-now-btn:disabled {
+    background: #F3F4F6;
+    border-color: #E5E7EB;
+    color: #9CA3AF;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.buy-now-btn.is-loading {
+    pointer-events: none;
+    cursor: wait;
+    opacity: 0.85;
 }
 
 @keyframes spin {
@@ -1113,6 +1170,7 @@ header {
     gap: 48px;
     padding: 40px 48px;
     background: var(--c-navy);
+    border-top: 2px solid var(--c-crimson);
     color: #fff;
     margin-bottom: 40px;
 }
@@ -2697,19 +2755,23 @@ header {
 /* ══════════════════════════════════════
    CRO / UX IMPROVEMENTS & SHARP GEOMETRY
 ══════════════════════════════════════ */
-*, *::before, *::after {
-    border-radius: 0 !important;
-}
+/* radius reset removed */
 
 .product-bc {
+    max-width: 1320px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 40px;
-    background: var(--c-surface);
-    border-bottom: 1px solid var(--c-border);
-    font-size: 12px;
+    gap: 10px;
+    padding: 20px 28px 0;
+    background: transparent;
+    border-bottom: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     color: var(--c-muted);
 }
 .product-bc a {
@@ -2718,7 +2780,7 @@ header {
     transition: color var(--t-fast);
 }
 .product-bc a:hover {
-    color: var(--c-crimson);
+    color: var(--c-navy);
 }
 .product-bc .bc-sep {
     color: var(--c-dim);

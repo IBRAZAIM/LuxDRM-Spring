@@ -57,6 +57,12 @@ public class Order {
     @Column(name = "total_price", precision = 12, scale = 2)
     BigDecimal totalPrice;
 
+    @Column(name = "tracking_number", length = 120)
+    String trackingNumber;
+
+    @Column(name = "promo_code", length = 64)
+    String promoCode;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<OrderProduct> orderProducts = new ArrayList<>();
 }

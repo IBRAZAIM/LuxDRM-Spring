@@ -10,6 +10,151 @@
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/cart.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
+    <style>
+        .promo-box {
+            margin: 18px 0 4px;
+            padding: 16px 0 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .promo-label {
+            display: block;
+            font-family: var(--f-ui);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.42);
+            margin-bottom: 10px;
+        }
+        .promo-form {
+            display: flex;
+            gap: 0;
+        }
+        .promo-input {
+            flex: 1;
+            min-width: 0;
+            height: 40px;
+            padding: 0 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: none;
+            background: rgba(255, 255, 255, 0.96);
+            font-family: var(--f-ui);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--c-navy);
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+        .promo-input::placeholder {
+            color: rgba(10, 10, 46, 0.4);
+            font-weight: 500;
+        }
+        .promo-input:focus {
+            background: #fff;
+            border-color: var(--c-gold);
+        }
+        .promo-apply-btn {
+            height: 40px;
+            padding: 0 16px;
+            border: 1px solid var(--c-crimson);
+            background: var(--c-crimson);
+            color: #fff;
+            font-family: var(--f-ui);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background .2s, border-color .2s, color .2s;
+            white-space: nowrap;
+        }
+        .promo-apply-btn:hover {
+            background: var(--c-gold);
+            border-color: var(--c-gold);
+            color: var(--c-navy);
+        }
+        .promo-applied-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid rgba(107, 207, 149, 0.35);
+            background: rgba(107, 207, 149, 0.1);
+            font-family: var(--f-ui);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: var(--c-free);
+        }
+        .promo-applied-bar.hidden {
+            display: none;
+        }
+        .promo-remove-btn {
+            border: none;
+            background: none;
+            color: rgba(255, 255, 255, 0.75);
+            font-family: var(--f-ui);
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 2px 4px;
+            text-decoration: underline;
+            transition: color .2s;
+        }
+        .promo-remove-btn:hover {
+            color: #fff;
+        }
+        .promo-msg {
+            margin-top: 7px;
+            font-family: var(--f-ui);
+            font-size: 11px;
+            min-height: 15px;
+        }
+        .promo-msg.is-error { color: #fca5a5; }
+        .promo-msg.is-success { color: var(--c-free); }
+        .promo-hints {
+            margin-top: 8px;
+            font-family: var(--f-ui);
+            font-size: 10px;
+            letter-spacing: 0.04em;
+            color: rgba(255, 255, 255, 0.45);
+        }
+        .promo-hints code {
+            font-family: var(--f-ui);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--c-gold);
+            cursor: pointer;
+            border-bottom: 1px dashed rgba(201, 168, 76, 0.55);
+            margin-right: 8px;
+            transition: color .2s, border-color .2s;
+        }
+        .promo-hints code:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+        .summary-line.summary-promo .summary-line-label strong {
+            color: var(--c-gold);
+            letter-spacing: 0.1em;
+        }
+        .summary-line.summary-promo .summary-line-val {
+            font-family: var(--f-display);
+            font-size: 17px;
+            font-weight: 400;
+            color: var(--c-gold);
+        }
+        .summary-line.summary-promo .summary-line-val::before {
+            content: '−';
+        }
+        .summary-line.summary-promo.hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body class="cart-page">
 <div th:insert="~{navbar :: navigation-panel}"></div>
@@ -265,12 +410,23 @@
                                   th:attr="data-raw=${subtotalPrice != null ? subtotalPrice : 0}"></span>
                         </div>
                         <div class="summary-line summary-discount"
+                             id="summary-discount-line"
                              th:classappend="${(discountAmount == null or discountAmount == 0) ? ' hidden' : ''}">
                             <span class="summary-line-label">
-                                Скидка <span th:text="${discountPercent != null ? discountPercent : 0} + '%'"></span>
+                                Скидка <span id="sum-discount-pct" th:text="${discountPercent != null ? discountPercent : 0} + '%'"></span>
                             </span>
                             <span class="summary-line-val js-money" id="sum-discount"
                                   th:attr="data-raw=${discountAmount != null ? discountAmount : 0}"></span>
+                        </div>
+                        <div class="summary-line summary-promo"
+                             id="summary-promo-line"
+                             th:classappend="${(promoDiscount == null or promoDiscount == 0) ? ' hidden' : ''}">
+                            <span class="summary-line-label">
+                                Промокод <strong id="sum-promo-code-label" th:text="${promoCode != null ? promoCode : ''}"></strong>
+                                (<span id="sum-promo-pct-label" th:text="'-' + ${(promoPercent != null ? promoPercent : 0)} + '%'"></span>)
+                            </span>
+                            <span class="summary-line-val js-money" id="sum-promo-discount"
+                                  th:attr="data-raw=${promoDiscount != null ? promoDiscount : 0}"></span>
                         </div>
                         <div class="summary-line">
                             <span class="summary-line-label">Доставка</span>
@@ -278,16 +434,44 @@
                         </div>
                     </div>
 
+                    <!-- Promo code block -->
+                    <div class="promo-box">
+                        <span class="promo-label">Промокод</span>
+                        <form th:action="@{/cart/promo/apply}" method="post" class="promo-form" id="promo-apply-form"
+                              th:classappend="${promoCode != null ? ' hidden' : ''}"
+                              th:style="${promoCode != null ? 'display:none;' : ''}">
+                            <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                            <input type="text" name="code" class="promo-input" id="promo-code-input"
+                                   placeholder="Например, LUX10" maxlength="32" autocomplete="off">
+                            <button type="submit" class="promo-apply-btn">Применить</button>
+                        </form>
+                        <div class="promo-applied-bar" id="promo-applied-bar"
+                             th:classappend="${promoCode == null ? ' hidden' : ''}">
+                            <span>Применён: <strong id="promo-applied-code" th:text="${promoCode != null ? promoCode : ''}"></strong> (-<span id="promo-applied-pct" th:text="${promoPercent != null ? promoPercent : 0}"></span>%)</span>
+                            <form th:action="@{/cart/promo/remove}" method="post" id="promo-remove-form" style="display:inline;">
+                                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                                <button type="submit" class="promo-remove-btn">Убрать</button>
+                            </form>
+                        </div>
+                        <div class="promo-hints" id="promo-hints" th:style="${promoCode != null ? 'display:none;' : ''}">
+                            Доступны: <code data-code="LUX10">LUX10</code> <code data-code="WELCOME15">WELCOME15</code> <code data-code="VIP20">VIP20</code>
+                        </div>
+                        <div class="promo-msg" id="promo-msg"
+                             th:classappend="${promoError != null ? ' is-error' : (promoSuccess != null ? ' is-success' : '')}"
+                             th:text="${promoError != null ? promoError : (promoSuccess != null ? promoSuccess : '')}"></div>
+                    </div>
+
                     <!-- Savings badge -->
                     <div class="saving-badge"
-                         th:classappend="${(discountAmount == null or discountAmount == 0) ? ' hidden' : ''}">
+                         id="saving-badge"
+                         th:classappend="${((discountAmount == null ? 0 : discountAmount) + (promoDiscount == null ? 0 : promoDiscount) == 0) ? ' hidden' : ''}">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                         </svg>
                         Ваша экономия&nbsp;
                         <strong class="js-money" id="sum-saving"
-                                th:attr="data-raw=${discountAmount != null ? discountAmount : 0}"></strong>
+                                th:attr="data-raw=${(discountAmount != null ? discountAmount : 0) + (promoDiscount != null ? promoDiscount : 0)}"></strong>
                     </div>
 
                     <!-- Total -->
@@ -381,7 +565,119 @@
             _toastTimer = setTimeout(function () { t.classList.remove('visible'); }, 2400);
         }
 
-        /* ── Qty steppers ────────────────────────────────── */
+        /* ── Ajax helper + UI state sync ────────────────── */
+        function sendCartAjax(form) {
+            return fetch(form.getAttribute('action'), {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: new URLSearchParams(new FormData(form))
+            }).then(function (res) {
+                return res.json().catch(function () { return { ok: false }; });
+            });
+        }
+
+        function applyCartPayload(data) {
+            if (!data || !data.ok) return;
+            if (data.empty) {
+                window.location.reload();
+                return;
+            }
+
+            var headerCount = document.querySelector('.cart-page-count');
+            if (headerCount && data.cartItemsLabel) {
+                headerCount.textContent = data.cartItemsLabel;
+            }
+
+            var sumCount = document.getElementById('sum-count');
+            if (sumCount) sumCount.textContent = (data.cartItemsCount || 0) + ' шт.';
+
+            var sumSubtotal = document.getElementById('sum-subtotal');
+            if (sumSubtotal) sumSubtotal.textContent = money(data.subtotalPrice);
+
+            var discountLine = document.getElementById('summary-discount-line');
+            var sumDiscount = document.getElementById('sum-discount');
+            var sumDiscountPct = document.getElementById('sum-discount-pct');
+            var prodDisc = Number(data.discountAmount || 0);
+            if (discountLine && sumDiscount) {
+                if (prodDisc > 0) {
+                    discountLine.classList.remove('hidden');
+                    sumDiscount.textContent = money(prodDisc);
+                    if (sumDiscountPct) sumDiscountPct.textContent = (data.discountPercent || 0) + '%';
+                } else {
+                    discountLine.classList.add('hidden');
+                }
+            }
+
+            var promoLine = document.getElementById('summary-promo-line');
+            var promoCodeLbl = document.getElementById('sum-promo-code-label');
+            var promoPctLbl = document.getElementById('sum-promo-pct-label');
+            var sumPromoDisc = document.getElementById('sum-promo-discount');
+            var promoApplyForm = document.getElementById('promo-apply-form');
+            var promoAppliedBar = document.getElementById('promo-applied-bar');
+            var promoAppliedCode = document.getElementById('promo-applied-code');
+            var promoAppliedPct = document.getElementById('promo-applied-pct');
+            var promoHints = document.getElementById('promo-hints');
+            var promoDisc = Number(data.promoDiscount || 0);
+
+            if (data.promoCode) {
+                if (promoLine) promoLine.classList.remove('hidden');
+                if (promoCodeLbl) promoCodeLbl.textContent = data.promoCode;
+                if (promoPctLbl) promoPctLbl.textContent = '-' + (data.promoPercent || 0) + '%';
+                if (sumPromoDisc) sumPromoDisc.textContent = money(promoDisc);
+                if (promoApplyForm) promoApplyForm.style.display = 'none';
+                if (promoHints) promoHints.style.display = 'none';
+                if (promoAppliedBar) promoAppliedBar.classList.remove('hidden');
+                if (promoAppliedCode) promoAppliedCode.textContent = data.promoCode;
+                if (promoAppliedPct) promoAppliedPct.textContent = data.promoPercent || 0;
+            } else {
+                if (promoLine) promoLine.classList.add('hidden');
+                if (promoApplyForm) promoApplyForm.style.display = '';
+                if (promoHints) promoHints.style.display = '';
+                if (promoAppliedBar) promoAppliedBar.classList.add('hidden');
+            }
+
+            var savingBadge = document.getElementById('saving-badge');
+            var sumSaving = document.getElementById('sum-saving');
+            var totalSaved = prodDisc + promoDisc;
+            if (savingBadge && sumSaving) {
+                if (totalSaved > 0) {
+                    savingBadge.classList.remove('hidden');
+                    sumSaving.textContent = money(totalSaved);
+                } else {
+                    savingBadge.classList.add('hidden');
+                }
+            }
+
+            var sumFinal = document.getElementById('sum-final');
+            if (sumFinal) sumFinal.textContent = money(data.finalPrice);
+
+            if (data.itemId != null) {
+                document.querySelectorAll('[data-id="' + data.itemId + '"]').forEach(function (node) {
+                    node.classList.remove('is-updating');
+                    var inp = node.querySelector('input[name="quantity"]');
+                    var val = node.querySelector('.qty-val');
+                    var minus = node.querySelector('.qty-minus');
+                    var plus = node.querySelector('.qty-plus');
+                    if (inp) inp.value = data.itemQuantity;
+                    if (val) val.textContent = data.itemQuantity;
+                    if (minus) minus.disabled = data.itemQuantity <= MIN;
+                    if (plus) plus.disabled = data.itemQuantity >= MAX;
+                    var rowTotal = node.querySelector('.cart-price-total, .card-price');
+                    if (rowTotal && data.itemLineSubtotal != null) {
+                        rowTotal.textContent = money(data.itemLineSubtotal);
+                    }
+                });
+            }
+
+            document.querySelectorAll('.cart-count, .badge-cart-count').forEach(function (el) {
+                el.textContent = data.cartItemsCount;
+            });
+        }
+
+        /* ── Qty steppers (AJAX) ─────────────────────────── */
         document.querySelectorAll('.qty-form').forEach(function (form) {
             var inp   = form.querySelector('input[name="quantity"]');
             var minus = form.querySelector('.qty-minus');
@@ -402,16 +698,112 @@
                 if (nxt < MIN || nxt > MAX) return;
                 inp.value = nxt;
                 sync();
-                var row = form.closest('.cart-row, .cart-card');
-                if (row) row.classList.add('is-updating');
-                toast('Обновляем корзину…');
-                form.submit();
+                var itemId = form.dataset.itemId;
+                document.querySelectorAll('[data-id="' + itemId + '"]').forEach(function (node) {
+                    node.classList.add('is-updating');
+                });
+                sendCartAjax(form).then(function (data) {
+                    if (data && data.ok) {
+                        applyCartPayload(data);
+                        toast('Количество обновлено');
+                    } else {
+                        form.submit();
+                    }
+                }).catch(function () {
+                    form.submit();
+                });
             }
 
             minus.addEventListener('click', function (e) { e.preventDefault(); step(-1); });
             plus.addEventListener('click',  function (e) { e.preventDefault(); step(+1); });
             sync();
         });
+
+        /* ── AJAX row / card delete ──────────────────────── */
+        document.querySelectorAll('.row-confirm-overlay form, .card-confirm-overlay form').forEach(function (delForm) {
+            delForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var holder = delForm.closest('.cart-row, .cart-card');
+                var itemId = holder ? holder.dataset.id : null;
+                sendCartAjax(delForm).then(function (data) {
+                    if (data && data.ok) {
+                        if (itemId) {
+                            document.querySelectorAll('[data-id="' + itemId + '"]').forEach(function (n) { n.remove(); });
+                        }
+                        applyCartPayload(data);
+                        toast('Товар удалён из корзины');
+                    } else {
+                        delForm.submit();
+                    }
+                }).catch(function () {
+                    delForm.submit();
+                });
+            });
+        });
+
+        /* ── AJAX Promo code apply & remove ──────────────── */
+        var promoApplyForm = document.getElementById('promo-apply-form');
+        var promoRemoveForm = document.getElementById('promo-remove-form');
+        var promoCodeInput = document.getElementById('promo-code-input');
+        var promoMsg = document.getElementById('promo-msg');
+
+        document.querySelectorAll('#promo-hints code[data-code]').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                if (promoCodeInput) promoCodeInput.value = chip.dataset.code;
+                if (promoApplyForm) promoApplyForm.requestSubmit();
+            });
+        });
+
+        if (promoApplyForm) {
+            promoApplyForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!promoCodeInput || !promoCodeInput.value.trim()) {
+                    if (promoMsg) {
+                        promoMsg.className = 'promo-msg is-error';
+                        promoMsg.textContent = 'Введите промокод.';
+                    }
+                    return;
+                }
+                sendCartAjax(promoApplyForm).then(function (data) {
+                    if (data && data.ok) {
+                        applyCartPayload(data);
+                        if (promoMsg) {
+                            promoMsg.className = 'promo-msg is-success';
+                            promoMsg.textContent = data.message || 'Промокод применён!';
+                        }
+                        toast('Промокод применён');
+                    } else {
+                        if (promoMsg) {
+                            promoMsg.className = 'promo-msg is-error';
+                            promoMsg.textContent = (data && data.message) || 'Промокод не найден.';
+                        }
+                    }
+                }).catch(function () {
+                    promoApplyForm.submit();
+                });
+            });
+        }
+
+        if (promoRemoveForm) {
+            promoRemoveForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                sendCartAjax(promoRemoveForm).then(function (data) {
+                    if (data && data.ok) {
+                        applyCartPayload(data);
+                        if (promoCodeInput) promoCodeInput.value = '';
+                        if (promoMsg) {
+                            promoMsg.className = 'promo-msg is-success';
+                            promoMsg.textContent = data.message || 'Промокод отменён.';
+                        }
+                        toast('Промокод отменён');
+                    } else {
+                        promoRemoveForm.submit();
+                    }
+                }).catch(function () {
+                    promoRemoveForm.submit();
+                });
+            });
+        }
 
         /* ── Inline delete — desktop rows ────────────────── */
         document.querySelectorAll('.cart-row').forEach(function (row) {

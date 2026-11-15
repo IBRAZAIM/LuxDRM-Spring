@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Промокоды — LUXDRM Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <style>
+        body {
+            background: #f6f5f3;
+            color: #111111;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+        }
+        .promos-shell {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 36px 28px 80px;
+        }
+        .promos-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e4e1db;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .promos-head::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: #8b1a3a;
+        }
+        .promos-eyebrow {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #8b1a3a;
+            margin-bottom: 8px;
+        }
+        .promos-title {
+            margin: 0;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(34px, 3.8vw, 50px);
+            font-weight: 300;
+            font-style: italic;
+            color: #0a0a2e;
+            line-height: 1.05;
+        }
+        .promo-alert {
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+        .promo-alert--ok {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+        .promo-alert--err {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+        .promo-panel {
+            background: #ffffff;
+            border: 1px solid #e4e1db;
+            padding: 28px 30px;
+            margin-bottom: 24px;
+        }
+        .promo-panel-title {
+            margin: 0 0 18px;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 28px;
+            font-weight: 300;
+            font-style: italic;
+            color: #0a0a2e;
+        }
+        .promo-form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .pf-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .pf-group--full {
+            grid-column: 1 / -1;
+        }
+        .pf-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #5a5a5a;
+        }
+        .pf-input {
+            height: 44px;
+            padding: 0 14px;
+            border: 1px solid #e4e1db;
+            background: #faf9f7;
+            font-family: inherit;
+            font-size: 13px;
+            color: #111111;
+            box-sizing: border-box;
+        }
+        .pf-input:focus {
+            outline: none;
+            border-color: #0a0a2e;
+            background: #ffffff;
+        }
+        .pf-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+        .pf-submit {
+            height: 46px;
+            padding: 0 28px;
+            background: #0a0a2e;
+            color: #ffffff;
+            border: none;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pf-submit:hover {
+            background: #8b1a3a;
+        }
+        .promo-table-wrap {
+            overflow-x: auto;
+        }
+        .promo-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .promo-table th {
+            text-align: left;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #9a9a9a;
+            padding: 14px 12px;
+            border-bottom: 1.5px solid #0a0a2e;
+        }
+        .promo-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #e4e1db;
+            vertical-align: middle;
+        }
+        .promo-table tbody tr:hover td {
+            background: #faf9f7;
+        }
+        .code-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #0a0a2e;
+            color: #fff;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 0;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .status-pill--active {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+        .status-pill--off {
+            background: #faf9f7;
+            border: 1px solid #e4e1db;
+            color: #5a5a5a;
+        }
+        .tbl-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .btn-mini {
+            height: 34px;
+            padding: 0 14px;
+            border: 1px solid #0a0a2e;
+            background: transparent;
+            color: #0a0a2e;
+            font-family: inherit;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-mini:hover {
+            background: #0a0a2e;
+            color: #ffffff;
+        }
+        .btn-mini--del {
+            color: #8b1a3a;
+            border-color: #fecaca;
+        }
+        .btn-mini--del:hover {
+            background: #8b1a3a;
+            border-color: #8b1a3a;
+            color: #ffffff;
+        }
+        @media (max-width: 900px) {
+            .promo-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
+
+<main class="promos-shell">
+    <div class="promos-head">
+        <div>
+            <div class="promos-eyebrow">Администрирование</div>
+            <h1 class="promos-title">Управление промокодами</h1>
+        </div>
+        <a th:href="@{/orders}" style="color:#0c0c3d;font-size:13px;font-weight:600;text-decoration:none;">← К заказам</a>
+    </div>
+
+    <div th:if="${successMessage}" class="promo-alert promo-alert--ok" role="status" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="promo-alert promo-alert--err" role="alert" th:text="${errorMessage}"></div>
+
+    <!-- Форма создания / обновления -->
+    <section class="promo-panel">
+        <h2 class="promo-panel-title">Создать или обновить промокод</h2>
+        <form th:action="@{/promos/save}" method="post" class="promo-form-grid">
+            <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+
+            <div class="pf-group">
+                <label class="pf-label" for="code">Код (латиница) *</label>
+                <input type="text" id="code" name="code" class="pf-input" placeholder="SPRING25" minlength="3" maxlength="64" required style="text-transform:uppercase;">
+            </div>
+
+            <div class="pf-group">
+                <label class="pf-label" for="discountPercent">Скидка (%) *</label>
+                <input type="number" id="discountPercent" name="discountPercent" class="pf-input" min="1" max="90" value="10" required>
+            </div>
+
+            <div class="pf-group">
+                <label class="pf-label" for="minOrderAmount">Мин. сумма заказа (₸)</label>
+                <input type="number" id="minOrderAmount" name="minOrderAmount" class="pf-input" min="0" step="100" value="0">
+            </div>
+
+            <div class="pf-group">
+                <label class="pf-label" for="maxUses">Лимит использований (пусто — без лимита)</label>
+                <input type="number" id="maxUses" name="maxUses" class="pf-input" min="1" placeholder="Например: 100">
+            </div>
+
+            <div class="pf-group">
+                <label class="pf-label" for="expiresAt">Действует до (необязательно)</label>
+                <input type="datetime-local" id="expiresAt" name="expiresAt" class="pf-input">
+            </div>
+
+            <div class="pf-group">
+                <label class="pf-label" for="description">Описание</label>
+                <input type="text" id="description" name="description" class="pf-input" maxlength="255" placeholder="Весенняя акция">
+            </div>
+
+            <div class="pf-group pf-group--full" style="flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                <label class="pf-check">
+                    <input type="checkbox" name="active" value="true" checked>
+                    <span>Промокод активен сразу после сохранения</span>
+                </label>
+                <button type="submit" class="pf-submit">Сохранить промокод</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Список промокодов -->
+    <section class="promo-panel">
+        <h2 class="promo-panel-title">Существующие промокоды</h2>
+        <div class="promo-table-wrap" th:if="${promos != null and !#lists.isEmpty(promos)}">
+            <table class="promo-table">
+                <thead>
+                <tr>
+                    <th>Код</th>
+                    <th>Скидка</th>
+                    <th>Описание</th>
+                    <th>Мин. сумма</th>
+                    <th>Использований</th>
+                    <th>Срок действия</th>
+                    <th>Статус</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="promo : ${promos}">
+                    <td><span class="code-badge" th:text="${promo.code}">LUX10</span></td>
+                    <td><strong th:text="${promo.discountPercent} + '%'">10%</strong></td>
+                    <td th:text="${promo.description != null ? promo.description : '—'}"></td>
+                    <td th:text="${promo.minOrderAmount != null and promo.minOrderAmount > 0 ? promo.minOrderAmount + ' ₸' : 'Без порога'}"></td>
+                    <td th:text="${promo.usedCount + (promo.maxUses != null ? ' / ' + promo.maxUses : ' / ∞')}"></td>
+                    <td th:text="${promo.expiresAt != null ? #temporals.format(promo.expiresAt, 'dd.MM.yyyy HH:mm') : 'Бессрочно'}"></td>
+                    <td>
+                        <span class="status-pill"
+                              th:classappend="${promo.active} ? ' status-pill--active' : ' status-pill--off'"
+                              th:text="${promo.active} ? 'Активен' : 'Отключён'"></span>
+                    </td>
+                    <td>
+                        <div class="tbl-actions">
+                            <form th:action="@{/promos/{id}/toggle(id=${promo.id})}" method="post" style="margin:0;">
+                                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                                <button type="submit" class="btn-mini" th:text="${promo.active} ? 'Отключить' : 'Включить'"></button>
+                            </form>
+                            <form th:action="@{/promos/{id}/delete(id=${promo.id})}" method="post"
+                                  data-confirm="Удалить этот промокод?" style="margin:0;">
+                                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                                <button type="submit" class="btn-mini btn-mini--del">Удалить</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p th:if="${promos == null or #lists.isEmpty(promos)}" style="color:#6b7280;font-size:13px;">Промокоды пока не добавлены.</p>
+    </section>
+</main>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
+</body>
+</html>

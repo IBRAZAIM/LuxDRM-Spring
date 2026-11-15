@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Избранное — UXD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <link rel="stylesheet" th:href="@{/product-card.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            background-color: #f6f5f3;
+            color: #111111;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .wishlist-main {
+            flex: 1;
+            max-width: 1320px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 28px 80px;
+            box-sizing: border-box;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #9a9a9a;
+            margin-bottom: 28px;
+        }
+        .breadcrumb a {
+            color: #9a9a9a;
+            text-decoration: none;
+            transition: color 0.18s;
+        }
+        .breadcrumb a:hover {
+            color: #0a0a2e;
+        }
+        .breadcrumb span.sep {
+            font-size: 8px;
+            opacity: 0.6;
+        }
+        .breadcrumb span.current {
+            color: #0a0a2e;
+        }
+        .wishlist-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e4e1db;
+            position: relative;
+        }
+        .wishlist-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: #8b1a3a;
+        }
+        .wishlist-title-wrap {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+        .wishlist-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(36px, 4vw, 54px);
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            margin: 0;
+            color: #0a0a2e;
+        }
+        .wishlist-count {
+            font-size: 11px;
+            color: #9a9a9a;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+        .wishlist-clear-btn {
+            background: transparent;
+            border: 1.5px solid #0a0a2e;
+            border-radius: 0;
+            padding: 11px 22px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #0a0a2e;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .wishlist-clear-btn:hover {
+            background: #8b1a3a;
+            border-color: #8b1a3a;
+            color: #ffffff;
+        }
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        .wishlist-grid .uxd-card {
+            display: none;
+        }
+        .wishlist-grid .uxd-card.is-in-wishlist {
+            display: flex;
+        }
+        .wishlist-empty {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 88px 32px;
+            background: #ffffff;
+            border: 1px solid #e4e1db;
+            border-radius: 0;
+        }
+        .wishlist-empty.is-visible {
+            display: flex;
+        }
+        .wishlist-empty__icon {
+            width: 88px;
+            height: 88px;
+            border: 1px solid #e4e1db;
+            border-radius: 0;
+            background: #ffffff;
+            color: #0a0a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            position: relative;
+        }
+        .wishlist-empty__icon::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border: 1px solid #e4e1db;
+        }
+        .wishlist-empty__title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 40px;
+            font-weight: 300;
+            font-style: italic;
+            margin: 0 0 12px;
+            color: #0a0a2e;
+        }
+        .wishlist-empty__desc {
+            font-size: 13px;
+            color: #5a5a5a;
+            max-width: 400px;
+            margin: 0 0 36px;
+            line-height: 1.7;
+        }
+        .wishlist-empty__cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 36px;
+            background: transparent;
+            border: 1.5px solid #0a0a2e;
+            color: #0a0a2e;
+            text-decoration: none;
+            border-radius: 0;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            transition: background 0.2s, color 0.2s;
+        }
+        .wishlist-empty__cta:hover {
+            background: #0a0a2e;
+            color: #ffffff;
+        }
+        @media (max-width: 1024px) {
+            .wishlist-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .wishlist-main {
+                padding: 20px 16px 56px;
+            }
+            .wishlist-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
+
+<main class="wishlist-main">
+    <nav class="breadcrumb" aria-label="Хлебные крошки">
+        <a th:href="@{/}">Главная</a>
+        <span class="sep">·</span>
+        <span class="current">Избранное</span>
+    </nav>
+
+    <div class="wishlist-header">
+        <div class="wishlist-title-wrap">
+            <h1 class="wishlist-title">Избранное</h1>
+            <span class="wishlist-count" id="wishlistPageCount">0 товаров</span>
+        </div>
+        <button type="button" class="wishlist-clear-btn" id="clearWishlistBtn" style="display: none;">
+            Очистить список
+        </button>
+    </div>
+
+    <div class="wishlist-empty" id="wishlistEmpty">
+        <div class="wishlist-empty__icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+        </div>
+        <h2 class="wishlist-empty__title">В избранном пока пусто</h2>
+        <p class="wishlist-empty__desc">Нажимайте на иконку сердечка на карточках понравившихся товаров, чтобы сохранить их здесь.</p>
+        <a th:href="@{/products}" class="wishlist-empty__cta">Перейти в каталог</a>
+    </div>
+
+    <div class="wishlist-grid" id="wishlistGrid">
+        <th:block th:each="product : ${products}">
+            <th:block th:replace="~{fragments/product-card :: productCard(product=${product})}"></th:block>
+        </th:block>
+    </div>
+</main>
+
+<div th:insert="~{footer :: footer}"></div>
+
+<script th:src="@{/js/navbar-component.js}" defer></script>
+<script th:src="@{/js/product-card.js}" defer></script>
+<script>
+    (function () {
+        var grid = document.getElementById('wishlistGrid');
+        var emptyBlock = document.getElementById('wishlistEmpty');
+        var countLabel = document.getElementById('wishlistPageCount');
+        var clearBtn = document.getElementById('clearWishlistBtn');
+
+        function pluralize(n) {
+            var mod10 = n % 10;
+            var mod100 = n % 100;
+            if (mod10 === 1 && mod100 !== 11) return n + ' товар';
+            if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return n + ' товара';
+            return n + ' товаров';
+        }
+
+        function refreshWishlistView() {
+            var ids = window.UXDWishlist ? window.UXDWishlist.getIds() : [];
+            var cards = grid ? grid.querySelectorAll('.uxd-card') : [];
+            var visibleCount = 0;
+
+            cards.forEach(function (card) {
+                var pid = String(card.getAttribute('data-id') || '');
+                if (ids.indexOf(pid) !== -1) {
+                    card.classList.add('is-in-wishlist');
+                    visibleCount++;
+                } else {
+                    card.classList.remove('is-in-wishlist');
+                }
+            });
+
+            if (countLabel) {
+                countLabel.textContent = pluralize(visibleCount);
+            }
+            if (emptyBlock) {
+                emptyBlock.classList.toggle('is-visible', visibleCount === 0);
+            }
+            if (clearBtn) {
+                clearBtn.style.display = visibleCount > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                if (window.UXDWishlist && typeof window.UXDWishlist.clear === 'function') {
+                    window.UXDWishlist.clear();
+                } else if (window.UXDWishlist) {
+                    window.UXDWishlist.saveIds([]);
+                }
+                document.querySelectorAll('.uxd-card__wish.is-liked').forEach(function (btn) {
+                    btn.classList.remove('is-liked');
+                    btn.setAttribute('aria-pressed', 'false');
+                });
+                refreshWishlistView();
+            });
+        }
+
+        window.addEventListener('uxd:wishlist-change', refreshWishlistView);
+        document.addEventListener('DOMContentLoaded', refreshWishlistView);
+        refreshWishlistView();
+    })();
+</script>
+</body>
+</html>
+

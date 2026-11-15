@@ -6,11 +6,13 @@
             finalPrice=${product.finalPrice},
             catName=${product.category != null and product.category.name != null ? product.category.name : 'Коллекция UXD'},
             img=${(product.images != null and !#lists.isEmpty(product.images) and product.images[0] != null and product.images[0].image != null and !#strings.isEmpty(product.images[0].image)) ? product.images[0].image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80'},
+            img2=${(product.images != null and #lists.size(product.images) > 1 and product.images[1] != null and product.images[1].image != null and !#strings.isEmpty(product.images[1].image)) ? product.images[1].image : null},
             hasCustomSizes=${product.sizes != null and !#lists.isEmpty(product.sizes)}
          " th:attr="
             data-id=${product.id},
             data-name=${product.name},
             data-cat=${catName},
+            data-cat-id=${product.category != null ? product.category.id : ''},
             data-price=${rawPrice},
             data-final-price=${finalPrice},
             data-disc=${discInt},
@@ -18,14 +20,26 @@
          ">
 
     <!-- ── ФОТО + БЕЙДЖ ── -->
-    <a th:href="@{'/products/' + ${product.id}}" class="uxd-card__media" th:attr="aria-label=${product.name}">
-        <img th:src="${img}" th:alt="${product.name}" class="uxd-card__img" loading="lazy">
+    <a th:href="@{'/products/' + ${product.id}}" class="uxd-card__media" th:classappend="${img2 != null} ? 'has-second-img' : ''" th:attr="aria-label=${product.name}">
+        <img th:src="${img}" th:alt="${product.name}" class="uxd-card__img uxd-card__img--primary" loading="lazy">
+        <img th:if="${img2 != null}" th:src="${img2}" th:alt="${product.name}" class="uxd-card__img uxd-card__img--secondary" loading="lazy">
         <span class="uxd-card__badge" th:if="${hasDisc}" th:text="'−' + ${discInt} + '%'">−15%</span>
     </a>
 
+    <button type="button" class="uxd-card__wish" aria-label="Добавить в избранное"
+        th:attr="data-product-id=${product.id}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+    </button>
+
     <!-- ── ИНФОРМАЦИЯ ── -->
     <div class="uxd-card__body">
-        <span class="uxd-card__category" th:text="${catName}">Пижамы</span>
+        <div class="uxd-card__meta">
+            <span class="uxd-card__category" th:text="${catName}">Пижамы</span>
+        </div>
 
         <a th:href="@{'/products/' + ${product.id}}" class="uxd-card__title" th:text="${product.name}">Название
             модели</a>
@@ -33,13 +47,19 @@
         <div class="uxd-card__price" th:classappend="${hasDisc} ? 'uxd-card__price--sale' : ''">
             <span class="uxd-card__price-current"
                 th:text="${#numbers.formatInteger(finalPrice.intValue(), 1, 'WHITESPACE')} + ' ₸'">18 900 ₸</span>
-            <span class="uxd-card__price-old" th:if="${hasDisc}"
-                th:text="${#numbers.formatInteger(rawPrice.intValue(), 1, 'WHITESPACE')} + ' ₸'">22 000 ₸</span>
+            <span class="uxd-card__price-old" th:if="${hasDisc}">
+                <span class="uxd-card__price-old-num" th:text="${#numbers.formatInteger(rawPrice.intValue(), 1, 'WHITESPACE')}">22 000</span>&nbsp;₸
+            </span>
         </div>
 
         <button type="button" class="uxd-card__cart" aria-expanded="false"
             th:attr="aria-controls='uxd-sizes-' + ${product.id}">
-            В корзину
+            <svg class="uxd-card__cart-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>В корзину</span>
         </button>
     </div>
 
@@ -47,7 +67,7 @@
     <div class="uxd-card__sizes" th:id="'uxd-sizes-' + ${product.id}" role="dialog" aria-label="Выберите размер">
         <div class="uxd-card__sizes-head">
             <span>Выберите размер</span>
-            <button type="button" class="uxd-card__sizes-close" aria-label="Закрыть">×</button>
+            <button type="button" class="uxd-card__sizes-close" aria-label="Закрыть">✕</button>
         </div>
 
         <form th:action="@{'/cart/' + ${product.id}}" method="post">

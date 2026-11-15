@@ -6,7 +6,7 @@
     <title>Мои заказы — UXD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/myOrders.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
@@ -20,9 +20,18 @@
 
         <nav class="breadcrumb" aria-label="Навигация">
             <a th:href="@{/}">Главная</a>
-            <span class="sep">/</span>
+            <span class="sep">·</span>
             <span class="cur">Мои заказы</span>
         </nav>
+
+        <div th:if="${successMessage}" class="alert alert-success" role="status"
+             style="background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;padding:12px 16px;border-radius:0;margin-bottom:18px;font-size:13px;font-weight:500;">
+            <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error" role="alert"
+             style="background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;padding:12px 16px;border-radius:0;margin-bottom:18px;font-size:13px;font-weight:500;">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+        </div>
 
         <header class="page-head">
             <div>
@@ -61,11 +70,15 @@
                 <tr th:each="order : ${orders}"
                     class="order-item"
                     th:with="stName=${order.status != null ? order.status.name() : 'PENDING'},
-                             stDisplay=${order.status != null ? order.status.displayName : 'В ожидании'}"
+                             stDisplay=${order.status != null ? order.status.displayName : 'В ожидании'},
+                             tx=${paymentTxMap != null ? paymentTxMap[order.id] : null}"
                     th:attr="data-status=${stName}">
                     <td class="order-number">
                         <a th:href="@{/orders/{id}(id=${order.id})}" class="order-num-link" th:text="'№ 00' + ${order.id}">№ 001</a>
                         <span class="serial-sub" th:if="${order.serialNumber != null}" th:text="${order.serialNumber}"></span>
+                        <span class="serial-sub" th:if="${order.trackingNumber != null and !#strings.isEmpty(order.trackingNumber)}"
+                              th:text="'Трек: ' + ${order.trackingNumber}"
+                              style="color:#1E3A8A;font-weight:600;"></span>
                     </td>
                     <td class="order-items-preview">
                         <div th:if="${order.orderProducts != null and !#lists.isEmpty(order.orderProducts)}" class="preview-list">
@@ -85,12 +98,32 @@
                               th:classappend="'status--' + ${#strings.toLowerCase(stName)}"
                               th:attr="data-status=${stDisplay}"
                               th:text="${stDisplay}">В ожидании</span>
+                        <span th:if="${tx != null}"
+                              th:text="${tx.paymentStatus.displayName}"
+                              th:style="${'display:inline-block;margin-top:4px;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 8px;border-radius:0;' + (tx.paymentStatus.name() == 'PAID' ? 'background:#ECFDF5;color:#065F46;' : (tx.paymentStatus.name() == 'FAILED' ? 'background:#FEF2F2;color:#991B1B;' : (tx.paymentStatus.name() == 'AWAITING_PAYMENT' ? 'background:#FFFBEB;color:#92400E;' : 'background:#faf9f7;color:#5a5a5a;')))}"></span>
                     </td>
                     <td class="total js-money"
                         th:attr="data-raw=${order.totalPrice != null ? order.totalPrice : 0}"
                         th:text="${(order.totalPrice != null ? order.totalPrice : 0) + ' ₸'}">0 ₸</td>
-                    <td class="order-detail">
+                    <td class="order-detail" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                        <a th:if="${stName == 'PENDING' and tx != null and (tx.paymentStatus.name() == 'AWAITING_PAYMENT' or tx.paymentStatus.name() == 'FAILED')}"
+                           th:href="@{/orders/{id}/pay(id=${order.id})}"
+                           style="background:#8b1a3a;color:#FFFFFF;text-decoration:none;padding:9px 14px;border-radius:0;font-size:9.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;">
+                            Оплатить
+                        </a>
                         <a th:href="@{/orders/{id}(id=${order.id})}" class="view-order-btn">Посмотреть заказ</a>
+                        <form th:if="${stName == 'PENDING'}"
+                              th:action="@{/orders/{id}/cancel(id=${order.id})}"
+                              method="post"
+                              data-confirm="Вы уверены, что хотите отменить этот заказ?"
+                              style="margin:0;">
+                            <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+                            <input type="hidden" name="redirectTo" value="/orders">
+                            <button type="submit"
+                                    style="background:transparent;border:1px solid #FECACA;color:#8b1a3a;padding:8px 14px;border-radius:0;font-size:9.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;">
+                                Отменить
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

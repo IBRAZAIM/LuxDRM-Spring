@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -48,37 +49,41 @@ public class ProductService implements AbstractService<Product> {
     }
 
     @Transactional
-    public void create(Product product, List<String> values, List<Long> optionsIds, Long categoryId, List<String> imageUrls, List<String> sizes) {
+    public void create(
+            Product product,
+            List<String> values,
+            List<Long> optionsIds,
+            Long categoryId,
+            List<MultipartFile> imageFiles,
+            List<String> sizes
+    ) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
 
         product.setCategory(category);
 
-        // Устанавливаем рейтинг и скидку по умолчанию
         if (product.getRating() <= 0) {
             product.setRating(5.0);
         }
-        if (product.getDiscount() == null) {
+        if (product.getDiscount() == null || product.getDiscount().compareTo(BigDecimal.ZERO) < 0) {
             product.setDiscount(BigDecimal.ZERO);
+        } else if (product.getDiscount().compareTo(new BigDecimal("99")) > 0) {
+            product.setDiscount(new BigDecimal("99"));
         }
         if (product.getStock() < 0) {
             product.setStock(0);
         }
 
-        // Сохраняем продукт, чтобы получить ID
         Product savedProduct = productRepository.save(product);
 
-        // Создаем характеристики
         if (optionsIds != null && !optionsIds.isEmpty()) {
             createValues(savedProduct, values != null ? values : List.of(), optionsIds);
         }
 
-        // Создаем изображения
-        if (imageUrls != null && !imageUrls.isEmpty()) {
-            productImageService.create(savedProduct, imageUrls);
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            productImageService.saveUploadedFiles(savedProduct, imageFiles);
         }
 
-        // Создаем размеры
         if (sizes != null && !sizes.isEmpty()) {
             productSizeService.saveSizes(savedProduct, sizes);
         }
@@ -89,7 +94,7 @@ public class ProductService implements AbstractService<Product> {
         List<Value> toSave = new ArrayList<>(options.size());
 
         for (int i = 0; i < options.size(); i++) {
-            String valueText = (i < values.size()) ? values.get(i) : "";
+            String valueText = (i < values.size() && values.get(i) != null) ? values.get(i).trim() : "";
 
             Value value = new Value();
             value.setName(valueText);
@@ -132,12 +137,36 @@ public class ProductService implements AbstractService<Product> {
     }
 
     @Transactional
-    public void update(long id, String name, BigDecimal price, Integer stock, List<Long> optionIds, List<String> values) {
+    public void update(
+            long id,
+            String name,
+            BigDecimal price,
+            BigDecimal discount,
+            Integer stock,
+            String description,
+            List<Long> optionIds,
+            List<String> values,
+            List<String> sizes,
+            List<String> existingImages,
+            List<MultipartFile> imageFiles
+    ) {
         Product existingProduct = findById(id);
         existingProduct.setName(name);
         existingProduct.setPrice(price);
+        if (discount != null) {
+            if (discount.compareTo(BigDecimal.ZERO) < 0) {
+                existingProduct.setDiscount(BigDecimal.ZERO);
+            } else if (discount.compareTo(new BigDecimal("99")) > 0) {
+                existingProduct.setDiscount(new BigDecimal("99"));
+            } else {
+                existingProduct.setDiscount(discount);
+            }
+        }
         if (stock != null) {
             existingProduct.setStock(Math.max(0, stock));
+        }
+        if (description != null) {
+            existingProduct.setDescription(description.trim());
         }
 
         productRepository.save(existingProduct);
@@ -166,11 +195,17 @@ public class ProductService implements AbstractService<Product> {
                     newValue.setOption(option);
                     return newValue;
                 });
-                value.setName(i < values.size() ? values.get(i) : "");
+                value.setName(i < values.size() && values.get(i) != null ? values.get(i).trim() : "");
                 toSave.add(value);
             }
             valueRepository.saveAll(toSave);
         }
+
+        if (sizes != null) {
+            productSizeService.replaceSizes(existingProduct, sizes);
+        }
+
+        productImageService.replaceImages(existingProduct, existingImages, imageFiles);
     }
 
     public Map<Option, Optional<Value>> getOptions(Product product) {

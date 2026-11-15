@@ -37,6 +37,27 @@ public class User {
 
     String surname;
 
+    @Column(length = 40)
+    String phone;
+
+    @Column(length = 100)
+    String country;
+
+    @Column(length = 100)
+    String city;
+
+    @Column(length = 255)
+    String address;
+
+    @Column(name = "postal_code", length = 32)
+    String postalCode;
+
+    @Column(name = "reset_token", length = 128)
+    String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    LocalDateTime resetTokenExpiry;
+
     @Column(name = "registration_date", updatable = false)
     @CreationTimestamp
     LocalDateTime registrationDate;

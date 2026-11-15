@@ -8,7 +8,7 @@
     <title th:text="'Заказ №00' + ${order.id} + ' — UXD'">Детали заказа — UXD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/orderPage.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
@@ -26,10 +26,10 @@
         <div class="detail-topbar">
             <nav class="breadcrumb" aria-label="Навигация">
                 <a th:href="@{/}">Главная</a>
-                <span class="sep">/</span>
+                <span class="sep">·</span>
                 <a th:href="@{/orders}" sec:authorize="hasAnyRole('admin', 'moder')">Все заказы</a>
                 <a th:href="@{/orders}" sec:authorize="!hasAnyRole('admin', 'moder')">Мои заказы</a>
-                <span class="sep">/</span>
+                <span class="sep">·</span>
                 <span class="cur" th:text="'Заказ №00' + ${order.id}">Заказ №001</span>
             </nav>
 
@@ -85,7 +85,29 @@
                                 th:selected="${order.status == s}">
                         </option>
                     </select>
+                    <input type="text" name="trackingNumber" th:value="${order.trackingNumber}"
+                           placeholder="Трек-номер доставки" class="detail-status-select" style="min-width:170px;">
                     <button type="submit" class="detail-status-btn">Обновить статус</button>
+                </form>
+            </div>
+
+            <!-- Customer Pay & Cancel Buttons when PENDING -->
+            <div sec:authorize="!hasAnyRole('admin', 'moder')" th:if="${stName == 'PENDING'}"
+                 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <a th:if="${paymentTx != null and (paymentTx.paymentStatus.name() == 'AWAITING_PAYMENT' or paymentTx.paymentStatus.name() == 'FAILED')}"
+                   th:href="@{/orders/{id}/pay(id=${order.id})}"
+                   style="background:#8b1a3a;color:#FFFFFF;text-decoration:none;padding:11px 20px;border-radius:0;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px;">
+                    <i class="fas fa-lock"></i> Оплатить онлайн
+                </a>
+                <form th:action="@{/orders/{id}/cancel(id=${order.id})}"
+                      method="post"
+                      data-confirm="Вы уверены, что хотите отменить этот заказ?"
+                      style="margin:0;">
+                    <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+                    <button type="submit"
+                            style="background:transparent;border:1px solid #FECACA;color:#8b1a3a;padding:10px 20px;border-radius:0;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;">
+                        <i class="fas fa-times-circle"></i> Отменить заказ
+                    </button>
                 </form>
             </div>
         </header>
@@ -254,10 +276,37 @@
                                   th:text="${order.deliveryMethod == 'premium' ? 'Премиум+ (3–5 дней)' : 'Стандарт (5–7 дней)'}"></span>
                         </div>
 
+                        <div class="info-row tracking" th:if="${order.trackingNumber != null and !#strings.isEmpty(order.trackingNumber)}">
+                            <span class="option"><i class="fas fa-route"></i> Трек-номер</span>
+                            <span class="value mono" style="font-weight:700;color:#c9a84c;" th:text="${order.trackingNumber}"></span>
+                        </div>
+
+                        <div class="info-row promo" th:if="${order.promoCode != null and !#strings.isEmpty(order.promoCode)}">
+                            <span class="option"><i class="fas fa-ticket-alt"></i> Промокод</span>
+                            <span class="value" style="color:#6bcf95;font-weight:600;" th:text="${order.promoCode}"></span>
+                        </div>
+
                         <div class="info-row payment" th:if="${order.paymentMethod != null}">
                             <span class="option"><i class="fas fa-credit-card"></i> Способ оплаты</span>
                             <span class="value"
-                                  th:text="${order.paymentMethod == 'card' ? 'Банковская карта' : 'Другой способ'}"></span>
+                                  th:text="${paymentTx != null ? paymentTx.providerDisplayName : (order.paymentMethod == 'card' or order.paymentMethod == 'card_gateway' ? 'Банковская карта' : (order.paymentMethod == 'kaspi_qr' ? 'Kaspi Pay / QR' : (order.paymentMethod == 'installment' ? 'Рассрочка 0-0-12' : 'При получении')))}"></span>
+                        </div>
+
+                        <div class="info-row payment-status" th:if="${paymentTx != null}">
+                            <span class="option"><i class="fas fa-shield-alt"></i> Статус оплаты</span>
+                            <span class="value"
+                                  th:style="${paymentTx.paymentStatus.name() == 'PAID' ? 'color:#6bcf95;font-weight:700;' : (paymentTx.paymentStatus.name() == 'FAILED' ? 'color:#f87171;font-weight:700;' : 'color:#fbbf24;font-weight:600;')}"
+                                  th:text="${paymentTx.paymentStatus.displayName}"></span>
+                        </div>
+
+                        <div class="info-row payment-tx" th:if="${paymentTx != null and paymentTx.externalTransactionId != null}">
+                            <span class="option"><i class="fas fa-receipt"></i> ID платежа</span>
+                            <span class="value mono" th:text="${paymentTx.externalTransactionId}"></span>
+                        </div>
+
+                        <div class="info-row payment-pan" th:if="${paymentTx != null and paymentTx.maskedPan != null}">
+                            <span class="option"><i class="fas fa-wallet"></i> Реквизиты</span>
+                            <span class="value" th:text="${paymentTx.maskedPan}"></span>
                         </div>
                     </div>
                 </div>

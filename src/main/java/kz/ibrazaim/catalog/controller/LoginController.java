@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
@@ -79,6 +80,61 @@ public class LoginController {
             model.addAttribute("email", email.trim());
         }
         return "loginForm";
+    }
+
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        if (userService.getUser() != null) {
+            return "redirect:/profile";
+        }
+        return "forgotPasswordForm";
+    }
+
+    @PostMapping("/forgot-password")
+    public String processForgotPassword(
+            @RequestParam("email") String email,
+            Model model
+    ) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            String resetLink = userService.initiatePasswordReset(email, baseUrl);
+            model.addAttribute("successMessage", "Ссылка для восстановления пароля сформирована и отправлена в журнал уведомлений магазина.");
+            model.addAttribute("resetLink", resetLink);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "forgotPasswordForm";
+    }
+
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam(value = "token", required = false) String token, Model model) {
+        if (!userService.isResetTokenValid(token)) {
+            model.addAttribute("tokenInvalid", true);
+            model.addAttribute("error", "Ссылка для сброса пароля недействительна или устарела.");
+            return "resetPasswordForm";
+        }
+        model.addAttribute("token", token);
+        return "resetPasswordForm";
+    }
+
+    @PostMapping("/reset-password")
+    public String processResetPassword(
+            @RequestParam("token") String token,
+            @RequestParam("newPassword") String newPassword,
+            @RequestParam("confirmPassword") String confirmPassword,
+            RedirectAttributes redirectAttributes,
+            Model model
+    ) {
+        try {
+            userService.resetPasswordWithToken(token, newPassword, confirmPassword);
+            redirectAttributes.addFlashAttribute("successMessage", "Пароль успешно изменён! Войдите с новым паролем.");
+            return "redirect:/login";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("token", token);
+            model.addAttribute("tokenInvalid", !userService.isResetTokenValid(token));
+            model.addAttribute("error", e.getMessage());
+            return "resetPasswordForm";
+        }
     }
 
     private String extractRedirectFromReferer(String referer) {

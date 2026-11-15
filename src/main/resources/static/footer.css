@@ -1,8 +1,9 @@
 .footer {
-    margin-top: 40px;
-    background-color: #F4F4F4;
-    padding-top: 33px;
-    font-size: 14px;
+    margin-top: 64px;
+    background-color: #f6f5f3;
+    border-top: 1px solid #e4e1db;
+    padding-top: 52px;
+    font-size: 13px;
 }
 
 .footer-content {
@@ -18,11 +19,13 @@
 }
 
 .footer-part .footer-title {
-    color: #545454;
-    font-family: Montserrat Bold, sans-serif;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 39px;
+    color: #0a0a2e;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
 }
 
 .footer-links {
@@ -32,22 +35,24 @@
 }
 
 .footer-links .list {
-    margin-bottom: 22px;
+    margin-bottom: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .footer-links .ssylka {
-    color: #292929;
+    color: #5a5a5a;
     text-decoration: none;
-    font-style: italic;
-    font-size: 16px;
-    font-family: Montserrat Light, sans-serif;
+    font-style: normal;
+    font-size: 18px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    transition: color 0.18s ease;
 }
 
 .footer-links .ssylka:hover {
-    text-decoration: underline;
+    color: #0a0a2e;
+    text-decoration: none;
 }
 
 .footer-social {
@@ -57,42 +62,47 @@
 }
 
 .footer-social a {
-    color: #292929;
-    font-size: 46px;
-    transition: color 0.3s ease;
+    color: #0a0a2e;
+    font-size: 38px;
+    transition: color 0.25s ease;
 }
 
 .footer-social a:hover {
-    color: #0c0c3d;
+    color: #8b1a3a;
 }
 
 .footer-policy .footer-links{
-    font-family: Montserrat Light, sans-serif;
-    font-style: italic;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 100px;
-    gap: 170px;
+    margin-top: 72px;
+    gap: 120px;
     text-align: center;
 }
 
 .footer-policy .footer-links .ssylka{
-    color: #292929;
+    color: #9a9a9a;
     text-decoration: none;
-    font-style: italic;
-    font-size: 16px;
-    font-family: Montserrat Light, sans-serif;
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .footer-policy .ssylka:hover{
-    text-decoration: underline;
+    color: #0a0a2e;
+    text-decoration: none;
 }
 .footer-text {
-    font-family: Montserrat Light, sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-align: center;
     white-space: nowrap;
-    color: #292929;
+    color: #9a9a9a;
     padding-bottom: 20px;
 }
 
@@ -187,4 +197,63 @@
     .footer-text{
         font-size: 10px;
     }
+}
+
+
+
+/* ════════════════════════════════════════════════════════════
+   АДАПТИВ ФУТЕРА (переопределяет старые правила выше)
+   ════════════════════════════════════════════════════════════ */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 28px;
+    box-sizing: border-box;
+    grid-template-columns: repeat(4, 1fr);
+    justify-items: start;
+    gap: 32px;
+}
+.footer-social { justify-content: flex-start; }
+.footer-social svg { width: 34px; height: 34px; fill: currentColor; }
+.footer-links .list { white-space: normal; }
+.footer-text { white-space: normal; padding: 0 20px 20px; }
+
+/* Соцсети больше не прячутся на средних экранах */
+@media screen and (max-width: 1200px) {
+    .footer-content { grid-template-columns: repeat(4, 1fr); }
+    .footer-content > *:nth-child(4) { display: block; }
+}
+
+@media screen and (max-width: 992px) {
+    .footer-content { grid-template-columns: repeat(2, 1fr); gap: 36px 24px; }
+}
+
+@media screen and (max-width: 768px) {
+    .footer { margin-top: 48px; padding-top: 40px; }
+    .footer-part .footer-title { font-size: 10px; font-weight: 700; margin-bottom: 18px; }
+    .footer-links .ssylka {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: normal;
+        font-size: 17px;
+    }
+    .footer-policy .footer-links {
+        flex-wrap: wrap;
+        gap: 14px 40px;
+        margin-top: 48px;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+    .footer-policy .footer-links .ssylka { font-size: 11px; margin-top: 0; }
+}
+
+@media screen and (max-width: 560px) {
+    .footer-content { grid-template-columns: 1fr 1fr; padding: 0 20px; gap: 28px 16px; }
+    .footer-content > *:nth-child(4) { grid-column: 1 / -1; }
+    .footer-links .list { margin-bottom: 10px; }
+    .footer-links .ssylka { font-size: 16px; }
+    .footer-policy .footer-links { flex-direction: column; align-items: center; gap: 10px; }
+}
+
+@media screen and (max-width: 380px) {
+    .footer-content { grid-template-columns: 1fr; }
 }

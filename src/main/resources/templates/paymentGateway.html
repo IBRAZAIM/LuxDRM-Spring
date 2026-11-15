@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Оплата заказа №00' + ${order.id} + ' — UXD Pay Gateway'">Безопасная оплата — UXD Pay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0a0a2e;
+            --crimson: #8b1a3a;
+            --crimson-dark: #6d1230;
+            --kaspi: #E31E24;
+            --gold: #c9a84c;
+            --bg: #f6f5f3;
+            --surface: #ffffff;
+            --border: #e4e1db;
+            --ink: #111111;
+            --muted: #5a5a5a;
+            --dim: #9a9a9a;
+            --success: #16794F;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 16px;
+        }
+        .gw-container {
+            width: 100%;
+            max-width: 520px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+        }
+        .gw-header {
+            background: var(--navy);
+            border-top: 2px solid var(--crimson);
+            color: #FFFFFF;
+            padding: 26px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .gw-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .gw-logo {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 28px;
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: 0.06em;
+        }
+        .gw-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #6bcf95;
+            padding: 5px 10px;
+            border-radius: 0;
+        }
+        .gw-summary {
+            padding: 22px 28px;
+            background: #faf9f7;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .gw-order-meta {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+        .gw-order-meta strong {
+            display: block;
+            font-size: 13px;
+            color: var(--navy);
+            margin-bottom: 2px;
+        }
+        .gw-amount {
+            text-align: right;
+        }
+        .gw-amount-label {
+            display: block;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--dim);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .gw-amount-val {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 36px;
+            font-weight: 300;
+            color: var(--crimson);
+            line-height: 1;
+        }
+        .gw-body {
+            padding: 28px;
+        }
+        .gw-provider-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--navy);
+            background: #faf9f7;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 0;
+            margin-bottom: 20px;
+        }
+        /* Kaspi QR Box */
+        .kaspi-qr-box {
+            text-align: center;
+            padding: 22px;
+            border: 1px dashed var(--border);
+            border-radius: 0;
+            background: #faf9f7;
+            margin-bottom: 20px;
+        }
+        .kaspi-qr-frame {
+            width: 176px;
+            height: 176px;
+            margin: 0 auto 14px;
+            padding: 12px;
+            background: #FFFFFF;
+            border: 2px solid var(--kaspi);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .kaspi-qr-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+        .kaspi-qr-sub {
+            font-size: 12px;
+            color: var(--muted);
+        }
+        /* Card Form */
+        .gw-field {
+            margin-bottom: 14px;
+        }
+        .gw-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--dim);
+            margin-bottom: 6px;
+        }
+        .gw-input {
+            width: 100%;
+            height: 46px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            background: #faf9f7;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .gw-input:focus {
+            border-color: var(--navy);
+            background: #ffffff;
+        }
+        .gw-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        /* Installment Box */
+        .installment-plan {
+            background: #faf9f7;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            padding: 16px 18px;
+            margin-bottom: 20px;
+        }
+        .installment-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12.5px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .installment-row:last-child { border-bottom: none; }
+        /* Buttons */
+        .gw-btn-primary {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 0;
+            background: var(--navy);
+            color: #FFFFFF;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .gw-btn-primary:hover {
+            background: var(--crimson);
+        }
+        .gw-sandbox-bar {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .gw-sandbox-note {
+            font-size: 11px;
+            color: var(--muted);
+        }
+        .gw-btn-fail {
+            background: transparent;
+            border: 1px solid #FECACA;
+            color: var(--crimson);
+            padding: 8px 14px;
+            border-radius: 0;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .gw-btn-fail:hover {
+            background: #FEF2F2;
+        }
+        .gw-footer {
+            padding: 14px 28px;
+            background: #faf9f7;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--muted);
+        }
+        .gw-footer a {
+            color: var(--navy);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="gw-container">
+    <header class="gw-header">
+        <div class="gw-brand">
+            <span class="gw-logo">UXD PAY</span>
+        </div>
+        <span class="gw-badge">🔒 3D-Secure · PCI DSS</span>
+    </header>
+
+    <section class="gw-summary">
+        <div class="gw-order-meta">
+            <strong th:text="'Заказ №00' + ${order.id} + (${order.serialNumber != null ? ' · ' + order.serialNumber : ''})">Заказ №001</strong>
+            <span th:text="'Транзакция: ' + ${tx.externalTransactionId}">PAY-XXXX</span>
+        </div>
+        <div class="gw-amount">
+            <span class="gw-amount-label">К оплате</span>
+            <span class="gw-amount-val" id="gwAmount" th:attr="data-raw=${tx.amount}" th:text="${tx.amount} + ' ₸'">0 ₸</span>
+        </div>
+    </section>
+
+    <div class="gw-body">
+        <div class="gw-provider-pill" th:text="${tx.providerDisplayName}">Способ оплаты</div>
+
+        <form th:action="@{/payment/confirm/{extId}(extId=${tx.externalTransactionId})}" method="post" id="gatewayPayForm">
+            <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+            <input type="hidden" name="result" id="paymentResultInput" value="success">
+
+            <!-- ВАРИАНТ 1: KASPI QR -->
+            <div th:if="${tx.provider == 'kaspi_qr'}" class="kaspi-qr-box">
+                <div class="kaspi-qr-frame" aria-label="Kaspi QR">
+                    <svg width="136" height="136" viewBox="0 0 120 120" fill="none">
+                        <rect x="6" y="6" width="32" height="32" rx="4" stroke="#0C0C3D" stroke-width="6"/>
+                        <rect x="16" y="16" width="12" height="12" fill="#E31E24"/>
+                        <rect x="82" y="6" width="32" height="32" rx="4" stroke="#0C0C3D" stroke-width="6"/>
+                        <rect x="92" y="16" width="12" height="12" fill="#E31E24"/>
+                        <rect x="6" y="82" width="32" height="32" rx="4" stroke="#0C0C3D" stroke-width="6"/>
+                        <rect x="16" y="92" width="12" height="12" fill="#E31E24"/>
+                        <rect x="48" y="12" width="8" height="20" fill="#0C0C3D"/>
+                        <rect x="62" y="20" width="10" height="10" fill="#0C0C3D"/>
+                        <rect x="46" y="46" width="28" height="28" rx="4" fill="#E31E24"/>
+                        <path d="M55 60h10M60 55v10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+                        <rect x="12" y="48" width="22" height="8" fill="#0C0C3D"/>
+                        <rect x="84" y="48" width="24" height="8" fill="#0C0C3D"/>
+                        <rect x="84" y="66" width="10" height="22" fill="#0C0C3D"/>
+                        <rect x="102" y="76" width="10" height="34" fill="#0C0C3D"/>
+                        <rect x="48" y="84" width="26" height="10" fill="#0C0C3D"/>
+                        <rect x="56" y="102" width="34" height="10" fill="#0C0C3D"/>
+                    </svg>
+                </div>
+                <div class="kaspi-qr-title">Отсканируйте QR-код в приложении Kaspi.kz</div>
+                <div class="kaspi-qr-sub">Или нажмите кнопку ниже для подтверждения оплаты счёта</div>
+            </div>
+
+            <!-- ВАРИАНТ 2: РАССРОЧКА 0-0-12 -->
+            <div th:if="${tx.provider == 'installment'}" class="installment-plan">
+                <div class="installment-row">
+                    <span>Срок рассрочки</span>
+                    <strong>12 месяцев</strong>
+                </div>
+                <div class="installment-row">
+                    <span>Переплата и комиссия</span>
+                    <strong style="color: var(--success);">0 ₸ (0%)</strong>
+                </div>
+                <div class="installment-row">
+                    <span>Ежемесячный платёж</span>
+                    <strong id="gwMonthlyVal">— ₸ / мес.</strong>
+                </div>
+                <div class="installment-row">
+                    <span>Номер телефона заёмщика</span>
+                    <strong th:text="${order.phone != null ? order.phone : '—'}"></strong>
+                </div>
+            </div>
+
+            <!-- ВАРИАНТ 2.1: APPLE PAY / GOOGLE PAY -->
+            <div th:if="${tx.provider == 'apple_pay' or tx.provider == 'google_pay'}" class="kaspi-qr-box">
+                <div style="width:72px;height:72px;margin:0 auto 12px;border-radius:18px;background:#0C0C3D;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;">
+                    <span th:text="${tx.provider == 'apple_pay' ? '' : 'G'}">Pay</span>
+                </div>
+                <div class="kaspi-qr-title" th:text="${tx.provider == 'apple_pay' ? 'Подтверждение Apple Pay (Face ID / Touch ID)' : 'Подтверждение через Google Pay'}"></div>
+                <div class="kaspi-qr-sub">Токенизированный платёж защищён криптографическим ключом устройства</div>
+            </div>
+
+            <!-- ВАРИАНТ 3: БАНКОВСКАЯ КАРТА НА ШЛЮЗЕ -->
+            <div th:if="${tx.provider != 'kaspi_qr' and tx.provider != 'installment' and tx.provider != 'apple_pay' and tx.provider != 'google_pay'}">
+                <div class="gw-field">
+                    <label class="gw-label" for="cardPan">Номер банковской карты</label>
+                    <input type="text" id="cardPan" name="cardPan" class="gw-input"
+                           placeholder="4400 4301 0000 0000" maxlength="19" required
+                           oninput="this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();">
+                </div>
+                <div class="gw-row">
+                    <div class="gw-field">
+                        <label class="gw-label" for="cardExp">Срок действия</label>
+                        <input type="text" id="cardExp" class="gw-input" placeholder="MM / YY" maxlength="5" required
+                               oninput="let v=this.value.replace(/\D/g,'').slice(0,4); this.value = v.length>2 ? v.slice(0,2)+'/'+v.slice(2) : v;">
+                    </div>
+                    <div class="gw-field">
+                        <label class="gw-label" for="cardCvv">CVV / CVC</label>
+                        <input type="password" id="cardCvv" class="gw-input" placeholder="•••" maxlength="3" required
+                               oninput="this.value = this.value.replace(/\D/g, '').slice(0,3);">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="gw-btn-primary" onclick="document.getElementById('paymentResultInput').value='success'">
+                Подтвердить оплату
+            </button>
+
+            <div class="gw-sandbox-bar">
+                <span class="gw-sandbox-note">Тестовый шлюз (Sandbox Mode)</span>
+                <button type="submit" class="gw-btn-fail" formnovalidate
+                        onclick="document.getElementById('paymentResultInput').value='fail'">
+                    Симулировать отказ банка
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <footer class="gw-footer">
+        <span>Защищено TLS 1.3 · UXD Acquiring</span>
+        <a th:href="@{/orders/{id}(id=${order.id})}">Вернуться к заказу →</a>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        var amountEl = document.getElementById('gwAmount');
+        if (!amountEl) return;
+        var raw = parseFloat(amountEl.getAttribute('data-raw')) || 0;
+        amountEl.textContent = Math.round(raw).toLocaleString('ru-RU') + '\u00a0₸';
+
+        var monthlyEl = document.getElementById('gwMonthlyVal');
+        if (monthlyEl) {
+            var perMonth = Math.ceil(raw / 12);
+            monthlyEl.textContent = perMonth.toLocaleString('ru-RU') + '\u00a0₸ / мес.';
+        }
+    })();
+</script>
+</body>
+</html>
+

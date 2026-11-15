@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет — LUXDRM Spring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <style>
+        :root {
+            --p-bg: #f6f5f3;
+            --p-card: #ffffff;
+            --p-ink: #111111;
+            --p-navy: #0a0a2e;
+            --p-crimson: #8b1a3a;
+            --p-gold: #c9a84c;
+            --p-muted: #5a5a5a;
+            --p-dim: #9a9a9a;
+            --p-border: #e4e1db;
+            --p-serif: 'Cormorant Garamond', Georgia, serif;
+            --p-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body.profile-page {
+            background: var(--p-bg);
+            color: var(--p-ink);
+            font-family: var(--p-sans);
+            margin: 0;
+        }
+
+        .profile-shell {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 32px 28px 80px;
+        }
+
+        .profile-bc {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--p-dim);
+            margin-bottom: 28px;
+        }
+        .profile-bc a {
+            color: var(--p-dim);
+            text-decoration: none;
+            transition: color .18s;
+        }
+        .profile-bc a:hover { color: var(--p-navy); }
+        .profile-bc .sep { font-size: 8px; opacity: 0.6; }
+        .profile-bc .cur { color: var(--p-navy); }
+
+        .profile-page-head {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 36px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--p-border);
+            position: relative;
+        }
+        .profile-page-head::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--p-crimson);
+        }
+        .profile-page-title {
+            margin: 0;
+            font-family: var(--p-serif);
+            font-size: clamp(36px, 4vw, 54px);
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            color: var(--p-navy);
+        }
+
+        .profile-hero {
+            background: var(--p-navy);
+            border: none;
+            border-top: 2px solid var(--p-crimson);
+            padding: 34px 36px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 28px;
+            color: #ffffff;
+        }
+
+        .profile-identity {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .profile-avatar {
+            width: 68px;
+            height: 68px;
+            border-radius: 0;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--p-serif);
+            font-size: 30px;
+            font-style: italic;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            flex-shrink: 0;
+        }
+
+        .profile-name {
+            margin: 0 0 8px;
+            font-family: var(--p-serif);
+            font-size: 34px;
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.05;
+            color: #ffffff;
+        }
+
+        .profile-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 14px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .profile-role-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--p-gold);
+            border-radius: 0;
+        }
+
+        .profile-hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-logout-btn {
+            height: 42px;
+            padding: 0 22px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 0;
+            background: transparent;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background .2s, border-color .2s, color .2s;
+        }
+        .profile-logout-btn:hover {
+            border-color: var(--p-crimson);
+            background: var(--p-crimson);
+            color: #ffffff;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--p-card);
+            border: 1px solid var(--p-border);
+            padding: 20px 24px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color .2s, transform .2s;
+        }
+        .stat-card:hover {
+            border-color: var(--p-navy);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--p-dim);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: var(--p-serif);
+            font-size: 38px;
+            font-weight: 400;
+            color: var(--p-navy);
+            line-height: 1;
+        }
+
+        .stat-arrow {
+            font-size: 18px;
+            color: var(--p-dim);
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .profile-card {
+            background: var(--p-card);
+            border: 1px solid var(--p-border);
+            padding: 28px 30px;
+        }
+
+        .card-heading {
+            margin: 0 0 6px;
+            font-family: var(--p-serif);
+            font-size: 28px;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--p-navy);
+        }
+
+        .card-sub {
+            margin: 0 0 22px;
+            font-size: 12px;
+            color: var(--p-muted);
+        }
+
+        .p-field {
+            margin-bottom: 16px;
+        }
+
+        .p-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--p-muted);
+            margin-bottom: 7px;
+        }
+
+        .p-input {
+            width: 100%;
+            box-sizing: border-box;
+            height: 44px;
+            padding: 0 14px;
+            border: 1px solid var(--p-border);
+            background: #faf9f7;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--p-ink);
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+        .p-input:focus {
+            border-color: var(--p-navy);
+            background: #ffffff;
+        }
+
+        .p-submit {
+            height: 44px;
+            padding: 0 24px;
+            border: none;
+            background: var(--p-navy);
+            color: #fff;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .p-submit:hover { background: var(--p-crimson); }
+
+        .p-alert {
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            border: 1px solid transparent;
+        }
+        .p-alert--success {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+        .p-alert--error {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
+        .orders-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .orders-all-link {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--p-navy);
+            text-decoration: none;
+            border-bottom: 1px solid currentColor;
+            padding-bottom: 2px;
+        }
+
+        .orders-table-wrap {
+            overflow-x: auto;
+        }
+
+        .p-orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .p-orders-table th {
+            text-align: left;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--p-dim);
+            padding: 12px 14px;
+            border-bottom: 1.5px solid var(--p-navy);
+        }
+        .p-orders-table td {
+            padding: 16px 14px;
+            border-bottom: 1px solid var(--p-border);
+            vertical-align: middle;
+        }
+        .p-orders-table tbody tr:hover td {
+            background: #faf9f7;
+        }
+
+        .p-status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 0;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            background: #faf9f7;
+            border: 1px solid var(--p-border);
+            color: var(--p-navy);
+        }
+
+        .p-order-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .p-btn-pay {
+            background: var(--p-crimson);
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 0;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+        .p-btn-view {
+            border: 1px solid var(--p-navy);
+            color: var(--p-navy);
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 0;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            transition: background .18s, color .18s;
+        }
+        .p-btn-view:hover {
+            background: var(--p-navy);
+            color: #ffffff;
+        }
+
+        .p-empty {
+            padding: 24px 0 8px;
+            color: var(--p-muted);
+            font-size: 13.5px;
+        }
+
+        @media (max-width: 900px) {
+            .profile-stats,
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="profile-page">
+<div th:insert="~{navbar :: navigation-panel}"></div>
+
+<main class="profile-shell">
+    <nav class="profile-bc" aria-label="Навигация">
+        <a th:href="@{/}">Главная</a>
+        <span class="sep">·</span>
+        <span class="cur">Личный кабинет</span>
+    </nav>
+
+    <header class="profile-page-head">
+        <h1 class="profile-page-title">Личный кабинет</h1>
+    </header>
+
+    <!-- Карточка пользователя -->
+    <section class="profile-hero">
+        <div class="profile-identity">
+            <div class="profile-avatar"
+                 th:text="${user.name != null and !#strings.isEmpty(user.name) ? #strings.toUpperCase(#strings.substring(user.name, 0, 1)) : (user.email != null and !#strings.isEmpty(user.email) ? #strings.toUpperCase(#strings.substring(user.email, 0, 1)) : 'U')}">U</div>
+            <div>
+                <h2 class="profile-name"
+                    th:text="${(user.name != null ? user.name : '') + (user.surname != null and !#strings.isEmpty(user.surname) ? ' ' + user.surname : '')}">Пользователь</h2>
+                <div class="profile-meta">
+                    <span th:text="${user.email != null ? user.email : user.login}">email@example.com</span>
+                    <span class="profile-role-pill" th:text="${user.role != null ? user.role.displayName : 'Пользователь'}">Пользователь</span>
+                    <span th:if="${user.registrationDate != null}"
+                          th:text="'С нами с ' + ${#temporals.format(user.registrationDate, 'dd.MM.yyyy')}">С нами с 01.01.2026</span>
+                </div>
+            </div>
+        </div>
+        <div class="profile-hero-actions">
+            <form th:action="@{/logout}" method="post" style="margin:0;">
+                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                <button type="submit" class="profile-logout-btn">Выйти</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Быстрая статистика -->
+    <section class="profile-stats">
+        <a th:href="@{/orders}" class="stat-card">
+            <div>
+                <div class="stat-label">Мои заказы</div>
+                <div class="stat-value" th:text="${ordersCount}">0</div>
+            </div>
+            <span class="stat-arrow">→</span>
+        </a>
+        <a th:href="@{/wishlist}" class="stat-card">
+            <div>
+                <div class="stat-label">Избранное</div>
+                <div class="stat-value" th:text="${wishlistCount}">0</div>
+            </div>
+            <span class="stat-arrow">→</span>
+        </a>
+        <a th:href="@{/cart}" class="stat-card">
+            <div>
+                <div class="stat-label">В корзине</div>
+                <div class="stat-value" th:text="${cartCount}">0</div>
+            </div>
+            <span class="stat-arrow">→</span>
+        </a>
+    </section>
+
+    <!-- Формы редактирования профиля и смены пароля -->
+    <section class="profile-grid">
+        <div class="profile-card">
+            <h2 class="card-heading">Личные данные и доставка</h2>
+            <p class="card-sub">Контактные данные и сохранённый адрес для быстрого оформления заказов</p>
+
+            <div th:if="${profileSuccess != null}" class="p-alert p-alert--success" th:text="${profileSuccess}"></div>
+            <div th:if="${profileError != null}" class="p-alert p-alert--error" th:text="${profileError}"></div>
+
+            <form th:action="@{/profile/update}" method="post">
+                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                <div class="p-field">
+                    <label class="p-label" for="profName">Имя *</label>
+                    <input type="text" id="profName" name="name" class="p-input"
+                           th:value="${user.name}" maxlength="80" required>
+                </div>
+                <div class="p-field">
+                    <label class="p-label" for="profSurname">Фамилия</label>
+                    <input type="text" id="profSurname" name="surname" class="p-input"
+                           th:value="${user.surname}" maxlength="80">
+                </div>
+                <div class="p-field">
+                    <label class="p-label" for="profEmail">Email *</label>
+                    <input type="email" id="profEmail" name="email" class="p-input"
+                           th:value="${user.email != null ? user.email : user.login}" maxlength="255" required>
+                </div>
+                <div class="p-field">
+                    <label class="p-label" for="profPhone">Телефон</label>
+                    <input type="tel" id="profPhone" name="phone" class="p-input"
+                           th:value="${user.phone}" placeholder="+7 (700) 000-00-00" maxlength="40">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="p-field">
+                        <label class="p-label" for="profCountry">Страна</label>
+                        <input type="text" id="profCountry" name="country" class="p-input"
+                               th:value="${user.country}" placeholder="Казахстан" maxlength="100">
+                    </div>
+                    <div class="p-field">
+                        <label class="p-label" for="profCity">Город</label>
+                        <input type="text" id="profCity" name="city" class="p-input"
+                               th:value="${user.city}" placeholder="Астана" maxlength="100">
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
+                    <div class="p-field">
+                        <label class="p-label" for="profAddress">Улица, дом, квартира</label>
+                        <input type="text" id="profAddress" name="address" class="p-input"
+                               th:value="${user.address}" placeholder="ул. Манаса 46/1, кв. 44" maxlength="255">
+                    </div>
+                    <div class="p-field">
+                        <label class="p-label" for="profZip">Индекс</label>
+                        <input type="text" id="profZip" name="postalCode" class="p-input"
+                               th:value="${user.postalCode}" placeholder="010000" maxlength="32">
+                    </div>
+                </div>
+                <button type="submit" class="p-submit">Сохранить изменения</button>
+            </form>
+        </div>
+
+        <div class="profile-card">
+            <h2 class="card-heading">Безопасность</h2>
+            <p class="card-sub">Смена пароля учётной записи (минимум 6 символов)</p>
+
+            <div th:if="${passwordSuccess != null}" class="p-alert p-alert--success" th:text="${passwordSuccess}"></div>
+            <div th:if="${passwordError != null}" class="p-alert p-alert--error" th:text="${passwordError}"></div>
+
+            <form th:action="@{/profile/password}" method="post">
+                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                <div class="p-field">
+                    <label class="p-label" for="currPass">Текущий пароль *</label>
+                    <input type="password" id="currPass" name="currentPassword" class="p-input" required>
+                </div>
+                <div class="p-field">
+                    <label class="p-label" for="newPass">Новый пароль *</label>
+                    <input type="password" id="newPass" name="newPassword" class="p-input" minlength="6" maxlength="72" required>
+                </div>
+                <div class="p-field">
+                    <label class="p-label" for="confPass">Подтверждение пароля *</label>
+                    <input type="password" id="confPass" name="confirmPassword" class="p-input" minlength="6" maxlength="72" required>
+                </div>
+                <button type="submit" class="p-submit">Изменить пароль</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Последние заказы -->
+    <section class="profile-card">
+        <div class="orders-section-head">
+            <div>
+                <h2 class="card-heading">Последние заказы</h2>
+                <p class="card-sub" style="margin-bottom:0;">История ваших последних покупок и статусы оплаты</p>
+            </div>
+            <a th:href="@{/orders}" class="orders-all-link">Все заказы →</a>
+        </div>
+
+        <div class="orders-table-wrap" th:if="${recentOrders != null and !#lists.isEmpty(recentOrders)}">
+            <table class="p-orders-table">
+                <thead>
+                <tr>
+                    <th>Заказ</th>
+                    <th>Дата</th>
+                    <th>Статус</th>
+                    <th>Оплата</th>
+                    <th>Сумма</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${recentOrders}"
+                    th:with="tx=${paymentTxMap != null ? paymentTxMap.get(order.id) : null},
+                             stName=${order.status != null ? order.status.name() : 'PENDING'},
+                             stDisplay=${order.status != null ? order.status.displayName : 'В ожидании'}">
+                    <td>
+                        <strong th:text="'№00' + ${order.id}">№001</strong>
+                        <div th:if="${order.serialNumber != null}" style="font-size:11px;color:#6b7280;" th:text="${order.serialNumber}"></div>
+                        <div th:if="${order.trackingNumber != null and !#strings.isEmpty(order.trackingNumber)}"
+                             style="font-size:11px;color:#1e3a8a;font-weight:600;"
+                             th:text="'Трек: ' + ${order.trackingNumber}"></div>
+                    </td>
+                    <td th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : '—'}"></td>
+                    <td>
+                        <span class="p-status-pill" th:text="${stDisplay}">В ожидании</span>
+                    </td>
+                    <td>
+                        <span th:if="${tx != null}"
+                              class="p-status-pill"
+                              th:text="${tx.paymentStatus.displayName}"
+                              th:style="${tx.paymentStatus.name() == 'PAID' ? 'background:#ECFDF5;color:#065F46;' : (tx.paymentStatus.name() == 'FAILED' ? 'background:#FEF2F2;color:#991B1B;' : (tx.paymentStatus.name() == 'AWAITING_PAYMENT' ? 'background:#FFFBEB;color:#92400E;' : ''))}"></span>
+                        <span th:unless="${tx != null}" style="color:#9ca3af;font-size:12px;">—</span>
+                    </td>
+                    <td>
+                        <strong class="js-money" th:attr="data-raw=${order.totalPrice != null ? order.totalPrice : 0}" th:text="${order.totalPrice}">0</strong>
+                    </td>
+                    <td>
+                        <div class="p-order-actions">
+                            <a th:if="${stName == 'PENDING' and tx != null and (tx.paymentStatus.name() == 'AWAITING_PAYMENT' or tx.paymentStatus.name() == 'FAILED')}"
+                               th:href="@{/orders/{id}/pay(id=${order.id})}"
+                               class="p-btn-pay">Оплатить</a>
+                            <a th:href="@{/orders/{id}(id=${order.id})}" class="p-btn-view">Детали</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-empty" th:if="${recentOrders == null or #lists.isEmpty(recentOrders)}">
+            У вас пока нет оформленных заказов. <a th:href="@{/products}" style="color:#0c0c3d;font-weight:600;">Перейти в каталог</a>
+        </div>
+    </section>
+</main>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.js-money').forEach(function (el) {
+            var n = Number(String(el.dataset.raw || el.textContent || '0').replace(/[^\d.-]/g, '') || 0);
+            el.textContent = Math.round(n).toLocaleString('ru-RU') + '\u00a0₸';
+        });
+    });
+</script>
+</body>
+</html>

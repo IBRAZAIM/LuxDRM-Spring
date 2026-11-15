@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Создание товара</title>
+  <title>Создание товара — UXD</title>
   <link rel="stylesheet" th:href="@{/updateForm.css}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,62 +12,84 @@
     <a th:href="@{/products}" style="color: #6b6b85; text-decoration: none; font-size: 13px; font-weight: 600;">← Назад к списку товаров</a>
   </div>
   <h1>Создание товара</h1>
-  <p class="subtitle">Заполните информацию о товаре</p>
+  <p class="subtitle">Категория: <strong th:text="${category != null ? category.name : 'Не выбрана'}">Категория</strong></p>
 
-  <form th:action="@{/products/create}" th:object="${product}" method="post">
+  <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
+  <form th:action="@{/products/create(categoryId=${category != null ? category.id : ''})}" th:object="${product}" method="post" enctype="multipart/form-data">
     <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
-    <input type="hidden" name="categoryId" th:value="${category.id}">
+    <input type="hidden" name="categoryId" th:value="${category != null ? category.id : ''}">
+
     <!-- Основная информация -->
     <div class="form-section">
       <div class="form-group">
         <label>Название товара</label>
-        <input type="text" name="name" placeholder="Название товара" maxlength="255" required>
+        <input type="text" name="name" th:field="*{name}" placeholder="Например: Шелковая пижама UXD" maxlength="255" required>
       </div>
-      <div class="form-group">
-        <label>Цена (₸)</label>
-        <input type="text" name="price" placeholder="Цена" required>
+
+      <div class="form-row-grid">
+        <div class="form-group">
+          <label>Цена (₸)</label>
+          <input type="number" name="price" th:field="*{price}" placeholder="45000" min="0" step="1" required>
+        </div>
+        <div class="form-group">
+          <label>Скидка (%)</label>
+          <input type="number" name="discount" th:field="*{discount}" placeholder="0" value="0" min="0" max="99" step="1">
+        </div>
+        <div class="form-group">
+          <label>Остаток на складе (шт.)</label>
+          <input type="number" name="stock" th:field="*{stock}" placeholder="100" value="100" min="0" required>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Количество на складе (Stock)</label>
-        <input type="number" name="stock" placeholder="Количество на складе" value="100" min="0" required>
-      </div>
+
       <div class="form-group">
         <label>Описание</label>
-        <textarea name="description" placeholder="Описание товара" maxlength="5000"></textarea>
+        <textarea name="description" th:field="*{description}" placeholder="Подробное описание модели, посадки и ухода" maxlength="5000"></textarea>
       </div>
     </div>
 
     <!-- Характеристики -->
-    <div class="form-section">
-      <label>Характеристики</label>
+    <div class="form-section" th:if="${category != null and category.optionList != null and !category.optionList.isEmpty()}">
+      <label>Характеристики категории</label>
       <div class="options-list">
         <div class="option-row" th:each="option : ${category.optionList}">
           <span class="option-name" th:text="${option.name}"></span>
           <input type="hidden" name="optionsIds" th:value="${option.id}" th:if="${option.id != null}">
-          <input type="text" name="values" placeholder="Введите значение" required>
+          <input type="text" name="values" placeholder="Введите значение">
         </div>
       </div>
     </div>
 
+    <!-- Размеры -->
     <div class="form-section">
-      <label>Размеры</label>
-      <div id="sizes" class="items-list" data-empty-text="Пока нет размеров. Нажмите + чтобы добавить.">
-        <span class="empty-text">Пока нет размеров. Нажмите + чтобы добавить.</span>
+      <div class="section-header">
+        <label>Размеры</label>
+        <div class="preset-chips">
+          <button type="button" class="preset-chip" onclick="addPresetSizes(['XS','S','M','L','XL'])">+ XS–XL</button>
+          <button type="button" class="preset-chip" onclick="addPresetSizes(['S','M','L'])">+ S–L</button>
+          <button type="button" class="preset-chip" onclick="addPresetSizes(['One Size'])">+ One Size</button>
+        </div>
       </div>
-      <button type="button" class="add-product-btn" onclick="addItem('sizes', 'Size')">
+      <div id="sizes" class="items-list" data-empty-text="Пока нет размеров. Выберите шаблон выше или нажмите +.">
+        <span class="empty-text">Пока нет размеров. Выберите шаблон выше или нажмите +.</span>
+      </div>
+      <button type="button" class="add-product-btn" onclick="addSizeItem('')" title="Добавить размер">
         <i class="fas fa-plus"></i>
       </button>
     </div>
 
-    <!-- Изображения -->
+    <!-- Изображения (Загрузка файлов) -->
     <div class="form-section">
-      <label>Изображения</label>
-      <div id="images" class="items-list" data-empty-text="Изображения не добавлены. Пожалуйста добавьте URL-изображения!">
-        <span class="empty-text">Изображения не добавлены. Пожалуйста добавьте URL-изображения!</span>
+      <label>Фотографии товара</label>
+      <input type="file" id="imageFilesInput" name="imageFiles" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple style="display: none;">
+
+      <div class="upload-dropzone" id="uploadDropzone">
+        <i class="fas fa-cloud-upload-alt upload-dropzone__icon"></i>
+        <span class="upload-dropzone__title">Нажмите для выбора фото или перетащите файлы сюда</span>
+        <span class="upload-dropzone__hint">Поддерживаются JPG, PNG, WEBP, AVIF (до 10 МБ на файл). Первое фото станет главным.</span>
       </div>
-      <button type="button" class="add-product-btn" onclick="addItem('images', 'URL изображения')">
-        <i class="fas fa-plus"></i>
-      </button>
+
+      <div class="upload-previews" id="uploadPreviews"></div>
     </div>
 
     <!-- Submit -->
@@ -77,14 +99,11 @@
   </form>
 </div>
 <script>
-  function addItem(listId, placeholder) {
-    const list = document.getElementById(listId);
-
-    // Убираем текст-подсказку
+  function addSizeItem(initialValue) {
+    const list = document.getElementById('sizes');
     const emptyText = list.querySelector('.empty-text');
     if (emptyText) emptyText.remove();
 
-    // Создаем контейнер
     const container = document.createElement('div');
     container.className = 'option-row';
     container.style.display = 'flex';
@@ -93,34 +112,13 @@
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.placeholder = placeholder;
-    input.name = listId === 'sizes' ? 'sizes[]' : 'imageUrls[]';
-
-    // Для изображений добавляем превью перед input
-    if (listId === 'images') {
-      const preview = document.createElement('img');
-      preview.style.display = 'none';
-      preview.style.width = '60px';
-      preview.style.height = '60px';
-      preview.style.objectFit = 'cover';
-      preview.style.border = '1px solid #ccc';
-      container.appendChild(preview);
-      container.appendChild(input);
-
-      input.addEventListener('input', () => {
-        const url = input.value.trim();
-        if (!url) return preview.style.display = 'none';
-
-        const imgTest = new Image();
-        imgTest.onload = () => { preview.src = url; preview.style.display = 'inline-block'; };
-        imgTest.onerror = () => preview.style.display = 'none';
-        imgTest.src = url;
-      });
-    } else {
-      container.appendChild(input); // для размеров
+    input.placeholder = 'Размер';
+    input.name = 'sizes';
+    if (initialValue) {
+      input.value = initialValue;
     }
+    container.appendChild(input);
 
-    // Кнопка удаления
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'remove-btn';
@@ -131,7 +129,16 @@
     list.appendChild(container);
   }
 
-  // Проверка пустого списка
+  function addPresetSizes(sizesArray) {
+    const existing = Array.from(document.querySelectorAll('#sizes input[name="sizes"], #sizes input[name="sizes[]"]'))
+      .map(inp => inp.value.trim().toUpperCase());
+    sizesArray.forEach(size => {
+      if (!existing.includes(size.toUpperCase())) {
+        addSizeItem(size);
+      }
+    });
+  }
+
   function checkEmpty(list) {
     if (!list.querySelector('.option-row')) {
       const empty = document.createElement('span');
@@ -140,6 +147,86 @@
       list.appendChild(empty);
     }
   }
+
+  const fileInput = document.getElementById('imageFilesInput');
+  const dropzone = document.getElementById('uploadDropzone');
+  const previewsContainer = document.getElementById('uploadPreviews');
+  const selectedFiles = [];
+
+  function syncInputFiles() {
+    const dt = new DataTransfer();
+    selectedFiles.forEach(file => dt.items.add(file));
+    fileInput.files = dt.files;
+    renderPreviews();
+  }
+
+  function addFiles(fileList) {
+    Array.from(fileList).forEach(file => {
+      if (file.type && file.type.startsWith('image/')) {
+        selectedFiles.push(file);
+      }
+    });
+    syncInputFiles();
+  }
+
+  function renderPreviews() {
+    previewsContainer.innerHTML = '';
+    selectedFiles.forEach((file, idx) => {
+      const card = document.createElement('div');
+      card.className = 'upload-preview-card';
+
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.alt = file.name;
+      card.appendChild(img);
+
+      if (idx === 0) {
+        const badge = document.createElement('span');
+        badge.className = 'upload-preview-card__badge';
+        badge.textContent = 'Главное фото';
+        card.appendChild(badge);
+      }
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'upload-preview-card__remove';
+      removeBtn.title = 'Удалить фото';
+      removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+      removeBtn.onclick = () => {
+        selectedFiles.splice(idx, 1);
+        syncInputFiles();
+      };
+      card.appendChild(removeBtn);
+
+      previewsContainer.appendChild(card);
+    });
+  }
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      addFiles(e.target.files);
+    }
+  });
+
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('is-dragover');
+  });
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('is-dragover');
+  });
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('is-dragover');
+    if (e.dataTransfer && e.dataTransfer.files) {
+      addFiles(e.dataTransfer.files);
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    addPresetSizes(['XS', 'S', 'M', 'L', 'XL']);
+  });
 </script>
 </body>
 </html>

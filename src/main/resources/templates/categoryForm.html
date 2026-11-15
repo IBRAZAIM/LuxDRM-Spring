@@ -2,48 +2,65 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Создание категории</title>
+    <title th:text="${isEdit != null and isEdit ? 'Редактирование категории — UXD' : 'Создание категории — UXD'}">Категория — UXD</title>
     <link rel="stylesheet" th:href="@{/updateForm.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div class="container">
     <a th:href="@{/categories}" style="display:inline-block;margin-bottom:16px;color:#6b6b85;text-decoration:none;font-size:13px;font-weight:600;">← Назад к категориям</a>
-    <h1>Создание категории</h1>
-    <p class="subtitle">Категория определяет набор характеристик товара</p>
+    <h1 th:text="${isEdit != null and isEdit ? 'Редактирование категории' : 'Создание категории'}">Создание категории</h1>
+    <p class="subtitle">Категория определяет набор характеристик для карточек товаров</p>
 
-    <form th:action="@{/categories/create}" th:object="${category}" method="post" id="categoryForm">
+    <div th:if="${errorMessage}" class="alert-error" th:text="${errorMessage}"></div>
+
+    <form th:action="${isEdit != null and isEdit ? '/categories/update/' + category.id : '/categories/create'}"
+          th:object="${category}"
+          method="post"
+          id="categoryForm">
         <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
 
         <!-- Название -->
         <div class="form-group">
             <label for="name">Название категории</label>
-            <input id="name" type="text" th:field="*{name}" placeholder="Например: Премиальные стейки">
+            <input id="name" type="text" th:field="*{name}" placeholder="Например: Шелковые пижамы, Домашние костюмы" required>
             <span class="error" id="nameError"></span>
         </div>
 
-        <!-- Характеристики -->
+        <!-- Текущие характеристики (при редактировании) -->
+        <div class="form-section" th:if="${isEdit != null and isEdit and existingOptions != null and !existingOptions.isEmpty()}">
+            <div class="section-header">
+                <label>Существующие характеристики категории</label>
+            </div>
+            <div class="options-list">
+                <div class="option-row" th:each="opt : ${existingOptions}">
+                    <span class="option-name" th:text="${opt.name}" style="color: #0c0c3d; font-weight: 600;"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Новые характеристики -->
         <div class="form-section">
             <div class="section-header">
-                <label>Характеристики</label>
-                <span class="hint">Будут доступны при создании товара</span>
+                <label th:text="${isEdit != null and isEdit ? 'Добавить новые характеристики' : 'Характеристики категории'}">Характеристики</label>
+                <span class="hint">Например: Состав ткани, Плотность, Посадка, Страна производства</span>
             </div>
 
             <div id="characterContainer" class="options-list empty">
-                <span class="empty-text">Характеристики не добавлены</span>
+                <span class="empty-text">Дополнительные характеристики не добавлены (необязательно)</span>
             </div>
 
-            <button type="button" class="add-product-btn" onclick="addCharacter()" aria-label="Добавить характеристику">
+            <button type="button" class="add-product-btn" onclick="addCharacter()" aria-label="Добавить характеристику" title="Добавить характеристику">
                 <i class="fas fa-plus"></i>
             </button>
         </div>
 
         <!-- Действие -->
         <div class="form-actions">
-            <button type="submit" class="btn-primary">Создать категорию</button>
+            <button type="submit" class="btn-primary" th:text="${isEdit != null and isEdit ? 'Сохранить изменения' : 'Создать категорию'}">Создать категорию</button>
         </div>
     </form>
 </div>
-<script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
 <script>
     function addCharacter() {
         const container = document.getElementById("characterContainer");
@@ -56,53 +73,37 @@
         const input = document.createElement("input");
         input.type = "text";
         input.name = "optionNames";
-        input.placeholder = "Например: Вес, Степень прожарки";
-        input.required = true;
+        input.placeholder = "Например: Состав ткани, Посадка, Уход за изделием";
 
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.className = "remove-btn";
-        remove.innerHTML = '<i class="fas fa-times"></i>';
-        remove.setAttribute("aria-label", "Удалить характеристику");
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "remove-btn";
+        removeBtn.setAttribute("aria-label", "Удалить характеристику");
+        removeBtn.innerHTML = `<i class="fas fa-times"></i>`;
 
-        // Исправлено: после удаления проверяем, пуст ли контейнер
-        remove.onclick = () => {
+        removeBtn.onclick = () => {
             row.remove();
-            if (container.querySelectorAll('.option-row').length === 0) {
+            if (!container.children.length) {
                 container.classList.add("empty");
-                const emptyText = document.createElement("span");
-                emptyText.className = "empty-text";
-                emptyText.textContent = "Характеристики не добавлены";
-                container.appendChild(emptyText);
+                container.innerHTML = `<span class="empty-text">Дополнительные характеристики не добавлены (необязательно)</span>`;
             }
         };
 
-        row.append(input, remove);
+        row.appendChild(input);
+        row.appendChild(removeBtn);
         container.appendChild(row);
         input.focus();
     }
 
+    document.getElementById("categoryForm").addEventListener("submit", function (event) {
+        const nameInput = document.getElementById("name");
+        const errorSpan = document.getElementById("nameError");
 
-    document.getElementById("categoryForm").addEventListener("submit", e => {
-        const name = document.getElementById("name");
-        const error = document.getElementById("nameError");
-        const options = document.querySelectorAll('input[name="optionNames"]');
-
-        if (!name.value.trim()) {
-            e.preventDefault();
-            error.textContent = "Название категории обязательно";
-            name.focus();
-            return;
-        }
-
-        let hasEmpty = false;
-        options.forEach(opt => {
-            if (!opt.value.trim()) hasEmpty = true;
-        });
-
-        if (hasEmpty) {
-            e.preventDefault();
-            alert("Все добавленные характеристики должны быть заполнены");
+        if (nameInput.value.trim() === "") {
+            errorSpan.textContent = "Пожалуйста, введите название категории";
+            event.preventDefault();
+        } else {
+            errorSpan.textContent = "";
         }
     });
 </script>

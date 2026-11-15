@@ -3,9 +3,6 @@ package kz.ibrazaim.catalog.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +13,7 @@ import java.util.List;
 @Table(name = "product_sizes")
 public class ProductSize {
 
-    @jakarta.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
@@ -26,5 +23,8 @@ public class ProductSize {
 
     @Column(name = "size", nullable = false)
     String size; // Хранит отдельный размер, например, "S", "M", "L".
+
+    @Column(name = "stock", nullable = false)
+    int stock = 15;
 }
 

@@ -4,14 +4,38 @@
 
 /* ── 1. Боковое меню ───────────────────────────────────────── */
 (function () {
+    window.openSidebar = function () {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        if (sidebar) sidebar.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeSidebar = function () {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        if (sidebar) sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
     const sidebar = document.getElementById('sidebar');
     if (!sidebar) return;
 
-    // Открытие/закрытие/Escape уже обеспечивает inline-скрипт в navbar.html
-    // (openSidebar / closeSidebar), здесь только дополнительное поведение.
     const close = () => {
-        if (typeof window.closeSidebar === 'function') window.closeSidebar();
+        window.closeSidebar();
     };
+
+    const menuIcon = document.getElementById('menu-icon');
+    if (menuIcon) {
+        menuIcon.addEventListener('click', window.openSidebar);
+    }
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.addEventListener('click', window.closeSidebar);
+    }
+    document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', window.closeSidebar));
 
     // Закрытие по клику на пункт меню (удобно на мобильных)
     sidebar.querySelectorAll('.panel-item a').forEach((a) => a.addEventListener('click', close));
@@ -111,6 +135,45 @@
             search.focus();
             search.select();
         }
+    });
+
+    // 2.6 Глобальный счётчик «Избранное» в шапке (индивидуально для каждого пользователя)
+    function getWishlistStorageKey() {
+        const badge = document.getElementById('navWishlistCount');
+        const userKey = (badge && badge.getAttribute('data-user-key')) || 'guest';
+        return 'uxd_wishlist_ids_' + userKey;
+    }
+
+    // Инициализация серверных данных для авторизованного пользователя (даже на страницах без product-card.js)
+    (function hydrateServerWishlist() {
+        const badge = document.getElementById('navWishlistCount');
+        if (!badge) return;
+        const isAuth = badge.getAttribute('data-authenticated') === 'true';
+        if (isAuth) {
+            const serverIdsRaw = badge.getAttribute('data-server-ids') || '';
+            const serverIds = serverIdsRaw ? serverIdsRaw.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : [];
+            try {
+                localStorage.setItem(getWishlistStorageKey(), JSON.stringify(serverIds));
+            } catch (_) {}
+        }
+    })();
+
+    window.syncNavbarWishlistCount = function () {
+        const badge = document.getElementById('navWishlistCount');
+        if (!badge) return;
+        try {
+            const raw = localStorage.getItem(getWishlistStorageKey());
+            const list = raw ? JSON.parse(raw) : [];
+            const count = Array.isArray(list) ? list.length : 0;
+            badge.textContent = String(count);
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        } catch (_) {
+            badge.style.display = 'none';
+        }
+    };
+    window.syncNavbarWishlistCount();
+    window.addEventListener('storage', function (e) {
+        if (e.key && e.key.indexOf('uxd_wishlist_ids_') === 0) window.syncNavbarWishlistCount();
     });
 })();
 

@@ -64,6 +64,4 @@ button[type="submit"]:hover {
 
 
 /* Строгая геометрия: без скруглений */
-*, *::before, *::after {
-    border-radius: 0 !important;
-}
+/* radius reset removed */

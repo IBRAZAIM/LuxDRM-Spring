@@ -69,6 +69,9 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder);
 
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/payments/webhook")
+                )
                 .authenticationProvider(authProvider)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -82,13 +85,18 @@ public class SecurityConfig {
                                 "/reviews/**",
                                 "/sales",
                                 "/sales/**",
-                                "/orders/updateStatus"
+                                "/orders/updateStatus",
+                                "/promos",
+                                "/promos/**"
                         ).hasAnyRole("admin", "moder")
                         .requestMatchers(
                                 "/products/addComment",
                                 "/checkout",
+                                "/payment/**",
                                 "/orders",
-                                "/orders/**"
+                                "/orders/**",
+                                "/profile",
+                                "/profile/**"
                         ).authenticated()
                         .anyRequest().permitAll()
                 )

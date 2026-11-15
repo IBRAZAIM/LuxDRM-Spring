@@ -2,8 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Обновление товара</title>
+    <title>Обновление товара — UXD</title>
     <link rel="stylesheet" th:href="@{/updateForm.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div class="container">
@@ -13,24 +14,38 @@
     <h1>Обновление товара</h1>
     <p class="subtitle">Изменения сохраняются сразу после отправки</p>
 
-    <form th:action="@{/products/update/{id}(id=${product.id})}" th:object="${product}" method="post">
+    <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
+    <form th:action="@{/products/update/{id}(id=${product.id})}" th:object="${product}" method="post" enctype="multipart/form-data">
         <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
         <input type="hidden" th:field="*{id}">
 
         <div class="form-section">
             <div class="form-group">
                 <label>Название товара</label>
-                <input type="text" th:field="*{name}" placeholder="Название товара">
+                <input type="text" th:field="*{name}" placeholder="Название товара" required>
+            </div>
+
+            <div class="form-row-grid">
+                <div class="form-group">
+                    <label>Цена (₸)</label>
+                    <input type="number" th:field="*{price}" placeholder="₸" min="0" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Скидка (%)</label>
+                    <input type="number" th:field="*{discount}" placeholder="0" min="0" max="99" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label>Остаток на складе (шт.)</label>
+                    <input type="number" th:field="*{stock}" placeholder="Количество на складе" min="0" required>
+                </div>
             </div>
 
             <div class="form-group">
-                <label>Цена (₸)</label>
-                <input type="text" th:field="*{price}" placeholder="₸">
-            </div>
-
-            <div class="form-group">
-                <label>Количество на складе (Stock)</label>
-                <input type="number" th:field="*{stock}" placeholder="Количество на складе" min="0">
+                <label>Описание</label>
+                <textarea th:field="*{description}" placeholder="Подробное описание товара" maxlength="5000"></textarea>
             </div>
         </div>
 
@@ -51,10 +66,182 @@
             </div>
         </div>
 
+        <!-- Размеры -->
+        <div class="form-section">
+            <div class="section-header">
+                <label>Размеры</label>
+                <div class="preset-chips">
+                    <button type="button" class="preset-chip" onclick="addPresetSizes(['XS','S','M','L','XL'])">+ XS–XL</button>
+                    <button type="button" class="preset-chip" onclick="addPresetSizes(['S','M','L'])">+ S–L</button>
+                    <button type="button" class="preset-chip" onclick="addPresetSizes(['One Size'])">+ One Size</button>
+                </div>
+            </div>
+            <div id="sizes" class="items-list" data-empty-text="Пока нет размеров. Нажмите + чтобы добавить.">
+                <span class="empty-text" th:if="${#lists.isEmpty(sizes)}">Пока нет размеров. Нажмите + чтобы добавить.</span>
+                <div class="option-row" th:each="s : ${sizes}" style="display: flex; align-items: center; gap: 6px;">
+                    <input type="text" name="sizes" th:value="${s.size}" placeholder="Размер">
+                    <button type="button" class="remove-btn" onclick="this.parentElement.remove(); checkEmpty(document.getElementById('sizes'));">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="add-product-btn" onclick="addSizeItem('')" title="Добавить размер">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        <!-- Изображения (Текущие + Загрузка новых файлов) -->
+        <div class="form-section">
+            <label>Текущие фотографии</label>
+            <div class="upload-previews" id="existingPreviews">
+                <div class="upload-preview-card" th:each="img, stat : ${images}">
+                    <input type="hidden" name="existingImages" th:value="${img.image}">
+                    <img th:src="@{${img.image}}" alt="Фото товара">
+                    <span class="upload-preview-card__badge" th:if="${stat.index == 0}">Главное фото</span>
+                    <button type="button" class="upload-preview-card__remove" title="Удалить фото" onclick="this.parentElement.remove();">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <label style="margin-top: 8px;">Загрузить новые фотографии с компьютера</label>
+            <input type="file" id="imageFilesInput" name="imageFiles" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple style="display: none;">
+
+            <div class="upload-dropzone" id="uploadDropzone">
+                <i class="fas fa-cloud-upload-alt upload-dropzone__icon"></i>
+                <span class="upload-dropzone__title">Нажмите для выбора фото или перетащите файлы сюда</span>
+                <span class="upload-dropzone__hint">Поддерживаются JPG, PNG, WEBP, AVIF (до 10 МБ на файл)</span>
+            </div>
+
+            <div class="upload-previews" id="uploadPreviews"></div>
+        </div>
+
         <div class="form-actions sticky">
             <button class="btn-primary" type="submit">Сохранить изменения</button>
         </div>
     </form>
 </div>
+<script>
+    function addSizeItem(initialValue) {
+        const list = document.getElementById('sizes');
+        const emptyText = list.querySelector('.empty-text');
+        if (emptyText) emptyText.remove();
+
+        const container = document.createElement('div');
+        container.className = 'option-row';
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.gap = '6px';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Размер';
+        input.name = 'sizes';
+        if (initialValue) input.value = initialValue;
+        container.appendChild(input);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-btn';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        removeBtn.onclick = () => { container.remove(); checkEmpty(list); };
+        container.appendChild(removeBtn);
+
+        list.appendChild(container);
+    }
+
+    function addPresetSizes(sizesArray) {
+        const existing = Array.from(document.querySelectorAll('#sizes input[name="sizes"], #sizes input[name="sizes[]"]'))
+            .map(inp => inp.value.trim().toUpperCase());
+        sizesArray.forEach(size => {
+            if (!existing.includes(size.toUpperCase())) {
+                addSizeItem(size);
+            }
+        });
+    }
+
+    function checkEmpty(list) {
+        if (!list.querySelector('.option-row')) {
+            const empty = document.createElement('span');
+            empty.className = 'empty-text';
+            empty.innerText = list.dataset.emptyText;
+            list.appendChild(empty);
+        }
+    }
+
+    const fileInput = document.getElementById('imageFilesInput');
+    const dropzone = document.getElementById('uploadDropzone');
+    const previewsContainer = document.getElementById('uploadPreviews');
+    const selectedFiles = [];
+
+    function syncInputFiles() {
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        fileInput.files = dt.files;
+        renderPreviews();
+    }
+
+    function addFiles(fileList) {
+        Array.from(fileList).forEach(file => {
+            if (file.type && file.type.startsWith('image/')) {
+                selectedFiles.push(file);
+            }
+        });
+        syncInputFiles();
+    }
+
+    function renderPreviews() {
+        previewsContainer.innerHTML = '';
+        selectedFiles.forEach((file, idx) => {
+            const card = document.createElement('div');
+            card.className = 'upload-preview-card';
+
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.alt = file.name;
+            card.appendChild(img);
+
+            const badge = document.createElement('span');
+            badge.className = 'upload-preview-card__badge';
+            badge.textContent = 'Новое';
+            card.appendChild(badge);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'upload-preview-card__remove';
+            removeBtn.title = 'Убрать фото';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.onclick = () => {
+                selectedFiles.splice(idx, 1);
+                syncInputFiles();
+            };
+            card.appendChild(removeBtn);
+
+            previewsContainer.appendChild(card);
+        });
+    }
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            addFiles(e.target.files);
+        }
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('is-dragover');
+    });
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('is-dragover');
+    });
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('is-dragover');
+        if (e.dataTransfer && e.dataTransfer.files) {
+            addFiles(e.dataTransfer.files);
+        }
+    });
+</script>
 </body>
 </html>

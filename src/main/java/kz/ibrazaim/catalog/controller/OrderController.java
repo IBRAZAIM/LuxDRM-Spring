@@ -3,21 +3,24 @@ package kz.ibrazaim.catalog.controller;
 import kz.ibrazaim.catalog.model.CartItem;
 import kz.ibrazaim.catalog.model.Order;
 import kz.ibrazaim.catalog.model.OrderStatus;
+import kz.ibrazaim.catalog.model.PaymentStatus;
+import kz.ibrazaim.catalog.model.PaymentTransaction;
 import kz.ibrazaim.catalog.model.Role;
 import kz.ibrazaim.catalog.model.User;
-import kz.ibrazaim.catalog.service.CardService;
 import kz.ibrazaim.catalog.service.CartService;
 import kz.ibrazaim.catalog.service.OrderService;
+import kz.ibrazaim.catalog.service.PaymentService;
+import kz.ibrazaim.catalog.service.PromoCodeService;
 import kz.ibrazaim.catalog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,7 +31,8 @@ public class OrderController {
     private final UserService userService;
     private final CartService cartService;
     private final OrderService orderService;
-    private final CardService cardService;
+    private final PaymentService paymentService;
+    private final PromoCodeService promoCodeService;
 
     @GetMapping("/checkout")
     public String getCheckout(Model model, jakarta.servlet.http.HttpSession session) {
@@ -38,6 +42,10 @@ public class OrderController {
         }
         cartService.mergeGuestCartToUser(session, user);
         model.addAttribute("user", user);
+        List<Order> prevOrders = orderService.getOrdersForUser(user);
+        if (prevOrders != null && !prevOrders.isEmpty()) {
+            model.addAttribute("lastOrder", prevOrders.get(0));
+        }
         List<CartItem> cartItems = userService.findCartItemsByUser(user);
         int cartItemsCount = cartItems.stream()
                 .mapToInt(item -> Math.max(0, item.getQuantity()))
@@ -51,12 +59,24 @@ public class OrderController {
                         .divide(subtotalPrice, 0, java.math.RoundingMode.HALF_UP)
                         .intValue()
                 : 0;
-        BigDecimal finalPrice = subtotalPrice.subtract(discountAmount)
+        BigDecimal afterProductDiscount = subtotalPrice.subtract(discountAmount)
+                .max(BigDecimal.ZERO)
+                .setScale(2, java.math.RoundingMode.HALF_UP);
+        PromoCodeService.PromoInfo activePromo = cartItems.isEmpty()
+                ? null
+                : promoCodeService.getActivePromo(session);
+        BigDecimal promoDiscount = promoCodeService.calculatePromoDiscount(afterProductDiscount, activePromo);
+        BigDecimal finalPrice = afterProductDiscount.subtract(promoDiscount)
                 .max(BigDecimal.ZERO)
                 .setScale(2, java.math.RoundingMode.HALF_UP);
         model.addAttribute("subtotalPrice", subtotalPrice);
         model.addAttribute("discountAmount", discountAmount);
         model.addAttribute("discountPercent", discountPercent);
+        model.addAttribute("afterProductDiscount", afterProductDiscount);
+        model.addAttribute("promoCode", activePromo != null ? activePromo.getCode() : null);
+        model.addAttribute("promoPercent", activePromo != null ? activePromo.getPercent() : 0);
+        model.addAttribute("promoDescription", activePromo != null ? activePromo.getDescription() : null);
+        model.addAttribute("promoDiscount", promoDiscount);
         model.addAttribute("totalPrice", finalPrice);
         model.addAttribute("finalPrice", finalPrice);
         return "checkout";
@@ -73,11 +93,9 @@ public class OrderController {
             @RequestParam("address") String address,
             @RequestParam("postalCode") String postalCode,
             @RequestParam(value = "delivery", required = false, defaultValue = "standard") String deliveryMethod,
-            @RequestParam(value = "paymentMethod", required = false, defaultValue = "card") String paymentMethod,
-            @RequestParam(required = false, defaultValue = "") String cardNumber,
-            @RequestParam(required = false, defaultValue = "") String cardHolderName,
-            @RequestParam(required = false, defaultValue = "") String expiryMonth,
-            @RequestParam(required = false, defaultValue = "") String expiryYear
+            @RequestParam(value = "paymentMethod", required = false, defaultValue = "kaspi_qr") String paymentMethod,
+            jakarta.servlet.http.HttpSession session,
+            RedirectAttributes redirectAttributes
     ) {
         User user = userService.getUser();
         if (user == null) {
@@ -89,12 +107,38 @@ public class OrderController {
             return "redirect:/cart";
         }
 
-        orderService.create(user, email, phone, fullName, country, city, address, postalCode, deliveryMethod, paymentMethod, cartItems);
-        if ("card".equals(paymentMethod)) {
-            cardService.saveCard(user, cardNumber, cardHolderName, expiryMonth, expiryYear);
-        }
+        BigDecimal itemsAfterProductDiscount = cartService.finalPrice(cartItems);
+        PromoCodeService.PromoInfo activePromo = promoCodeService.getActivePromo(session);
+        BigDecimal promoDiscount = promoCodeService.calculatePromoDiscount(itemsAfterProductDiscount, activePromo);
+        String appliedPromoCode = (activePromo != null && promoDiscount.compareTo(BigDecimal.ZERO) > 0)
+                ? activePromo.getCode()
+                : null;
+
+        Order createdOrder = orderService.create(
+                user, email, phone, fullName, country, city, address, postalCode,
+                deliveryMethod, paymentMethod, cartItems, promoDiscount, appliedPromoCode
+        );
+        userService.saveDeliveryDetailsIfBlank(user, phone, country, city, address, postalCode);
+        PaymentTransaction paymentTx = paymentService.createPaymentForOrder(createdOrder, paymentMethod);
         cartService.clearCart(user);
-        return "redirect:/orders";
+        if (appliedPromoCode != null) {
+            promoCodeService.consumePromo(session);
+        } else {
+            promoCodeService.clearPromo(session);
+        }
+
+        // Если выбран онлайн-способ оплаты — перенаправляем покупателя на платёжный шлюз
+        if (paymentTx.getPaymentStatus() == PaymentStatus.AWAITING_PAYMENT && paymentTx.getPaymentUrl() != null) {
+            return "redirect:" + paymentTx.getPaymentUrl();
+        }
+
+        redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "Спасибо за покупку! Ваш заказ №00" + createdOrder.getId() +
+                (createdOrder.getSerialNumber() != null ? " (" + createdOrder.getSerialNumber() + ")" : "") +
+                " успешно оформлен и принят в обработку."
+        );
+        return "redirect:/orders/" + createdOrder.getId();
     }
 
     @GetMapping("/orders")
@@ -121,6 +165,7 @@ public class OrderController {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             model.addAttribute("orders", orders);
+            model.addAttribute("paymentTxMap", paymentService.findLatestByOrders(orders));
             model.addAttribute("totalOrdersCount", orders.size());
             model.addAttribute("pendingCount", pendingCount);
             model.addAttribute("shippedCount", shippedCount);
@@ -132,6 +177,7 @@ public class OrderController {
 
         orders = orderService.getOrdersForUser(user);
         model.addAttribute("orders", orders);
+        model.addAttribute("paymentTxMap", paymentService.findLatestByOrders(orders));
 
         if (orders.isEmpty()) {
             model.addAttribute("message", "У вас нет заказов.");
@@ -144,6 +190,7 @@ public class OrderController {
     public String updateOrderStatus(
             @RequestParam("orderId") Long orderId,
             @RequestParam("status") String status,
+            @RequestParam(value = "trackingNumber", required = false) String trackingNumber,
             @RequestParam(value = "redirectTo", required = false) String redirectTo,
             RedirectAttributes redirectAttributes
     ) {
@@ -153,7 +200,7 @@ public class OrderController {
         }
 
         try {
-            orderService.updateOrderStatus(orderId, status);
+            orderService.updateOrderStatus(orderId, status, trackingNumber);
             redirectAttributes.addFlashAttribute("successMessage", "Статус заказа №00" + orderId + " успешно обновлён");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("errorMessage", "Ошибка при обновлении статуса: " + ex.getMessage());
@@ -163,6 +210,43 @@ public class OrderController {
             return "redirect:" + redirectTo;
         }
         return "redirect:/orders";
+    }
+
+    @PostMapping("/orders/{id}/cancel")
+    public String cancelUserOrder(
+            @PathVariable("id") long id,
+            @RequestParam(value = "redirectTo", required = false) String redirectTo,
+            RedirectAttributes redirectAttributes
+    ) {
+        User user = userService.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Order order = orderService.getOrderById(id);
+        if (order == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Заказ не найден");
+            return "redirect:/orders";
+        }
+
+        boolean isOwner = order.getUser() != null && order.getUser().getId() == user.getId();
+        boolean isStaff = userService.hasAnyRole(user, Role.ADMIN, Role.MODER);
+        if (!isOwner && !isStaff) {
+            return "redirect:/orders";
+        }
+
+        if (!isStaff && order.getStatus() != OrderStatus.PENDING) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Отменить заказ самостоятельно можно только в статусе «В ожидании».");
+            return "redirect:/orders/" + id;
+        }
+
+        orderService.updateOrderStatus(id, OrderStatus.CANCELED.name());
+        redirectAttributes.addFlashAttribute("successMessage", "Заказ №00" + id + " отменён.");
+
+        if (redirectTo != null && redirectTo.startsWith("/orders")) {
+            return "redirect:" + redirectTo;
+        }
+        return "redirect:/orders/" + id;
     }
 
     @GetMapping("/orders/{id}")
@@ -177,7 +261,6 @@ public class OrderController {
             return "redirect:/orders";
         }
 
-        // Разрешаем просмотр только владельцу заказа или администратору/модератору
         boolean isOwner = order.getUser() != null && order.getUser().getId() == user.getId();
         boolean isStaff = userService.hasAnyRole(user, Role.ADMIN, Role.MODER);
         if (!isOwner && !isStaff) {
@@ -186,6 +269,7 @@ public class OrderController {
 
         model.addAttribute("order", order);
         model.addAttribute("isStaff", isStaff);
+        model.addAttribute("paymentTx", paymentService.findLatestByOrder(order).orElse(null));
         int cartItemsCount = cartService.getCartItemsCountByUser(user);
         model.addAttribute("cartItemsCount", cartItemsCount);
         return "orderPage";

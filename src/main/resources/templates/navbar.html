@@ -10,6 +10,8 @@
 <body>
 <app-navbar>
     <header class="header" th:fragment="navigation-panel">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" th:href="@{/navbar.css(v=4)}">
         <div class="navbar-container">
 
             <!-- Overlay -->
@@ -20,7 +22,7 @@
 
                 <!-- Header row: logo + close -->
                 <div class="sidebar-head">
-                    <h2 class="sidebar-logo">UXD</h2>
+                    <h2 class="sidebar-logo">Under X Desire</h2>
                     <button class="close-btn" onclick="closeSidebar()" aria-label="Закрыть">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                             <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -58,6 +60,18 @@
                                 <span>Каталог</span>
                             </a>
                         </li>
+                        <li class="panel-item">
+                            <a th:href="@{/wishlist}">
+                                <i class="fas fa-heart"></i>
+                                <span>Избранное</span>
+                            </a>
+                        </li>
+                        <li class="panel-item" sec:authorize="isAuthenticated()">
+                            <a th:href="@{/profile}">
+                                <i class="fas fa-user"></i>
+                                <span>Мой профиль</span>
+                            </a>
+                        </li>
                         <li class="panel-item" sec:authorize="isAuthenticated() and !hasAnyRole('admin', 'moder')">
                             <a th:href="@{/orders}">
                                 <i class="fas fa-box"></i>
@@ -93,6 +107,12 @@
                                 <a th:href="@{/sales}">
                                     <i class="fas fa-chart-line"></i>
                                     <span>Отчеты и продажи</span>
+                                </a>
+                            </li>
+                            <li class="panel-item">
+                                <a th:href="@{/promos}">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    <span>Промокоды</span>
                                 </a>
                             </li>
                         </ul>
@@ -143,30 +163,47 @@
 
             <!-- Бургер меню -->
             <div class="menu-icon" id="menu-icon" onclick="openSidebar()">
-                <svg width="24" height="25" viewBox="0 0 50 50">
-                    <path d="M0 9h50v2H0zm0 15h50v2H0zm0 15h50v2H0"/>
+                <svg width="24" height="25" viewBox="0 0 50 50" style="fill:#000000 !important;stroke:none !important;">
+                    <path d="M0 9h50v2H0zm0 15h50v2H0zm0 15h50v2H0" style="fill:#000000 !important;stroke:none !important;"/>
                 </svg>
                 <span>Меню</span>
             </div>
 
-            <a class="logo" th:href="@{/}">UXD</a>
+            <a class="logo" th:href="@{/}">Under X Desire</a>
 
             <!-- Иконки пользователя -->
             <div class="icons-container">
-                <!-- 1. Иконка Профиль (Неавторизованный пользователь) -->
+                <!-- 0. Иконка Поиск (Search) -->
+                <button type="button" class="icon-link nav-search-btn" onclick="toggleNavSearch()" title="Поиск по каталогу" aria-label="Поиск по каталогу">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="#000000" style="fill:#000000 !important;stroke:none !important;" aria-hidden="true">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" style="fill:#000000 !important;stroke:none !important;"/>
+                    </svg>
+                </button>
+
+                <!-- 1. Иконка Избранное (Heart) -->
+                <a th:href="@{/wishlist}" class="icon-link" title="Избранное" style="position: relative;">
+                    <svg fill="#000000" height="22px" width="22px" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.996 511.996" style="fill:#000000 !important;stroke:none !important;">
+                        <g><g><path d="M467.01,64.373c-29.995-29.995-69.299-44.988-108.612-44.988c-36.779,0-73.259,13.662-102.4,39.919 c-29.15-26.257-65.621-39.919-102.4-39.919c-39.313,0-78.618,14.993-108.612,44.988c-59.981,59.981-59.981,157.235,0,217.225 L255.998,492.61L467.01,281.598C526.991,221.609,526.991,124.363,467.01,64.373z M448.919,263.49L255.998,456.403L63.085,263.499 c-49.903-49.911-49.903-131.115,0-181.018c24.175-24.175,56.32-37.487,90.513-37.487c31.206,0,60.399,11.563,83.695,31.889 l18.705,17.485l18.714-17.493c23.296-20.318,52.489-31.889,83.695-31.889c34.193,0,66.33,13.312,90.513,37.487 C498.831,132.375,498.822,213.587,448.919,263.49z" style="fill:#000000 !important;stroke:none !important;"/></g></g>
+                    </svg>
+                    <span class="cart-count" id="navWishlistCount" style="display:none;"
+                          th:attr="data-user-key=${wishlistUserKey},data-server-ids=${wishlistServerIds},data-authenticated=${#authorization.expression('isAuthenticated()')},data-csrf-token=${_csrf != null ? _csrf.token : ''},data-csrf-header=${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}">0</span>
+                </a>
+
+                <!-- 2. Иконка Профиль (Неавторизованный пользователь) -->
                 <a sec:authorize="!isAuthenticated()" th:href="@{/login(redirect=${currentRequestPath})}" class="icon-link" title="Войти">
                     <svg fill="#000000" height="22px" width="22px" version="1.1"
-                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492.308 492.308">
-                        <g><g><path d="M246.154,5.971c-66.933,0-121.385,54.452-121.385,121.375c0,66.933,54.452,121.385,121.385,121.385 s121.385-54.452,121.385-121.385C367.538,60.423,313.087,5.971,246.154,5.971z M246.154,229.038 c-56.072,0-101.692-45.615-101.692-101.692c0-56.067,45.62-101.683,101.692-101.683c56.072,0,101.692,45.615,101.692,101.683 C347.846,183.423,302.226,229.038,246.154,229.038z"/></g></g>
-                        <g><g><path d="M384.394,248.019c-1.822-1.25-5.486-3.625-5.486-3.625l-7.865-5.106l-5.486,7.615 c-27.649,38.385-72.284,61.308-119.404,61.308c-47.125,0-91.769-22.923-119.413-61.317l-5.495-7.635l-12.447,8.163 C40.673,293.308,0,369.683,0,451.712v34.625h492.308v-34.625C492.308,370.106,451.966,293.962,384.394,248.019z M472.615,466.644 H19.692v-14.933c0-74.154,36.125-143.279,96.861-185.731c31.577,38.942,79.337,61.923,129.601,61.923 c50.255,0,98.019-22.99,129.596-61.923c60.716,42.423,96.865,111.625,96.865,185.731V466.644z"/></g></g>
+                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492.308 492.308" style="fill:#000000 !important;stroke:none !important;">
+                        <g><g><path d="M246.154,5.971c-66.933,0-121.385,54.452-121.385,121.375c0,66.933,54.452,121.385,121.385,121.385 s121.385-54.452,121.385-121.385C367.538,60.423,313.087,5.971,246.154,5.971z M246.154,229.038 c-56.072,0-101.692-45.615-101.692-101.692c0-56.067,45.62-101.683,101.692-101.683c56.072,0,101.692,45.615,101.692,101.683 C347.846,183.423,302.226,229.038,246.154,229.038z" style="fill:#000000 !important;stroke:none !important;"/></g></g>
+                        <g><g><path d="M384.394,248.019c-1.822-1.25-5.486-3.625-5.486-3.625l-7.865-5.106l-5.486,7.615 c-27.649,38.385-72.284,61.308-119.404,61.308c-47.125,0-91.769-22.923-119.413-61.317l-5.495-7.635l-12.447,8.163 C40.673,293.308,0,369.683,0,451.712v34.625h492.308v-34.625C492.308,370.106,451.966,293.962,384.394,248.019z M472.615,466.644 H19.692v-14.933c0-74.154,36.125-143.279,96.861-185.731c31.577,38.942,79.337,61.923,129.601,61.923 c50.255,0,98.019-22.99,129.596-61.923c60.716,42.423,96.865,111.625,96.865,185.731V466.644z" style="fill:#000000 !important;stroke:none !important;"/></g></g>
                     </svg>
                 </a>
                 <!-- 2. Иконка Профиль (Авторизованный пользователь) -->
-                <a sec:authorize="isAuthenticated()" th:href="@{/orders}" class="icon-link" th:title="'Личный кабинет: ' + ${#authentication.name}" style="position: relative;">
+                <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="icon-link" th:title="'Личный кабинет: ' + ${#authentication.name}" style="position: relative;">
                     <svg fill="#000000" height="22px" width="22px" version="1.1"
-                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492.308 492.308">
-                        <g><g><path d="M246.154,5.971c-66.933,0-121.385,54.452-121.385,121.375c0,66.933,54.452,121.385,121.385,121.385 s121.385-54.452,121.385-121.385C367.538,60.423,313.087,5.971,246.154,5.971z M246.154,229.038 c-56.072,0-101.692-45.615-101.692-101.692c0-56.067,45.62-101.683,101.692-101.683c56.072,0,101.692,45.615,101.692,101.683 C347.846,183.423,302.226,229.038,246.154,229.038z"/></g></g>
-                        <g><g><path d="M384.394,248.019c-1.822-1.25-5.486-3.625-5.486-3.625l-7.865-5.106l-5.486,7.615 c-27.649,38.385-72.284,61.308-119.404,61.308c-47.125,0-91.769-22.923-119.413-61.317l-5.495-7.635l-12.447,8.163 C40.673,293.308,0,369.683,0,451.712v34.625h492.308v-34.625C492.308,370.106,451.966,293.962,384.394,248.019z M472.615,466.644 H19.692v-14.933c0-74.154,36.125-143.279,96.861-185.731c31.577,38.942,79.337,61.923,129.601,61.923 c50.255,0,98.019-22.99,129.596-61.923c60.716,42.423,96.865,111.625,96.865,185.731V466.644z"/></g></g>
+                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492.308 492.308" style="fill:#000000 !important;stroke:none !important;">
+                        <g><g><path d="M246.154,5.971c-66.933,0-121.385,54.452-121.385,121.375c0,66.933,54.452,121.385,121.385,121.385 s121.385-54.452,121.385-121.385C367.538,60.423,313.087,5.971,246.154,5.971z M246.154,229.038 c-56.072,0-101.692-45.615-101.692-101.692c0-56.067,45.62-101.683,101.692-101.683c56.072,0,101.692,45.615,101.692,101.683 C347.846,183.423,302.226,229.038,246.154,229.038z" style="fill:#000000 !important;stroke:none !important;"/></g></g>
+                        <g><g><path d="M384.394,248.019c-1.822-1.25-5.486-3.625-5.486-3.625l-7.865-5.106l-5.486,7.615 c-27.649,38.385-72.284,61.308-119.404,61.308c-47.125,0-91.769-22.923-119.413-61.317l-5.495-7.635l-12.447,8.163 C40.673,293.308,0,369.683,0,451.712v34.625h492.308v-34.625C492.308,370.106,451.966,293.962,384.394,248.019z M472.615,466.644 H19.692v-14.933c0-74.154,36.125-143.279,96.861-185.731c31.577,38.942,79.337,61.923,129.601,61.923 c50.255,0,98.019-22.99,129.596-61.923c60.716,42.423,96.865,111.625,96.865,185.731V466.644z" style="fill:#000000 !important;stroke:none !important;"/></g></g>
                     </svg>
                     <span style="position: absolute; bottom: 0; right: 0; width: 7px; height: 7px; background: #2e7d32; border-radius: 50%; border: 1.5px solid #fff;"></span>
                 </a>
@@ -174,8 +211,8 @@
                 <!-- 3. Иконка Корзина -->
                 <a th:href="@{/cart}" class="icon-link" title="Корзина">
                     <svg fill="#000000" width="24px" height="24px" viewBox="0 0 30.00 30.00"
-                         xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)">
-                        <g><path d="M11.5 7h7c.277 0 .5.223.5.5s-.223.5-.5.5h-7c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm-7 0c-.824 0-1.422.694-1.498 1.45l-2 20C.914 29.33 1.676 30 2.5 30h25c.824 0 1.586-.672 1.498-1.55l-2-20C26.922 7.695 26.324 7 25.5 7h-3c-.67 0-.65 1 0 1h3c.284 0 .467.204.502.55l2 20c.023.225-.218.45-.502.45h-25c-.284 0-.525-.225-.502-.45l2-20c.035-.346.218-.55.502-.55h3c.67 0 .654-1 0-1zM15 0c-3.308 0-6 2.692-6 6v4.5c0 .665 1 .665 1 0V6c0-2.767 2.233-5 5-5s5 2.233 5 5v4.5c0 .665 1 .657 1 0V6c0-3.308-2.692-6-6-6z"/></g>
+                         xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)" style="fill:#000000 !important;stroke:none !important;">
+                        <g><path d="M11.5 7h7c.277 0 .5.223.5.5s-.223.5-.5.5h-7c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm-7 0c-.824 0-1.422.694-1.498 1.45l-2 20C.914 29.33 1.676 30 2.5 30h25c.824 0 1.586-.672 1.498-1.55l-2-20C26.922 7.695 26.324 7 25.5 7h-3c-.67 0-.65 1 0 1h3c.284 0 .467.204.502.55l2 20c.023.225-.218.45-.502.45h-25c-.284 0-.525-.225-.502-.45l2-20c.035-.346.218-.55.502-.55h3c.67 0 .654-1 0-1zM15 0c-3.308 0-6 2.692-6 6v4.5c0 .665 1 .665 1 0V6c0-2.767 2.233-5 5-5s5 2.233 5 5v4.5c0 .665 1 .657 1 0V6c0-3.308-2.692-6-6-6z" style="fill:#000000 !important;stroke:none !important;"/></g>
                     </svg>
                     <span th:if="${cartItemsCount != null and cartItemsCount > 0}" class="cart-count" id="navCartCount" th:text="${cartItemsCount}"></span>
                     <span th:unless="${cartItemsCount != null and cartItemsCount > 0}" class="cart-count" id="navCartCount" style="display:none;">0</span>
@@ -183,30 +220,154 @@
             </div>
 
         </div>
+
+        <!-- Выдвижная панель быстрого поиска -->
+        <div id="navSearchDrawer" style="display:none;position:absolute;left:0;right:0;top:69px;background:#fff;border-bottom:1px solid #ebebf0;box-shadow:0 8px 24px rgba(12,12,61,0.08);z-index:9999;padding:14px 24px;">
+            <form th:action="@{/products}" method="get" style="max-width:720px;margin:0 auto;display:flex;align-items:center;gap:10px;">
+                <input type="search" id="navSearchInput" name="search" placeholder="Поиск по названию модели или категории..." required autocomplete="off"
+                       style="flex:1;padding:10px 14px;border:1.5px solid #e0e0ea;border-radius:8px;background:#fff;font-size:14px;outline:none;color:#0c0c3d;">
+                <button type="submit" style="padding:10px 20px;background:#0c0c3d;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+                    Найти
+                </button>
+                <button type="button" onclick="toggleNavSearch(false)" aria-label="Закрыть поиск"
+                        style="background:none;border:none;font-size:18px;color:#888;cursor:pointer;padding:6px 8px;">✕</button>
+            </form>
+            <div id="navSearchResults" style="max-width:720px;margin:10px auto 0;display:none;border:1px solid #ebebf0;border-radius:10px;background:#fff;overflow:hidden;"></div>
+        </div>
+
+        <script>
+            function toggleNavSearch(forceState) {
+                var drawer = document.getElementById('navSearchDrawer');
+                if (!drawer) return;
+                var show = typeof forceState === 'boolean' ? forceState : (drawer.style.display === 'none' || !drawer.style.display);
+                drawer.style.display = show ? 'block' : 'none';
+                if (show) {
+                    var inp = document.getElementById('navSearchInput');
+                    if (inp) setTimeout(function() { inp.focus(); }, 30);
+                } else {
+                    var resBox = document.getElementById('navSearchResults');
+                    if (resBox) {
+                        resBox.style.display = 'none';
+                        resBox.innerHTML = '';
+                    }
+                }
+            }
+            (function initNavLiveSearch() {
+                var inp = document.getElementById('navSearchInput');
+                var box = document.getElementById('navSearchResults');
+                if (!inp || !box) return;
+                var timer = null;
+
+                function formatKzt(val) {
+                    var n = Math.round(Number(val || 0));
+                    return n.toLocaleString('ru-RU') + '\u00a0₸';
+                }
+
+                function renderResults(items) {
+                    box.innerHTML = '';
+                    if (!Array.isArray(items) || items.length === 0) {
+                        var empty = document.createElement('div');
+                        empty.style.cssText = 'padding:12px 16px;font-size:13px;color:#6B7280;';
+                        empty.textContent = 'Ничего не найдено';
+                        box.appendChild(empty);
+                        box.style.display = 'block';
+                        return;
+                    }
+                    items.forEach(function(item) {
+                        var link = document.createElement('a');
+                        link.href = '/products/' + encodeURIComponent(item.id);
+                        link.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 14px;text-decoration:none;color:#111827;border-bottom:1px solid #F3F4F6;';
+                        link.onmouseenter = function() { link.style.background = '#F9FAFB'; };
+                        link.onmouseleave = function() { link.style.background = '#FFFFFF'; };
+
+                        var thumb = document.createElement('img');
+                        thumb.src = item.image || '/images/no-image.png';
+                        thumb.alt = item.name || '';
+                        thumb.style.cssText = 'width:44px;height:52px;object-fit:cover;border-radius:6px;background:#F3F4F6;flex-shrink:0;';
+                        thumb.onerror = function() { thumb.style.visibility = 'hidden'; };
+
+                        var info = document.createElement('div');
+                        info.style.cssText = 'flex:1;min-width:0;';
+
+                        var title = document.createElement('div');
+                        title.style.cssText = 'font-size:13px;font-weight:600;color:#0c0c3d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+                        title.textContent = item.name || '';
+
+                        var cat = document.createElement('div');
+                        cat.style.cssText = 'font-size:11px;color:#6B7280;margin-top:2px;';
+                        cat.textContent = item.category || 'LUXDRM';
+
+                        info.appendChild(title);
+                        info.appendChild(cat);
+
+                        var priceWrap = document.createElement('div');
+                        priceWrap.style.cssText = 'text-align:right;flex-shrink:0;';
+
+                        var finalP = document.createElement('div');
+                        finalP.style.cssText = 'font-size:13px;font-weight:700;color:#0c0c3d;';
+                        finalP.textContent = formatKzt(item.finalPrice);
+                        priceWrap.appendChild(finalP);
+
+                        if (Number(item.discount || 0) > 0) {
+                            var oldP = document.createElement('div');
+                            oldP.style.cssText = 'font-size:11px;color:#9CA3AF;text-decoration:line-through;';
+                            oldP.textContent = formatKzt(item.price);
+                            priceWrap.appendChild(oldP);
+                        }
+
+                        link.appendChild(thumb);
+                        link.appendChild(info);
+                        link.appendChild(priceWrap);
+                        box.appendChild(link);
+                    });
+                    box.style.display = 'block';
+                }
+
+                inp.addEventListener('input', function() {
+                    clearTimeout(timer);
+                    var q = inp.value.trim();
+                    if (q.length < 2) {
+                        box.style.display = 'none';
+                        box.innerHTML = '';
+                        return;
+                    }
+                    timer = setTimeout(function() {
+                        fetch('/products/api/search?q=' + encodeURIComponent(q), {
+                            headers: { 'Accept': 'application/json' }
+                        })
+                            .then(function(res) { return res.ok ? res.json() : []; })
+                            .then(renderResults)
+                            .catch(function() {});
+                    }, 220);
+                });
+            })();
+            function openSidebar() {
+                var sb = document.getElementById('sidebar');
+                var ov = document.getElementById('overlay');
+                if (sb) sb.classList.add('active');
+                if (ov) ov.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSidebar() {
+                var sb = document.getElementById('sidebar');
+                var ov = document.getElementById('overlay');
+                if (sb) sb.classList.remove('active');
+                if (ov) ov.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeSidebar();
+            });
+            (function() {
+                var path = window.location.pathname;
+                document.querySelectorAll('.panel-item a').forEach(function(a) {
+                    if (a.getAttribute('href') === path)
+                        a.closest('.panel-item').classList.add('active');
+                });
+            })();
+        </script>
     </header>
 </app-navbar>
 
-<script>
-    function openSidebar() {
-        document.getElementById('sidebar').classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeSidebar() {
-        document.getElementById('sidebar').classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeSidebar();
-    });
-    (function() {
-        var path = window.location.pathname;
-        document.querySelectorAll('.panel-item a').forEach(function(a) {
-            if (a.getAttribute('href') === path)
-                a.closest('.panel-item').classList.add('active');
-        });
-    })();
-</script>
 </body>
 </html>

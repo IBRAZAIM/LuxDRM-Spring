@@ -219,13 +219,23 @@
                     </td>
 
                     <!-- 4. Доставка и Оплата -->
-                    <td class="cell-delivery">
+                    <td class="cell-delivery"
+                        th:with="tx=${paymentTxMap != null ? paymentTxMap[order.id] : null},
+                                 payMethod=${order.paymentMethod != null ? order.paymentMethod : 'card_gateway'}">
                         <div class="meta-pills">
                             <span class="meta-pill"
                                   th:classappend="${order.deliveryMethod == 'premium'} ? ' meta-pill--gold' : ''"
                                   th:text="${order.deliveryMethod == 'premium' ? 'Премиум+' : 'Стандарт'}">Стандарт</span>
                             <span class="meta-pill"
-                                  th:text="${order.paymentMethod == 'card' ? 'Карта' : (order.paymentMethod != null ? 'Другое' : 'Карта')}">Карта</span>
+                                  th:text="${tx != null ? tx.providerDisplayName : (payMethod == 'kaspi_qr' ? 'Kaspi Pay / QR' : (payMethod == 'apple_pay' ? 'Apple Pay' : (payMethod == 'google_pay' ? 'Google Pay' : (payMethod == 'installment' ? 'Рассрочка 0-0-12' : ((payMethod == 'cod' or payMethod == 'other') ? 'При получении' : 'Банковская карта')))))}">Банковская карта</span>
+                            <span class="meta-pill"
+                                  th:if="${tx != null}"
+                                  th:text="${tx.paymentStatus.displayName}"
+                                  th:style="${tx.paymentStatus.name() == 'PAID' ? 'background:#ECFDF5;color:#065F46;border-color:#A7F3D0;' : (tx.paymentStatus.name() == 'FAILED' ? 'background:#FEF2F2;color:#991B1B;border-color:#FECACA;' : (tx.paymentStatus.name() == 'AWAITING_PAYMENT' ? 'background:#FFFBEB;color:#92400E;border-color:#FDE68A;' : ''))}">Оплачен</span>
+                            <span class="meta-pill"
+                                  th:if="${order.trackingNumber != null and !#strings.isEmpty(order.trackingNumber)}"
+                                  th:text="'Трек: ' + ${order.trackingNumber}"
+                                  style="background:#EEF2FF;color:#1E3A8A;border-color:#C7D2FE;"></span>
                         </div>
                     </td>
 
@@ -261,6 +271,12 @@
                                         Сохранить
                                     </button>
                                 </div>
+                                <input type="text"
+                                       name="trackingNumber"
+                                       th:value="${order.trackingNumber}"
+                                       placeholder="Трек-номер доставки"
+                                       oninput="this.closest('.status-form').classList.add('is-dirty')"
+                                       style="width:100%;margin-top:6px;padding:6px 9px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;">
                             </form>
                         </div>
                     </td>

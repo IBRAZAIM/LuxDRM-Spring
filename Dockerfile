@@ -1,16 +1,17 @@
 FROM maven:3.9.9-eclipse-temurin-21 AS build
-WORKDIR /workspace
+WORKDIR /app
 
 COPY pom.xml .
-RUN mvn -q -DskipTests dependency:go-offline
+RUN mvn dependency:go-offline -B
 
 COPY src ./src
-RUN mvn -DskipTests package
+RUN mvn package -DskipTests -B
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-COPY --from=build /workspace/target/Catalog-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
+RUN mkdir -p /app/uploads/products
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

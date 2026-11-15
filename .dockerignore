@@ -1,7 +1,8 @@
-.git
-.idea
-.ai
-target
+target/
+.git/
+.idea/
+.vscode/
 *.iml
-firebase-debug.log
-firebase-debug.*.log
+*.log
+uploads/
+.DS_Store

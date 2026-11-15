@@ -14,14 +14,14 @@
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" th:href="@{/productsByUser.css}">
     <link rel="stylesheet" th:href="@{/product-card.css}">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <div th:insert="~{navbar :: navigation-panel}"></div>
 
 <nav class="bc">
     <a th:href="@{/}">Главная</a>
-    <span class="sep">›</span>
+    <span class="sep">·</span>
     <span class="cur">Каталог</span>
 </nav>
 
@@ -209,6 +209,7 @@
         id:     Number(el.dataset.id || 0),
         name:   String(el.dataset.name || ''),
         cat:    String(el.dataset.cat || 'Коллекция UXD'),
+        catId:  String(el.dataset.catId || ''),
         price:  Number(el.dataset.price || 0),
         final:  Number(el.dataset.finalPrice || el.dataset.price || 0),
         disc:   Number(el.dataset.disc || 0),
@@ -428,7 +429,20 @@
     document.getElementById('tMin').max   = RANGE_MAX;
     document.getElementById('pMax').placeholder = RANGE_MAX.toLocaleString('ru-RU');
 
-    const urlCat = new URLSearchParams(window.location.search).get('category');
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCat = urlParams.get('category');
+    const urlCatId = urlParams.get('categoryId');
+    const urlSearch = urlParams.get('search') || urlParams.get('q');
+
+    if (urlCatId) {
+        const matchById = RAW.find(p => p.catId === String(urlCatId).trim());
+        if (matchById) {
+            document.querySelectorAll('input[name="cat"]').forEach(cb => {
+                if (cb.value === matchById.cat) cb.checked = true;
+            });
+        }
+    }
+
     if (urlCat) {
         const lowerCat = urlCat.trim().toLowerCase();
         let matched = false;
@@ -442,6 +456,11 @@
             const sInp = document.getElementById('catalogSearch');
             if (sInp) sInp.value = urlCat.trim();
         }
+    }
+
+    if (urlSearch) {
+        const sInp = document.getElementById('catalogSearch');
+        if (sInp) sInp.value = urlSearch.trim();
     }
 
     setGrid(getAutoCols());

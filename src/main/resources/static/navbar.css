@@ -55,6 +55,14 @@ body {
     gap: 15px;
 }
 
+.menu-icon svg,
+.menu-icon svg path,
+.icon-link svg,
+.icon-link svg path {
+    fill: #000000 !important;
+    stroke: none !important;
+}
+
 .icon-link {
     position: relative;
     color: #545454;
@@ -333,7 +341,7 @@ html {
     user-select: none;
 }
 
-.menu-icon:hover { color: #0c0c3d; }
+.menu-icon:hover { color: #0a0a2e; }
 
 /* 5. Видимый фокус для клавиатуры */
 a:focus-visible,
@@ -342,7 +350,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-    outline: 2px solid #9A073D;
+    outline: 2px solid #8b1a3a;
     outline-offset: 2px;
 }
 
@@ -380,7 +388,7 @@ select:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0c0c3d;
+    background: #0a0a2e;
     color: #FFFFFF;
     border: none;
     cursor: pointer;
@@ -397,7 +405,7 @@ select:disabled {
     transform: translateY(0);
 }
 
-.back-to-top:hover { background: #9A073D; }
+.back-to-top:hover { background: #8b1a3a; }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -429,4 +437,56 @@ select:disabled {
 }
 .menu-icon * {
     pointer-events: none !important;
+}
+
+
+/* Кнопка поиска в шапке */
+.nav-search-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; }
+.nav-search-btn svg { transition: transform .2s ease; }
+.nav-search-btn:hover svg { transform: scale(1.1); }
+
+
+/* ════════════════════════════════════════════════════════════
+   ОБЩИЙ АДАПТИВ САЙТА (подключается на всех страницах с навбаром)
+   ════════════════════════════════════════════════════════════ */
+html, body { max-width: 100%; overflow-x: clip; }
+img, video, svg, canvas { max-width: 100%; }
+img { height: auto; }
+table { max-width: 100%; }
+input, select, textarea, button { max-width: 100%; }
+
+@media screen and (max-width: 768px) {
+    /* Таблицы не ломают ширину страницы — скроллятся внутри контейнера */
+    .table-container,
+    .p-orders-table-wrap,
+    .orders-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Крупные редакционные заголовки страниц */
+    .cart-title,
+    .checkout-header h1,
+    .wishlist-header h1,
+    .profile-page-head h1,
+    .page-head h1,
+    .promos-head h1,
+    .admin-title,
+    .info-title {
+        font-size: clamp(30px, 8.5vw, 44px) !important;
+        line-height: 1.08 !important;
+        word-break: break-word;
+    }
+
+    .hero-title,
+    .product-name {
+        font-size: clamp(28px, 8vw, 40px) !important;
+        line-height: 1.1 !important;
+    }
+
+    /* Поля ввода 16px — iOS не зумит страницу при фокусе */
+    input[type="text"], input[type="email"], input[type="password"],
+    input[type="search"], input[type="tel"], input[type="number"],
+    select, textarea { font-size: 16px !important; }
+}
+
+@media screen and (max-width: 480px) {
+    .back-to-top { right: 14px; bottom: 14px; width: 40px; height: 40px; }
 }

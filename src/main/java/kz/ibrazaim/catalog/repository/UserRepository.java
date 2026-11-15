@@ -25,4 +25,6 @@ public interface UserRepository  extends JpaRepository<User, Long> {
 
     @Query("select case when count(u) > 0 then true else false end from User u where lower(u.email) = lower(:email)")
     boolean existsByEmailCaseInsensitive(@Param("email") String email);
+
+    Optional<User> findByResetToken(String resetToken);
 }

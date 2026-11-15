@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" th:href="@{/product.css}">
     <link rel="stylesheet" th:href="@{/product-card.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
@@ -30,13 +30,19 @@
 
     <nav class="product-bc" aria-label="Хлебные крошки">
         <a th:href="@{/}">Главная</a>
-        <span class="bc-sep">›</span>
+        <span class="bc-sep">·</span>
         <a th:href="@{/products}">Каталог</a>
-        <span class="bc-sep" th:if="${product.category != null}">›</span>
-        <span class="bc-cat" th:if="${product.category != null}" th:text="${product.category.name}">Категория</span>
-        <span class="bc-sep">›</span>
+        <span class="bc-sep" th:if="${product.category != null}">·</span>
+        <a class="bc-cat" th:if="${product.category != null}" th:href="@{/products(categoryId=${product.category.id})}" th:text="${product.category.name}">Категория</a>
+        <span class="bc-sep">·</span>
         <span class="bc-cur" th:text="${product.name}">Товар</span>
     </nav>
+
+    <div th:if="${reviewSuccess}" role="status"
+         style="max-width:1360px;margin:0 auto 20px;padding:14px 20px;background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;border-radius:8px;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:space-between;">
+        <span>✓ <span th:text="${reviewSuccess}"></span></span>
+        <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;color:#065F46;cursor:pointer;font-size:16px;">✕</button>
+    </div>
 
     <main class="product-container">
 
@@ -158,12 +164,25 @@
                         <a href="#" class="size-guide-link" id="openSizeGuide">Таблица размеров (см) →</a>
                     </div>
                     <div class="sizes-options">
-                        <div th:each="size : ${sizes}" class="size-option">
-                            <div th:text="${size.size}" class="size-label-btn" role="button" tabindex="0"
-                                aria-pressed="false"></div>
-                        </div>
+                        <th:block th:if="${sizes != null and !sizes.isEmpty()}">
+                            <div th:each="size : ${sizes}"
+                                 class="size-option"
+                                 th:classappend="${size.stock <= 0 ? ' out-of-stock' : ''}"
+                                 th:title="${size.stock <= 0 ? 'Нет в наличии' : 'В наличии: ' + size.stock + ' шт.'}">
+                                <div th:text="${size.size}" class="size-label-btn" role="button" tabindex="0"
+                                     th:attr="aria-disabled=${size.stock <= 0}"
+                                     aria-pressed="false"></div>
+                            </div>
+                        </th:block>
+                        <th:block th:if="${sizes == null or sizes.isEmpty()}">
+                            <div th:each="defaultSize : ${#strings.arraySplit('XS,S,M,L,XL', ',')}" class="size-option">
+                                <div th:text="${defaultSize}" class="size-label-btn" role="button" tabindex="0"
+                                    aria-pressed="false"></div>
+                            </div>
+                        </th:block>
                     </div>
                     <input type="hidden" name="size" id="selected-size">
+                    <input type="hidden" name="buyNow" id="buyNowInput" value="false">
                     <span id="size-error" class="size-error" role="alert" aria-live="assertive">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" aria-hidden="true">
@@ -195,7 +214,24 @@
                             <path d="M16 10a4 4 0 0 1-8 0" />
                         </svg>
                     </button>
+
+                    <button type="button" class="uxd-card__wish"
+                            th:attr="data-product-id=${product.id}"
+                            aria-label="В избранное"
+                            aria-pressed="false"
+                            style="position: static; width: 48px; height: 48px; border-radius: 0; border: 1.5px solid #0a0a2e; background: transparent; color: #0a0a2e; flex-shrink: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </button>
                 </div>
+
+                <button type="button" class="buy-now-btn" id="buy-now-btn" disabled aria-disabled="true">
+                    <span class="btn-text">Купить в 1 клик</span>
+                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                </button>
 
                 <p class="select-size-hint" id="sizeHint" aria-hidden="true">Нажмите на нужный размер выше, чтобы
                     активировать кнопку покупки</p>
@@ -711,6 +747,8 @@
 
             /* ─── SIZE SELECTION ─── */
             const addBtn = document.getElementById('add-to-cart-btn');
+            const buyNowBtn = document.getElementById('buy-now-btn');
+            const buyNowInput = document.getElementById('buyNowInput');
             const sizeInput = document.getElementById('selected-size');
             const sizeError = document.getElementById('size-error');
             const sizeHint = document.getElementById('sizeHint');
@@ -719,6 +757,10 @@
                 if (addBtn) {
                     addBtn.disabled = !hasSize;
                     addBtn.setAttribute('aria-disabled', String(!hasSize));
+                }
+                if (buyNowBtn) {
+                    buyNowBtn.disabled = !hasSize;
+                    buyNowBtn.setAttribute('aria-disabled', String(!hasSize));
                 }
                 if (sizeHint) sizeHint.style.display = hasSize ? 'none' : 'block';
             }
@@ -772,11 +814,29 @@
                     document.querySelector('.sizes-container')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return;
                 }
-                if (addBtn) {
-                    addBtn.classList.add('is-loading');
-                    addBtn.querySelector('.btn-text').textContent = 'Добавляем в корзину…';
+                if (buyNowInput && buyNowInput.value !== 'true') {
+                    if (addBtn) {
+                        addBtn.classList.add('is-loading');
+                        addBtn.querySelector('.btn-text').textContent = 'Добавляем в корзину…';
+                    }
                 }
             });
+
+            if (buyNowBtn) {
+                buyNowBtn.addEventListener('click', () => {
+                    if (!sizeInput?.value) {
+                        if (sizeError) sizeError.style.display = 'flex';
+                        document.querySelector('.sizes-container')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+                    if (buyNowInput) buyNowInput.value = 'true';
+                    buyNowBtn.disabled = true;
+                    buyNowBtn.classList.add('is-loading');
+                    const txt = buyNowBtn.querySelector('.btn-text');
+                    if (txt) txt.textContent = 'Переход к оформлению…';
+                    document.getElementById('cartForm')?.submit();
+                });
+            }
 
             /* ─── TABS ─── */
             const tabsContainer = document.querySelector('.tabs-container');
