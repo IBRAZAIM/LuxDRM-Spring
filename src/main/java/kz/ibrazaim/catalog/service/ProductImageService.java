@@ -48,7 +48,10 @@ public class ProductImageService {
                 ProductImage productImage = new ProductImage();
                 productImage.setProduct(product);
                 productImage.setImage(url.trim());
-                productImageRepository.save(productImage);
+                ProductImage saved = productImageRepository.save(productImage);
+                if (product.getImages() != null) {
+                    product.getImages().add(saved);
+                }
             }
         }
     }
@@ -56,14 +59,24 @@ public class ProductImageService {
     @Transactional
     public void replaceImages(Product product, List<String> keptImages, List<MultipartFile> newFiles) {
         List<ProductImage> currentImages = productImageRepository.findAllByProduct(product);
+        Set<String> existingForProduct = new HashSet<>();
+        for (ProductImage img : currentImages) {
+            if (img.getImage() != null) {
+                existingForProduct.add(img.getImage().trim());
+            }
+        }
         Set<String> keptSet = new LinkedHashSet<>();
         if (keptImages != null) {
             for (String img : keptImages) {
-                if (img != null && !img.trim().isEmpty()) {
+                if (img != null && !img.trim().isEmpty() && existingForProduct.contains(img.trim())) {
                     keptSet.add(img.trim());
                 }
             }
         }
+
+        List<String> newImagePaths = (newFiles != null && !newFiles.isEmpty())
+                ? storeFilesOnDisk(newFiles)
+                : List.of();
 
         // Удаляем с диска локальные файлы, которые были убраны при редактировании
         for (ProductImage oldImg : currentImages) {
@@ -73,12 +86,14 @@ public class ProductImageService {
             }
         }
 
+        if (product.getImages() != null) {
+            product.getImages().clear();
+        }
         productImageRepository.deleteAllByProduct(product);
+        productImageRepository.flush();
 
         List<String> allImagePaths = new ArrayList<>(keptSet);
-        if (newFiles != null && !newFiles.isEmpty()) {
-            allImagePaths.addAll(storeFilesOnDisk(newFiles));
-        }
+        allImagePaths.addAll(newImagePaths);
 
         create(product, allImagePaths);
     }
@@ -140,6 +155,15 @@ public class ProductImageService {
             if (ct.contains("avif")) return ".avif";
         }
         return "";
+    }
+
+    public void deleteLocalFiles(Collection<String> webPaths) {
+        if (webPaths == null || webPaths.isEmpty()) {
+            return;
+        }
+        for (String path : webPaths) {
+            deleteLocalFileIfUploaded(path);
+        }
     }
 
     private void deleteLocalFileIfUploaded(String webPath) {

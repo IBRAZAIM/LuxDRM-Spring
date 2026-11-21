@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,91 +15,59 @@
     <link rel="stylesheet" th:href="@{/product-card.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
 <div th:insert="~{navbar :: navigation-panel}"></div>
 
-<!-- ── Announcement Bar ─────────────────── -->
-<div class="marquee-container">
-    <div class="marquee">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Скидки до 15% на домашнюю одежду — акция ограничена
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Бесплатная доставка от 50 000 ₸
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Удобство и стиль для всей семьи
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    </div>
-</div>
-
 <!-- ── Hero ─────────────────────────────── -->
 <main class="welcome-main">
+    <div class="welcome-hero-bg"
+         th:classappend="${heroBanner != null and heroBanner.hasImage()} ? ' has-image' : ''"
+         th:style="${heroBanner != null and heroBanner.hasImage()} ? |background-image: url('${heroBanner.imageUrl}');| : null"></div>
+    <div class="welcome-hero-overlay"></div>
+
+    <a sec:authorize="hasAnyRole('admin', 'moder')"
+       th:href="@{/admin/banners}"
+       class="hero-admin-edit-btn"
+       title="Настроить фоны и блоки главной страницы">
+        <i class="fas fa-images"></i> Изменить фоны
+    </a>
+
     <div class="welcome-content">
-        <span class="welcome-eyebrow">Новая коллекция · UXD</span>
-        <h1 class="welcome-headline">Домашний<br>комфорт</h1>
-        <a th:href="@{'/products'}" class="btn">
+        <span class="welcome-eyebrow"
+              th:text="${heroBanner != null and heroBanner.subtitle != null and !#strings.isEmpty(heroBanner.subtitle) ? heroBanner.subtitle : 'Новая коллекция · UXD'}">Новая коллекция · UXD</span>
+        <h1 class="welcome-headline"
+            th:text="${heroBanner != null and heroBanner.title != null ? heroBanner.title : 'Домашний комфорт'}">Домашний комфорт</h1>
+        <a th:href="@{${heroBanner != null and heroBanner.targetUrl != null ? heroBanner.targetUrl : '/products'}}" class="btn">
             <span>Смотреть коллекцию</span>
         </a>
     </div>
 </main>
 
-<!-- ── Categories ───────────────────────── -->
-<section class="categories-section">
-    <div class="categories-section-inner">
-        <span class="section-label">Коллекции</span>
-        <h2 class="section-title">Категории</h2>
-
-        <div class="categories-grid">
-
-            <a th:href="@{'/products?category=Пижамы'}" class="category-card category-card--pyjamas">
-                <div class="category-card-bg"
-                     th:style="${categoryImages != null && categoryImages['pyjamas'] != null
-                       ? 'background-image: url(' + categoryImages['pyjamas'] + ')' : ''}">
-                </div>
-                <div class="category-card-overlay"></div>
-                <div class="category-card-content">
-                    <div class="category-card-name">Пижамы</div>
-                    <div class="category-card-cta">Смотреть</div>
-                </div>
-            </a>
-
-            <a th:href="@{'/products?category=Домашняя одежда'}" class="category-card category-card--home">
-                <div class="category-card-bg"
-                     th:style="${categoryImages != null && categoryImages['home'] != null
-                       ? 'background-image: url(' + categoryImages['home'] + ')' : ''}">
-                </div>
-                <div class="category-card-overlay"></div>
-                <div class="category-card-content">
-                    <div class="category-card-name">Домашняя одежда</div>
-                    <div class="category-card-cta">Смотреть</div>
+<!-- ── Audience Sections (Full-bleed: Мужское · Женское · Детское) ── -->
+<section class="sections-showcase" aria-label="Разделы каталога" th:if="${sectionBanners != null and !#lists.isEmpty(sectionBanners)}">
+    <div class="sections-showcase-inner">
+        <div class="audience-grid">
+            <a th:each="secBanner : ${sectionBanners}"
+               th:with="bgImg=${secBanner.hasImage() ? secBanner.imageUrl : (slotFallbackImages != null ? slotFallbackImages.get(secBanner.slotKey) : null)},
+                        cnt=${slotModelCounts != null ? slotModelCounts.get(secBanner.slotKey) : null}"
+               th:href="@{${secBanner.targetUrl}}"
+               class="audience-card"
+               th:classappend="' audience-card--' + ${secBanner.slotKey}">
+                <div class="audience-card-bg"
+                     th:classappend="${bgImg != null} ? ' has-image' : ''"
+                     th:style="${bgImg != null} ? |background-image: url('${bgImg}');| : null"></div>
+                <div class="audience-card-overlay"></div>
+                <div class="audience-card-content">
+                    <div class="audience-card-name" th:text="${secBanner.title}">Мужское</div>
+                    <div class="audience-card-foot">
+                        <span class="audience-card-cta">Смотреть <span class="cta-arr" aria-hidden="true">→</span></span>
+                        <span class="audience-card-count" th:if="${cnt != null and cnt > 0}" th:text="${cnt} + ' мод.'">12 мод.</span>
+                    </div>
                 </div>
             </a>
-
-            <a th:href="@{'/products?category=Детская'}" class="category-card category-card--kids">
-                <div class="category-card-bg"
-                     th:style="${categoryImages != null && categoryImages['kids'] != null
-                       ? 'background-image: url(' + categoryImages['kids'] + ')' : ''}">
-                </div>
-                <div class="category-card-overlay"></div>
-                <div class="category-card-content">
-                    <div class="category-card-name">Детская</div>
-                    <div class="category-card-cta">Смотреть</div>
-                </div>
-            </a>
-
-            <a th:href="@{'/products?category=Lounge'}" class="category-card category-card--lounge">
-                <div class="category-card-bg"
-                     th:style="${categoryImages != null && categoryImages['lounge'] != null
-                       ? 'background-image: url(' + categoryImages['lounge'] + ')' : ''}">
-                </div>
-                <div class="category-card-overlay"></div>
-                <div class="category-card-content">
-                    <div class="category-card-name">Lounge</div>
-                    <div class="category-card-cta">Смотреть</div>
-                </div>
-            </a>
-
         </div>
     </div>
 </section>
@@ -107,7 +76,10 @@
 <div class="products">
     <section id="product-section">
         <div class="products-header">
-            <h2 class="topic">Новинки коллекции</h2>
+            <div>
+                <span class="section-label">Избранное</span>
+                <h2 class="topic">Новинки коллекции</h2>
+            </div>
             <a th:href="@{'/products'}" class="products-view-all">Все товары →</a>
         </div>
 
@@ -119,33 +91,145 @@
     </section>
 </div>
 
-<!-- ── Back to Top ──────────────────────── -->
-<div class="back-to-top" id="backToTop">
-    <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 6V18M12 6L7 11M12 6L17 11" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-</div>
+<!-- ── Categories (Full-bleed horizontal editorial reel) ── -->
+<section class="categories-section" aria-label="Категории коллекций" th:if="${categoryBanners != null and !#lists.isEmpty(categoryBanners)}">
+    <div class="categories-section-inner">
+        <div class="cat-fade cat-fade--left" id="catFadeLeft" aria-hidden="true"></div>
+        <div class="cat-fade cat-fade--right" id="catFadeRight" aria-hidden="true"></div>
+
+        <button type="button" class="cat-nav-btn cat-nav-btn--prev" id="catPrevBtn" aria-label="Предыдущие категории">←</button>
+        <button type="button" class="cat-nav-btn cat-nav-btn--next" id="catNextBtn" aria-label="Следующие категории">→</button>
+
+        <div class="categories-track" id="categoriesTrack">
+            <a th:each="catBanner : ${categoryBanners}"
+               th:with="bgImg=${catBanner.hasImage() ? catBanner.imageUrl : (slotFallbackImages != null ? slotFallbackImages.get(catBanner.slotKey) : null)},
+                        cnt=${slotModelCounts != null ? slotModelCounts.get(catBanner.slotKey) : null}"
+               th:href="@{${catBanner.targetUrl}}"
+               class="category-card"
+               th:classappend="' category-card--' + ${catBanner.slotKey}">
+                <div class="category-card-bg"
+                     th:classappend="${bgImg != null} ? ' has-image' : ''"
+                     th:style="${bgImg != null} ? |background-image: url('${bgImg}');| : null"></div>
+                <div class="category-card-overlay"></div>
+                <div class="category-card-content">
+                    <div class="category-card-name" th:text="${catBanner.title}">Пижамы</div>
+                    <div class="category-card-foot">
+                        <span class="category-card-cta">Смотреть <span class="cta-arr" aria-hidden="true">→</span></span>
+                        <span class="category-card-count" th:if="${cnt != null and cnt > 0}" th:text="${cnt} + ' мод.'">8 мод.</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="cat-scroll-progress" id="catProgressWrap" aria-hidden="true">
+            <div class="cat-scroll-progress-bar" id="catProgressBar"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Editorial Service Strip (перед футером) ── -->
+<section class="maison-service-strip" aria-label="Сервис UNDER X DESIRE">
+    <div class="maison-service-inner">
+        <a th:href="@{/delivery}" class="maison-service-item">
+            <span class="maison-service-title">Доставка по Казахстану</span>
+            <span class="maison-service-desc">Бесплатно при заказе от 50 000 ₸</span>
+        </a>
+        <a th:href="@{/delivery}" class="maison-service-item">
+            <span class="maison-service-title">Примерка и обмен</span>
+            <span class="maison-service-desc">Удобный обмен в течение 14 дней</span>
+        </a>
+        <a th:href="@{/contact}" class="maison-service-item">
+            <span class="maison-service-title">Помощь с размером</span>
+            <span class="maison-service-desc">Персональная консультация перед заказом</span>
+        </a>
+    </div>
+</section>
 
 <div th:insert="~{footer :: footer-code}"></div>
 
 <script th:src="@{/js/navbar-component.js}" defer></script>
 <script th:src="@{/js/product-card.js}" defer></script>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const backToTop = document.getElementById("backToTop");
-        if (backToTop) {
-            window.addEventListener("scroll", () => {
-                backToTop.classList.toggle("show", window.scrollY > 200);
-            }, { passive: true });
-            backToTop.addEventListener("click", e => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-            });
-        }
-    });
-</script>
-<script>
     fetch('/analytics/register', { method: 'GET' }).catch(() => {});
+
+    (function initCategoriesReel() {
+        var track = document.getElementById('categoriesTrack');
+        if (!track) return;
+        var prevBtn = document.getElementById('catPrevBtn');
+        var nextBtn = document.getElementById('catNextBtn');
+        var fadeLeft = document.getElementById('catFadeLeft');
+        var fadeRight = document.getElementById('catFadeRight');
+        var progWrap = document.getElementById('catProgressWrap');
+        var progBar = document.getElementById('catProgressBar');
+
+        function syncReelUI() {
+            var maxScroll = track.scrollWidth - track.clientWidth;
+            var canScroll = maxScroll > 4;
+            if (progWrap) progWrap.style.display = canScroll ? 'block' : 'none';
+            if (!canScroll) {
+                if (prevBtn) prevBtn.classList.remove('is-visible');
+                if (nextBtn) nextBtn.classList.remove('is-visible');
+                if (fadeLeft) fadeLeft.classList.remove('is-visible');
+                if (fadeRight) fadeRight.classList.remove('is-visible');
+                return;
+            }
+            var left = track.scrollLeft;
+            var hasLeft = left > 8;
+            var hasRight = left < maxScroll - 8;
+            if (prevBtn) prevBtn.classList.toggle('is-visible', hasLeft);
+            if (nextBtn) nextBtn.classList.toggle('is-visible', hasRight);
+            if (fadeLeft) fadeLeft.classList.toggle('is-visible', hasLeft);
+            if (fadeRight) fadeRight.classList.toggle('is-visible', hasRight);
+            if (progBar) {
+                var ratio = Math.max(0.18, track.clientWidth / track.scrollWidth);
+                var progress = maxScroll > 0 ? (left / maxScroll) : 0;
+                progBar.style.width = (ratio * 100).toFixed(2) + '%';
+                progBar.style.transform = 'translateX(' + ((progress * (1 - ratio) / ratio) * 100).toFixed(2) + '%)';
+            }
+        }
+
+        function scrollStep(dir) {
+            var card = track.querySelector('.category-card');
+            var step = card ? card.offsetWidth : Math.round(track.clientWidth * 0.75);
+            track.scrollBy({ left: dir * step, behavior: 'smooth' });
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', function () { scrollStep(-1); });
+        if (nextBtn) nextBtn.addEventListener('click', function () { scrollStep(1); });
+
+        // Drag-to-scroll мышкой
+        var isDown = false, startX = 0, startScroll = 0, moved = false;
+        track.addEventListener('mousedown', function (e) {
+            if (e.button !== 0) return;
+            isDown = true;
+            moved = false;
+            startX = e.pageX;
+            startScroll = track.scrollLeft;
+            track.classList.add('is-dragging');
+        });
+        window.addEventListener('mousemove', function (e) {
+            if (!isDown) return;
+            var dx = e.pageX - startX;
+            if (Math.abs(dx) > 5) moved = true;
+            track.scrollLeft = startScroll - dx * 1.15;
+        });
+        window.addEventListener('mouseup', function () {
+            if (!isDown) return;
+            isDown = false;
+            track.classList.remove('is-dragging');
+        });
+        track.addEventListener('click', function (e) {
+            if (moved) {
+                e.preventDefault();
+                e.stopPropagation();
+                moved = false;
+            }
+        }, true);
+
+        track.addEventListener('scroll', syncReelUI, { passive: true });
+        window.addEventListener('resize', syncReelUI);
+        syncReelUI();
+    })();
 </script>
 
 </body>

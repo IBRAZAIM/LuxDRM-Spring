@@ -203,10 +203,20 @@ body {
 }
 
 @media (max-width: 640px) {
+  .info-shell {
+    padding: 20px 16px 56px;
+  }
   .info-hero {
-    padding: 28px 20px;
+    padding: 26px 20px;
   }
   .info-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .info-section {
+    padding: 20px 18px;
+  }
+  .info-cta-link {
+    width: 100%;
   }
 }

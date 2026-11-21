@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,11 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class LoginController {
     private final UserService userService;
+
+    @InitBinder("user")
+    public void initUserBinder(WebDataBinder binder) {
+        binder.setAllowedFields("name", "surname", "email", "login", "password");
+    }
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
@@ -95,14 +102,17 @@ public class LoginController {
             @RequestParam("email") String email,
             Model model
     ) {
+        if (email == null || email.isBlank()) {
+            model.addAttribute("error", "Введите email или логин.");
+            return "forgotPasswordForm";
+        }
         try {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-            String resetLink = userService.initiatePasswordReset(email, baseUrl);
-            model.addAttribute("successMessage", "Ссылка для восстановления пароля сформирована и отправлена в журнал уведомлений магазина.");
-            model.addAttribute("resetLink", resetLink);
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
+            userService.initiatePasswordReset(email, baseUrl);
+        } catch (IllegalArgumentException ignored) {
+            // Не раскрываем существование email в базе (защита от User Enumeration)
         }
+        model.addAttribute("successMessage", "Если аккаунт с указанным email существует, ссылка для восстановления пароля отправлена.");
         return "forgotPasswordForm";
     }
 

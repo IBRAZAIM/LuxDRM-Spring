@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<body>
+
+<!-- Общая верхняя панель разделов администрирования -->
+<div class="admin-topbar" th:fragment="topbar(activeSection, pageTitle)">
+    <nav class="admin-breadcrumb" aria-label="Навигация">
+        <a th:href="@{/}">Главная</a>
+        <span class="sep">/</span>
+        <span>Администрирование</span>
+        <span class="sep">/</span>
+        <span class="cur" th:text="${pageTitle}">Раздел</span>
+    </nav>
+
+    <div class="admin-nav-pills">
+        <a th:href="@{/products}" class="admin-pill"
+           th:classappend="${activeSection == 'products'} ? ' active' : ''">
+            <i class="fas fa-boxes-stacked"></i> Товары
+        </a>
+        <a th:href="@{/orders}" class="admin-pill"
+           th:classappend="${activeSection == 'orders'} ? ' active' : ''">
+            <i class="fas fa-clipboard-list"></i> Заказы
+        </a>
+        <a th:href="@{/categories}" class="admin-pill"
+           th:classappend="${activeSection == 'categories'} ? ' active' : ''">
+            <i class="fas fa-folder"></i> Категории
+        </a>
+        <a th:href="@{/reviews}" class="admin-pill"
+           th:classappend="${activeSection == 'reviews'} ? ' active' : ''">
+            <i class="fas fa-star"></i> Отзывы
+        </a>
+        <a th:href="@{/sales}" class="admin-pill"
+           th:classappend="${activeSection == 'sales'} ? ' active' : ''">
+            <i class="fas fa-chart-line"></i> Аналитика
+        </a>
+        <a th:href="@{/promos}" class="admin-pill"
+           th:classappend="${activeSection == 'promos'} ? ' active' : ''">
+            <i class="fas fa-ticket-alt"></i> Промокоды
+        </a>
+        <a th:href="@{/admin/banners}" class="admin-pill"
+           th:classappend="${activeSection == 'banners'} ? ' active' : ''">
+            <i class="fas fa-images"></i> Оформление
+        </a>
+    </div>
+</div>
+
+<!-- Верхняя панель для вложенных форм создания / редактирования -->
+<div class="admin-topbar" th:fragment="subpageTopbar(activeSection, parentLabel, parentHref, pageTitle)">
+    <nav class="admin-breadcrumb" aria-label="Навигация">
+        <a th:href="@{/}">Главная</a>
+        <span class="sep">/</span>
+        <a th:href="@{${parentHref}}" th:text="${parentLabel}">Раздел</a>
+        <span class="sep">/</span>
+        <span class="cur" th:text="${pageTitle}">Форма</span>
+    </nav>
+
+    <div class="admin-nav-pills">
+        <a th:href="@{/products}" class="admin-pill"
+           th:classappend="${activeSection == 'products'} ? ' active' : ''">
+            <i class="fas fa-boxes-stacked"></i> Товары
+        </a>
+        <a th:href="@{/orders}" class="admin-pill"
+           th:classappend="${activeSection == 'orders'} ? ' active' : ''">
+            <i class="fas fa-clipboard-list"></i> Заказы
+        </a>
+        <a th:href="@{/categories}" class="admin-pill"
+           th:classappend="${activeSection == 'categories'} ? ' active' : ''">
+            <i class="fas fa-folder"></i> Категории
+        </a>
+        <a th:href="@{/reviews}" class="admin-pill"
+           th:classappend="${activeSection == 'reviews'} ? ' active' : ''">
+            <i class="fas fa-star"></i> Отзывы
+        </a>
+        <a th:href="@{/sales}" class="admin-pill"
+           th:classappend="${activeSection == 'sales'} ? ' active' : ''">
+            <i class="fas fa-chart-line"></i> Аналитика
+        </a>
+        <a th:href="@{/promos}" class="admin-pill"
+           th:classappend="${activeSection == 'promos'} ? ' active' : ''">
+            <i class="fas fa-ticket-alt"></i> Промокоды
+        </a>
+        <a th:href="@{/admin/banners}" class="admin-pill"
+           th:classappend="${activeSection == 'banners'} ? ' active' : ''">
+            <i class="fas fa-images"></i> Оформление
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

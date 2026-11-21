@@ -1,0 +1,43 @@
+/* ════════════════════════════════════════════════════════════
+   UXD (Under X Desire) — Единые дизайн-токены (Design System)
+   ════════════════════════════════════════════════════════════ */
+:root {
+    /* Brand Colors */
+    --uxd-brand-navy:       #0a0a2e;
+    --uxd-brand-navy-deep:  #06061f;
+    --uxd-brand-crimson:    #8b1a3a;
+    --uxd-brand-crimson-h:  #6d1230;
+    --uxd-brand-gold:       #c9a84c;
+    --uxd-brand-gold-lt:    #e8d5a3;
+
+    /* Neutrals & Surfaces */
+    --uxd-bg:               #f6f5f3;
+    --uxd-bg-warm:          #eeece8;
+    --uxd-surface:          #ffffff;
+    --uxd-surface-subtle:   #faf9f7;
+    --uxd-ink:              #14142b;
+    --uxd-text-muted:       #5a5a5a;
+    --uxd-text-dim:         #767682; /* WCAG AA contrast on #fff */
+    --uxd-line:             #e4e1db;
+    --uxd-line-strong:      #ccc8c0;
+
+    /* Semantic */
+    --uxd-success:          #2e6b4e;
+    --uxd-success-bg:       #ecfdf5;
+    --uxd-success-border:   #a7f3d0;
+    --uxd-danger:           #9a073d;
+    --uxd-danger-bg:        #fef2f2;
+    --uxd-danger-border:    #fecaca;
+
+    /* Typography */
+    --uxd-font-display:     "Cormorant Garamond", Georgia, serif;
+    --uxd-font-ui:          "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    /* Layout & Motion */
+    --uxd-navbar-h:         69px;
+    --uxd-ease-std:         cubic-bezier(0.22, 1, 0.36, 1);
+    --uxd-t-fast:           0.18s ease;
+    --uxd-t-base:           0.28s var(--uxd-ease-std);
+    --uxd-shadow-sm:        0 4px 14px rgba(10, 10, 46, 0.06);
+    --uxd-shadow-md:        0 16px 36px rgba(10, 10, 46, 0.10);
+}

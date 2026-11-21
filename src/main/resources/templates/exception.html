@@ -1,12 +1,119 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" th:href="@{/form.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Что-то пошло не так — UXD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/tokens.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <style>
+        body {
+            background: var(--uxd-bg, #f6f5f3);
+            color: var(--uxd-brand-navy, #0a0a2e);
+            font-family: var(--uxd-font-ui, 'Montserrat', sans-serif);
+        }
+        .err-shell {
+            min-height: calc(100vh - 240px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 20px;
+        }
+        .err-card {
+            width: 100%;
+            max-width: 540px;
+            background: #ffffff;
+            border: 1px solid var(--uxd-line, #e4e1db);
+            border-top: 2px solid var(--uxd-brand-crimson, #8b1a3a);
+            padding: 52px 44px;
+            text-align: center;
+            box-shadow: var(--uxd-shadow-sm);
+        }
+        .err-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--uxd-brand-crimson, #8b1a3a);
+            margin-bottom: 14px;
+            display: block;
+        }
+        .err-title {
+            font-family: var(--uxd-font-display, 'Cormorant Garamond', serif);
+            font-size: clamp(32px, 5vw, 44px);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--uxd-brand-navy, #0a0a2e);
+            line-height: 1.1;
+            margin: 0 0 16px;
+        }
+        .err-desc {
+            font-size: 13.5px;
+            color: var(--uxd-text-muted, #5a5a5a);
+            line-height: 1.65;
+            margin: 0 0 32px;
+        }
+        .err-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+        .err-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 26px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .err-btn--primary {
+            background: var(--uxd-brand-navy, #0a0a2e);
+            color: #ffffff;
+            border: 1px solid var(--uxd-brand-navy, #0a0a2e);
+        }
+        .err-btn--primary:hover {
+            background: var(--uxd-brand-crimson, #8b1a3a);
+            border-color: var(--uxd-brand-crimson, #8b1a3a);
+        }
+        .err-btn--ghost {
+            background: transparent;
+            color: var(--uxd-brand-navy, #0a0a2e);
+            border: 1px solid var(--uxd-brand-navy, #0a0a2e);
+        }
+        .err-btn--ghost:hover {
+            background: var(--uxd-brand-navy, #0a0a2e);
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Упс! Сработало исключение</h1>
-    <h1 th:text="${message}"></h1>
+<div th:insert="~{navbar :: navigation-panel}"></div>
+
+<main class="err-shell">
+    <section class="err-card" role="alert">
+        <span class="err-eyebrow">Under X Desire</span>
+        <h1 class="err-title">Что-то пошло не так</h1>
+        <p class="err-desc"
+           th:text="${message != null and !#strings.isEmpty(message) and !#strings.containsIgnoreCase(message, 'Exception') ? message : 'Запрашиваемая страница временно недоступна или произошла ошибка при обработке запроса. Попробуйте обновить страницу или вернуться в каталог.'}">
+            Запрашиваемая страница временно недоступна.
+        </p>
+        <div class="err-actions">
+            <a th:href="@{/}" class="err-btn err-btn--primary">На главную</a>
+            <a th:href="@{/products}" class="err-btn err-btn--ghost">Перейти в каталог</a>
+        </div>
+    </section>
+</main>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
 </body>
 </html>

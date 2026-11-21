@@ -179,9 +179,15 @@
         const closeBtn = e.target.closest('.uxd-card__sizes-close');
 
         if (cartBtn) {
+            if (cartBtn.disabled) return;
             const card = cartBtn.closest('.uxd-card');
             const panel = card && card.querySelector('.uxd-card__sizes');
             if (!panel) return;
+            const availSizeBtns = panel.querySelectorAll('.uxd-card__size:not(:disabled)');
+            if (availSizeBtns.length === 1) {
+                availSizeBtns[0].click();
+                return;
+            }
             closeAll(panel);
             panel.classList.add('is-open');
             cartBtn.setAttribute('aria-expanded', 'true');
@@ -248,6 +254,21 @@
     document.addEventListener('DOMContentLoaded', function () {
         syncWishlistUI(document);
     });
+
+    // Обновление точек-индикаторов при свайпе фото в карточке на телефоне
+    document.addEventListener('scroll', function (e) {
+        const track = e.target;
+        if (!track || !track.classList || !track.classList.contains('uxd-card__track')) return;
+        const w = track.clientWidth;
+        if (!w) return;
+        const idx = Math.round(track.scrollLeft / w);
+        const media = track.closest('.uxd-card__media');
+        if (!media) return;
+        const dots = media.querySelectorAll('.uxd-card__dot');
+        dots.forEach(function (dot, i) {
+            dot.classList.toggle('is-active', i === idx);
+        });
+    }, true);
 
     window.UXDWishlist = {
         getIds: getWishlist,

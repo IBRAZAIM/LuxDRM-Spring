@@ -1,0 +1,288 @@
+/* ════════════════════════════════════════════════════════════
+   UXD ADMIN — admin-banners.css (Appearance & Banner Backgrounds)
+   ════════════════════════════════════════════════════════════ */
+
+.banners-section {
+    margin-bottom: 36px;
+}
+
+.banners-section-head {
+    margin-bottom: 14px;
+}
+
+.banners-kicker {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--adm-crimson);
+    margin-bottom: 4px;
+}
+
+.banners-section-title {
+    font-family: var(--adm-display);
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 500;
+    color: var(--adm-navy);
+    margin: 0;
+}
+
+.banners-grid {
+    display: grid;
+    gap: 18px;
+}
+
+.banners-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.banners-grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.banner-card {
+    background: var(--adm-surf);
+    border: 1px solid var(--adm-border);
+    border-radius: var(--adm-r-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 18px rgba(12, 12, 61, 0.04);
+}
+
+.banner-preview {
+    position: relative;
+    height: 190px;
+    background-color: #080828;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    overflow: hidden;
+    transition: box-shadow var(--adm-t);
+}
+
+.banner-preview--hero {
+    height: 260px;
+    padding: 28px;
+}
+
+.banner-preview.is-dragover {
+    box-shadow: inset 0 0 0 3px var(--adm-gold);
+}
+
+.banner-slot--hero {
+    background-image: linear-gradient(160deg, #080828 0%, #1a1a5e 50%, #2d1d4e 100%);
+}
+.banner-slot--section_men {
+    background-image: linear-gradient(145deg, #090b28 0%, #19244d 55%, #0c1430 100%);
+}
+.banner-slot--section_women {
+    background-image: linear-gradient(145deg, #2b0b20 0%, #5c1638 55%, #1d0918 100%);
+}
+.banner-slot--section_kids {
+    background-image: linear-gradient(145deg, #16221c 0%, #2a4636 55%, #111b16 100%);
+}
+.banner-slot--cat_pyjamas {
+    background-image: linear-gradient(135deg, #1a0a2e 0%, #3d1a5e 100%);
+}
+.banner-slot--cat_home {
+    background-image: linear-gradient(135deg, #0a1a2e 0%, #1a3d5e 100%);
+}
+.banner-slot--cat_kids {
+    background-image: linear-gradient(135deg, #1a1a0a 0%, #3d3a1a 100%);
+}
+.banner-slot--cat_lounge {
+    background-image: linear-gradient(135deg, #0a2e1a 0%, #1a5e3a 100%);
+}
+
+.banner-preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(8, 8, 40, 0.85) 0%, rgba(8, 8, 40, 0.2) 60%, transparent 100%);
+    pointer-events: none;
+}
+
+.banner-preview-content {
+    position: relative;
+    z-index: 2;
+}
+
+.bp-sub {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #e0c97a;
+    margin-bottom: 4px;
+}
+
+.bp-title {
+    font-family: var(--adm-display);
+    font-size: 26px;
+    font-weight: 400;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.banner-preview--hero .bp-title {
+    font-size: 36px;
+}
+
+.bp-status-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: var(--adm-r-pill);
+    background: rgba(8, 8, 40, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.banner-card-body {
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.banner-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.banner-upload-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.banner-file-label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: var(--adm-surf-2);
+    border: 1.5px dashed var(--adm-navy);
+    border-radius: var(--adm-r-sm);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--adm-navy);
+    cursor: pointer;
+    transition: background var(--adm-t), border-color var(--adm-t), color var(--adm-t);
+}
+
+.banner-file-label:hover {
+    background: var(--adm-crimson-soft);
+    border-color: var(--adm-crimson);
+    border-style: solid;
+    color: var(--adm-crimson);
+}
+
+.banner-file-label input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.banner-file-name {
+    font-size: 11.5px;
+    color: var(--adm-dim);
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.banner-fields-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.banner-fields-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.banner-fields-grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.bf-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bf-group label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--adm-muted);
+}
+
+.bf-group input {
+    height: 36px;
+    padding: 0 11px;
+    border: 1px solid var(--adm-border);
+    border-radius: var(--adm-r-sm);
+    font-family: var(--adm-ui);
+    font-size: 13px;
+    color: var(--adm-ink);
+    background: var(--adm-surf-2);
+    transition: border-color var(--adm-t), background var(--adm-t);
+}
+
+.bf-group input:focus {
+    outline: none;
+    border-color: var(--adm-navy);
+    background: var(--adm-surf);
+}
+
+.banner-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.banner-reset-form {
+    margin: 0;
+}
+
+@media (max-width: 1100px) {
+    .banners-grid--3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .banner-fields-grid--3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .banners-grid--3,
+    .banners-grid--2,
+    .banner-fields-grid--2 {
+        grid-template-columns: 1fr;
+    }
+    .banner-preview--hero {
+        height: 200px;
+        padding: 20px;
+    }
+}

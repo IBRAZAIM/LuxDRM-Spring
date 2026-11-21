@@ -20,12 +20,66 @@ public class ProductSizeService {
     private final ProductSizeRepository productSizeRepository;
 
     @Transactional
+    public int saveSizesWithStocks(Product product, List<String> sizes, List<Integer> sizeStocks) {
+        if (sizes == null || sizes.isEmpty()) {
+            return 0;
+        }
+        Map<String, String> displayByKey = new LinkedHashMap<>();
+        Map<String, Integer> stockByKey = new LinkedHashMap<>();
+
+        for (int i = 0; i < sizes.size(); i++) {
+            String rawSize = sizes.get(i);
+            if (rawSize == null || rawSize.trim().isEmpty()) {
+                continue;
+            }
+            String cleanSize = rawSize.trim();
+            String key = cleanSize.toLowerCase(Locale.ROOT);
+            displayByKey.putIfAbsent(key, cleanSize);
+
+            int rowStock = (sizeStocks != null && i < sizeStocks.size() && sizeStocks.get(i) != null)
+                    ? Math.max(0, sizeStocks.get(i))
+                    : 0;
+            stockByKey.put(key, rowStock);
+        }
+
+        int totalStock = 0;
+        for (Map.Entry<String, String> entry : displayByKey.entrySet()) {
+            int entryStock = stockByKey.getOrDefault(entry.getKey(), 0);
+            ProductSize productSize = new ProductSize();
+            productSize.setProduct(product);
+            productSize.setSize(entry.getValue());
+            productSize.setStock(entryStock);
+            ProductSize saved = productSizeRepository.save(productSize);
+            if (product.getSizes() != null) {
+                product.getSizes().add(saved);
+            }
+            totalStock += entryStock;
+        }
+        return totalStock;
+    }
+
+    @Transactional
+    public int replaceSizesWithStocks(Product product, List<String> sizes, List<Integer> sizeStocks) {
+        if (product.getSizes() != null) {
+            product.getSizes().clear();
+        }
+        productSizeRepository.deleteAllByProduct(product);
+        productSizeRepository.flush();
+        return saveSizesWithStocks(product, sizes, sizeStocks);
+    }
+
+    @Transactional
     public void saveSizes(Product product, List<String> sizes) {
-        saveSizes(product, sizes, Map.of());
+        saveSizes(product, sizes, Map.of(), false);
     }
 
     @Transactional
     public void replaceSizes(Product product, List<String> sizes) {
+        replaceSizes(product, sizes, false);
+    }
+
+    @Transactional
+    public void replaceSizes(Product product, List<String> sizes, boolean stockChanged) {
         List<ProductSize> existing = productSizeRepository.findAllByProduct(product);
         Map<String, Integer> existingStockMap = new LinkedHashMap<>();
         for (ProductSize ps : existing) {
@@ -33,12 +87,15 @@ public class ProductSizeService {
                 existingStockMap.put(ps.getSize().trim().toLowerCase(Locale.ROOT), ps.getStock());
             }
         }
+        if (product.getSizes() != null) {
+            product.getSizes().clear();
+        }
         productSizeRepository.deleteAllByProduct(product);
         productSizeRepository.flush();
-        saveSizes(product, sizes, existingStockMap);
+        saveSizes(product, sizes, existingStockMap, stockChanged);
     }
 
-    private void saveSizes(Product product, List<String> sizes, Map<String, Integer> existingStockMap) {
+    private void saveSizes(Product product, List<String> sizes, Map<String, Integer> existingStockMap, boolean stockChanged) {
         if (sizes == null || sizes.isEmpty()) {
             return;
         }
@@ -48,14 +105,25 @@ public class ProductSizeService {
                 uniqueSizes.add(size.trim());
             }
         }
-        int defaultStock = Math.max(1, product.getStock() > 0 ? product.getStock() : 15);
+        int productStock = Math.max(0, product.getStock());
         for (String cleanSize : uniqueSizes) {
             ProductSize productSize = new ProductSize();
             productSize.setProduct(product);
             productSize.setSize(cleanSize);
             Integer preservedStock = existingStockMap.get(cleanSize.toLowerCase(Locale.ROOT));
-            productSize.setStock(preservedStock != null ? preservedStock : defaultStock);
-            productSizeRepository.save(productSize);
+            int sizeStock;
+            if (productStock == 0) {
+                sizeStock = 0;
+            } else if (stockChanged || preservedStock == null || preservedStock <= 0) {
+                sizeStock = productStock;
+            } else {
+                sizeStock = preservedStock;
+            }
+            productSize.setStock(sizeStock);
+            ProductSize saved = productSizeRepository.save(productSize);
+            if (product.getSizes() != null) {
+                product.getSizes().add(saved);
+            }
         }
     }
 

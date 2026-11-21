@@ -3,16 +3,14 @@
 :root {
     --uxd-navy: #0a0a2e;
     --uxd-accent: #8b1a3a;
+    --uxd-accent-h: #7c0531;
     --uxd-gold: #c9a84c;
-    --uxd-border: #e4e1db;
+    --uxd-border: #EBEAE6;
     --uxd-border-h: #ccc8c0;
     --uxd-surface-2: #faf9f7;
-    --uxd-muted: #5a5a5a;
-    --uxd-dim: #9a9a9a;
-    --uxd-accent-h: #7c0531;
     --uxd-text: #14142B;
     --uxd-muted: #71717A;
-    --uxd-border: #EBEAE6;
+    --uxd-dim: #767682;
     --uxd-media-bg: #F7F6F3;
     --uxd-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -55,6 +53,13 @@
     border-bottom: 1px solid rgba(12, 12, 61, 0.04);
 }
 
+.uxd-card__track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
 .uxd-card__img {
     width: 100%;
     height: 100%;
@@ -63,22 +68,97 @@
     transition: transform 0.65s var(--uxd-ease), opacity 0.4s ease;
 }
 
-.uxd-card__img--secondary {
+.uxd-card__slide:nth-child(2) {
     position: absolute;
     inset: 0;
     opacity: 0;
     pointer-events: none;
 }
 
-.uxd-card:hover .uxd-card__img--primary {
+.uxd-card__slide:nth-child(n+3) {
+    display: none;
+}
+
+.uxd-card__dots {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    align-items: center;
+    gap: 5px;
+    padding: 4px 7px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.uxd-card__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(10, 10, 46, 0.25);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.uxd-card__dot.is-active {
+    background: var(--uxd-navy);
+    transform: scale(1.2);
+}
+
+@media (hover: none), (max-width: 900px) {
+    .uxd-card__track {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+    }
+
+    .uxd-card__track::-webkit-scrollbar {
+        display: none;
+    }
+
+    .uxd-card__slide {
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+
+    .uxd-card__slide:nth-child(2),
+    .uxd-card__slide:nth-child(n+3) {
+        position: static;
+        opacity: 1;
+        display: block;
+        pointer-events: auto;
+    }
+
+    .uxd-card:hover .uxd-card__slide:first-child,
+    .uxd-card:hover .uxd-card__media.has-second-img .uxd-card__slide:first-child,
+    .uxd-card:hover .uxd-card__media.has-second-img .uxd-card__slide:nth-child(2) {
+        transform: none;
+        opacity: 1;
+    }
+
+    .uxd-card__dots {
+        display: flex;
+    }
+}
+
+.uxd-card:hover .uxd-card__slide:first-child {
     transform: scale(1.04);
 }
 
-.uxd-card:hover .uxd-card__media.has-second-img .uxd-card__img--primary {
+.uxd-card:hover .uxd-card__media.has-second-img .uxd-card__slide:first-child {
     opacity: 0;
 }
 
-.uxd-card:hover .uxd-card__media.has-second-img .uxd-card__img--secondary {
+.uxd-card:hover .uxd-card__media.has-second-img .uxd-card__slide:nth-child(2) {
     opacity: 1;
     transform: scale(1.03);
 }
@@ -88,18 +168,55 @@
     top: 12px;
     left: 12px;
     height: 24px;
-    padding: 0 9px;
+    padding: 0 11px 0 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: var(--uxd-accent);
     color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 600;
-    border-radius: 0;
-    letter-spacing: 0.03em;
-    box-shadow: 0 2px 8px rgba(154, 7, 61, 0.22);
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    box-shadow: 0 4px 12px rgba(139, 26, 58, 0.24);
     z-index: 2;
+    pointer-events: none;
+    /* Вырезы по бокам в стиле билета */
+    -webkit-mask-image:
+        radial-gradient(circle 3px at 0 50%, transparent 0, transparent 3px, #000 3.5px),
+        radial-gradient(circle 3px at 100% 50%, transparent 0, transparent 3px, #000 3.5px);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        radial-gradient(circle 3px at 0 50%, transparent 0, transparent 3px, #000 3.5px),
+        radial-gradient(circle 3px at 100% 50%, transparent 0, transparent 3px, #000 3.5px);
+    mask-composite: intersect;
+    transition: transform 0.3s var(--uxd-ease);
+}
+
+.uxd-card__badge::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(232, 213, 163, 0.85);
+}
+
+.uxd-card__badge::after {
+    content: '';
+    position: absolute;
+    inset: 2.5px 4.5px;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+}
+
+.uxd-card:hover .uxd-card__badge {
+    transform: rotate(-2deg);
 }
 
 .uxd-card__wish {
@@ -238,41 +355,58 @@
 .uxd-card__cart {
     margin-top: 12px;
     width: 100%;
-    height: 40px;
-    border: 1px solid var(--uxd-navy);
-    border-radius: 8px;
-    background: var(--uxd-navy);
-    color: #FFFFFF;
+    height: 38px;
+    border: 1px solid rgba(10, 10, 46, 0.22);
+    border-radius: 0;
+    background: transparent;
+    color: var(--uxd-navy);
     font-family: inherit;
-    font-size: 11.5px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     cursor: pointer;
-    transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
 }
 
 .uxd-card__cart-icon {
     flex-shrink: 0;
-    transition: transform 0.25s ease;
+    transition: transform 0.22s ease;
 }
 
-.uxd-card__cart:hover {
-    background: var(--uxd-accent);
-    border-color: var(--uxd-accent);
-    box-shadow: 0 6px 16px rgba(154, 7, 61, 0.22);
+.uxd-card__cart:hover,
+.uxd-card__cart:active {
+    background: var(--uxd-navy);
+    border-color: var(--uxd-navy);
+    color: #FFFFFF;
 }
 
 .uxd-card__cart:hover .uxd-card__cart-icon {
     transform: translateY(-1px);
 }
 
-.uxd-card__cart:active {
-    transform: scale(0.985);
+.uxd-card__cart--out,
+.uxd-card__cart:disabled {
+    border-color: var(--uxd-border);
+    color: var(--uxd-muted);
+    background: #FAF9F7;
+    cursor: not-allowed;
+}
+
+.uxd-card__cart--out:hover,
+.uxd-card__cart:disabled:hover {
+    background: #FAF9F7;
+    border-color: var(--uxd-border);
+    color: var(--uxd-muted);
+}
+
+.uxd-card__cart--out:hover .uxd-card__cart-icon,
+.uxd-card__cart:disabled:hover .uxd-card__cart-icon {
+    transform: none;
 }
 
 /* ─── ПОПОВЕР ВЫБОРА РАЗМЕРА ─── */
@@ -285,7 +419,7 @@
     background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(8px);
     border-top: 1px solid var(--uxd-border);
-    border-radius: 12px 12px 0 0;
+    border-radius: 0;
     box-shadow: 0 -10px 28px rgba(12, 12, 61, 0.09);
     transform: translateY(102%);
     opacity: 0;
@@ -307,17 +441,17 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
-    font-size: 11.5px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     color: var(--uxd-text);
 }
 
 .uxd-card__sizes-close {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
     background: #F4F4F5;
     border: none;
     font-size: 12px;
@@ -344,7 +478,7 @@
 .uxd-card__size {
     height: 36px;
     border: 1px solid #D4D4D8;
-    border-radius: 7px;
+    border-radius: 0;
     background: #FFFFFF;
     font-family: inherit;
     font-size: 12.5px;
@@ -368,8 +502,16 @@
 }
 
 .uxd-card__size:disabled {
-    opacity: 0.6;
-    cursor: default;
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.uxd-card__size--out {
+    background: #F4F3F0;
+    border-color: #E4E1DB;
+    color: #9A9AA5;
+    text-decoration: line-through;
+    pointer-events: none;
 }
 
 /* ─── ТОСТ КАРТОЧКИ ─── */
@@ -398,27 +540,108 @@
     transform: translateX(-50%) translateY(0);
 }
 
-/* ─── АДАПТИВ ─── */
-@media (max-width: 480px) {
+/* ─── АДАПТИВ: КРУПНЫЕ ПРОДАЮЩИЕ КАРТОЧКИ НА МОБИЛЬНЫХ ─── */
+@media (max-width: 640px) {
     .uxd-card {
         border-radius: 0;
     }
 
+    .uxd-card:hover {
+        transform: none;
+    }
+
+    .uxd-card__media {
+        aspect-ratio: 4 / 5;
+    }
+
+    .uxd-card__badge {
+        top: 10px;
+        left: 10px;
+        height: 22px;
+        padding: 0 9px 0 14px;
+        font-size: 10px;
+    }
+
+    .uxd-card__wish {
+        top: 12px;
+        right: 12px;
+        width: 38px;
+        height: 38px;
+    }
+
     .uxd-card__body {
-        padding: 12px 12px 13px;
+        padding: 10px 10px 12px;
+    }
+
+    .uxd-card__meta {
+        margin-bottom: 3px;
+    }
+
+    .uxd-card__category {
+        font-size: 8.5px;
+        letter-spacing: 0.14em;
     }
 
     .uxd-card__title {
-        font-size: 13px;
+        font-size: 15px;
+        line-height: 1.22;
+        min-height: 0;
+        margin-bottom: 6px;
+        -webkit-line-clamp: 2;
     }
 
     .uxd-card__price-current {
-        font-size: 15px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .uxd-card__price-old {
+        font-size: 12px;
     }
 
     .uxd-card__cart {
         height: 36px;
-        font-size: 11px;
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        margin-top: 10px;
+    }
+
+    .prod-grid.cols-1 .uxd-card__body {
+        padding: 14px 16px 18px;
+    }
+
+    .prod-grid.cols-1 .uxd-card__title {
+        font-size: 21px;
+        margin-bottom: 8px;
+    }
+
+    .prod-grid.cols-1 .uxd-card__price-current {
+        font-size: 22px;
+    }
+
+    .prod-grid.cols-1 .uxd-card__cart {
+        height: 42px;
+        font-size: 10.5px;
+        margin-top: 12px;
+    }
+
+    .uxd-card__sizes {
+        padding: 14px 16px 16px;
+    }
+
+    .uxd-card__sizes-head {
+        font-size: 10.5px;
+        margin-bottom: 10px;
+    }
+
+    .uxd-card__sizes-grid {
+        grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+        gap: 8px;
+    }
+
+    .uxd-card__size {
+        height: 40px;
+        font-size: 13px;
     }
 }
 

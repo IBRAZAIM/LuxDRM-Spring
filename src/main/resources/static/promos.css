@@ -1,0 +1,161 @@
+/* ════════════════════════════════════════════════════════════
+   UXD ADMIN — promos.css (Promo codes styles layered on admin.css)
+   ════════════════════════════════════════════════════════════ */
+
+.promo-panel {
+    background: var(--adm-surf);
+    border: 1px solid var(--adm-border);
+    border-radius: var(--adm-r-lg);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(12, 12, 61, 0.03);
+}
+
+.promo-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.promo-panel-title {
+    margin: 0;
+    font-family: var(--adm-display);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--adm-navy);
+}
+
+.promo-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pf-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pf-group--full {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-top: 4px;
+}
+
+.pf-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--adm-muted);
+}
+
+.pf-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pf-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--adm-border);
+    border-radius: var(--adm-r-sm);
+    background: var(--adm-surf-2);
+    font-family: var(--adm-ui);
+    font-size: 13px;
+    color: var(--adm-ink);
+    transition: border-color var(--adm-t), background var(--adm-t);
+}
+
+.pf-input:focus {
+    outline: none;
+    border-color: var(--adm-navy);
+    background: var(--adm-surf);
+}
+
+.pf-code-input {
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.pf-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--adm-ink);
+    cursor: pointer;
+}
+
+.pf-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.code-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: var(--adm-navy);
+    color: #FFFFFF;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    font-family: monospace;
+}
+
+.code-badge:hover {
+    background: var(--adm-crimson);
+    color: #FFFFFF !important;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: var(--adm-r-pill);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.status-pill--active {
+    background: var(--adm-delivered-bg);
+    color: var(--adm-delivered-fg);
+    border: 1px solid var(--adm-delivered-bd);
+}
+
+.status-pill--off {
+    background: var(--adm-surf-2);
+    border: 1px solid var(--adm-border);
+    color: var(--adm-muted);
+}
+
+@media (max-width: 900px) {
+    .promo-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .promo-panel {
+        padding: 18px 16px;
+    }
+}

@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
+    boolean existsByProductId(long productId);
+
     void deleteAllByProductId(long productId);
 }

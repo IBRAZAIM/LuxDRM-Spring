@@ -1,5 +1,6 @@
 package kz.ibrazaim.catalog.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +27,9 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${app.security.remember-me-key:uxd-dev-remember-me-key-change-in-prod}")
+    private String rememberMeKey;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -87,7 +92,9 @@ public class SecurityConfig {
                                 "/sales/**",
                                 "/orders/updateStatus",
                                 "/promos",
-                                "/promos/**"
+                                "/promos/**",
+                                "/admin/banners",
+                                "/admin/banners/**"
                         ).hasAnyRole("admin", "moder")
                         .requestMatchers(
                                 "/products/addComment",
@@ -109,8 +116,14 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                         .permitAll()
                 )
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                        .referrerPolicy(ref -> ref.policy(
+                                ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN
+                        ))
+                )
                 .rememberMe(remember -> remember
-                        .key("LuxDRM-unique-remember-me-key-2026")
+                        .key(rememberMeKey)
                         .tokenValiditySeconds(86400 * 30)
                         .rememberMeParameter("remember-me")
                         .userDetailsService(userDetailsService)

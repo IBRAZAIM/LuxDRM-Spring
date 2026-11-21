@@ -59,15 +59,12 @@ public class OrderService {
                 throw new IllegalArgumentException("Cart is empty");
             }
 
-            // Проверяем и списываем остатки на складе (по товару и размеру)
+            // Проверяем и списываем остатки на складе (по размерам и общему остатку)
             for (CartItem cartItem : safeCartItems) {
                 Product product = cartItem.getProduct();
                 if (product != null) {
                     if (product.isDeleted()) {
                         throw new IllegalArgumentException("Товар '" + product.getName() + "' больше недоступен для заказа.");
-                    }
-                    if (product.getStock() < cartItem.getQuantity()) {
-                        throw new IllegalArgumentException("Недостаточно товара '" + product.getName() + "' на складе. В наличии: " + product.getStock() + " шт.");
                     }
                     if (cartItem.getSize() != null && !cartItem.getSize().isBlank()) {
                         ProductSize sizeEntity = productSizeRepository
@@ -79,7 +76,12 @@ public class OrderService {
                             }
                             sizeEntity.setStock(sizeEntity.getStock() - cartItem.getQuantity());
                             productSizeRepository.save(sizeEntity);
+                            syncProductStockFromSizes(product);
+                            continue;
                         }
+                    }
+                    if (product.getStock() < cartItem.getQuantity()) {
+                        throw new IllegalArgumentException("Недостаточно товара '" + product.getName() + "' на складе. В наличии: " + product.getStock() + " шт.");
                     }
                     product.setStock(product.getStock() - cartItem.getQuantity());
                     productRepository.save(product);
@@ -170,9 +172,12 @@ public class OrderService {
                 for (OrderProduct op : order.getOrderProducts()) {
                     if (op.getProduct() != null) {
                         Product p = op.getProduct();
-                        p.setStock(p.getStock() + op.getQuantity());
-                        productRepository.save(p);
-                        adjustSizeStock(p, op.getSize(), op.getQuantity());
+                        if (adjustSizeStock(p, op.getSize(), op.getQuantity())) {
+                            syncProductStockFromSizes(p);
+                        } else {
+                            p.setStock(p.getStock() + op.getQuantity());
+                            productRepository.save(p);
+                        }
                     }
                 }
             }
@@ -183,9 +188,12 @@ public class OrderService {
                 for (OrderProduct op : order.getOrderProducts()) {
                     if (op.getProduct() != null) {
                         Product p = op.getProduct();
-                        p.setStock(Math.max(0, p.getStock() - op.getQuantity()));
-                        productRepository.save(p);
-                        adjustSizeStock(p, op.getSize(), -op.getQuantity());
+                        if (adjustSizeStock(p, op.getSize(), -op.getQuantity())) {
+                            syncProductStockFromSizes(p);
+                        } else {
+                            p.setStock(Math.max(0, p.getStock() - op.getQuantity()));
+                            productRepository.save(p);
+                        }
                     }
                 }
             }
@@ -200,15 +208,30 @@ public class OrderService {
         notificationService.notifyOrderStatusChanged(order);
     }
 
-    private void adjustSizeStock(Product product, String size, int delta) {
+    private boolean adjustSizeStock(Product product, String size, int delta) {
         if (product == null || size == null || size.isBlank()) {
+            return false;
+        }
+        var optSize = productSizeRepository.findFirstByProductAndSizeIgnoreCase(product, size.trim());
+        if (optSize.isEmpty()) {
+            return false;
+        }
+        ProductSize ps = optSize.get();
+        ps.setStock(Math.max(0, ps.getStock() + delta));
+        productSizeRepository.save(ps);
+        return true;
+    }
+
+    private void syncProductStockFromSizes(Product product) {
+        if (product == null) {
             return;
         }
-        productSizeRepository.findFirstByProductAndSizeIgnoreCase(product, size.trim())
-                .ifPresent(ps -> {
-                    ps.setStock(Math.max(0, ps.getStock() + delta));
-                    productSizeRepository.save(ps);
-                });
+        List<ProductSize> sizes = productSizeRepository.findAllByProduct(product);
+        if (sizes != null && !sizes.isEmpty()) {
+            int total = sizes.stream().mapToInt(s -> Math.max(0, s.getStock())).sum();
+            product.setStock(total);
+            productRepository.save(product);
+        }
     }
 
     private String generateOrderSerialNumber() {

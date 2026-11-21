@@ -190,9 +190,9 @@ public class PaymentController {
             @RequestParam(value = "status", required = false) String paramStatus,
             @RequestParam(value = "maskedPan", required = false) String paramMaskedPan
     ) {
-        if (signature != null && !signature.isBlank() && !paymentGateway.verifyWebhookSignature(rawBody, signature)) {
+        if (signature == null || signature.isBlank() || !paymentGateway.verifyWebhookSignature(rawBody, signature)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("ok", false, "error", "Invalid webhook signature"));
+                    .body(Map.of("ok", false, "error", "Missing or invalid webhook signature"));
         }
 
         String txId = paramTxId != null ? paramTxId : extractJsonString(rawBody, "transactionId");

@@ -8,70 +8,104 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/admin.css}">
     <link rel="stylesheet" th:href="@{/reviews.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="admin-body">
 <div th:insert="~{navbar :: navigation-panel}"></div>
 
 <main class="admin-shell">
-    <div class="review-container">
+    <div class="admin-container">
 
-        <div class="admin-topbar">
-            <nav class="admin-breadcrumb" aria-label="Навигация">
-                <a th:href="@{/}">Главная</a>
-                <span class="sep">/</span>
-                <span>Администрирование</span>
-                <span class="sep">/</span>
-                <span class="cur">Отзывы</span>
-            </nav>
-
-            <div class="admin-nav-pills">
-                <a th:href="@{/products}" class="admin-pill">
-                    <i class="fas fa-boxes-stacked"></i> Товары
-                </a>
-                <a th:href="@{/orders}" class="admin-pill">
-                    <i class="fas fa-clipboard-list"></i> Заказы
-                </a>
-                <a th:href="@{/categories}" class="admin-pill">
-                    <i class="fas fa-folder"></i> Категории
-                </a>
-                <a th:href="@{/reviews}" class="admin-pill active">
-                    <i class="fas fa-star"></i> Отзывы
-                </a>
-                <a th:href="@{/sales}" class="admin-pill">
-                    <i class="fas fa-chart-line"></i> Аналитика
-                </a>
-            </div>
-        </div>
+        <div th:replace="~{fragments/admin-topbar :: topbar('reviews', 'Отзывы')}"></div>
 
         <header class="admin-header">
             <div>
                 <span class="admin-eyebrow">Панель управления UXD</span>
-                <h1 class="myCart">Модерация отзывов</h1>
+                <h1 class="admin-title">Модерация отзывов</h1>
             </div>
-            <span class="total-badge" th:text="'Всего отзывов: ' + ${reviews != null ? #lists.size(reviews) : 0}"></span>
+            <div class="header-actions">
+                <span class="total-badge" th:text="'Всего отзывов: ' + ${reviews != null ? #lists.size(reviews) : 0}">Всего отзывов: 0</span>
+            </div>
         </header>
 
-        <div th:if="${successMessage}" class="alert alert-success" role="status">
-            <div><i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span></div>
-            <button type="button" class="alert-close" onclick="this.parentElement.remove()">✕</button>
+        <div th:if="${successMessage}" class="admin-flash admin-flash--success" role="status">
+            <div class="admin-flash-content">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <button type="button" class="admin-flash__close" onclick="this.parentElement.remove()" aria-label="Закрыть">&times;</button>
         </div>
 
-        <div class="review-list" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
-            <table>
+        <!-- KPI Summary Cards -->
+        <section class="admin-kpi-grid admin-kpi-grid--4" aria-label="Сводка по отзывам">
+            <div class="kpi-card is-clickable is-selected" data-filter="ALL" onclick="filterReviewsByStatus('ALL')">
+                <span class="kpi-label">Всего отзывов</span>
+                <p class="kpi-value" th:text="${reviews != null ? #lists.size(reviews) : 0}">0</p>
+            </div>
+            <div class="kpi-card kpi-card--pending is-clickable" data-filter="PENDING" onclick="filterReviewsByStatus('PENDING')">
+                <span class="kpi-label">На модерации</span>
+                <p class="kpi-value" th:text="${pendingCount != null ? pendingCount : 0}">0</p>
+            </div>
+            <div class="kpi-card kpi-card--delivered is-clickable" data-filter="APPROVED" onclick="filterReviewsByStatus('APPROVED')">
+                <span class="kpi-label">Опубликовано</span>
+                <p class="kpi-value" th:text="${approvedCount != null ? approvedCount : 0}">0</p>
+            </div>
+            <div class="kpi-card kpi-card--gold">
+                <span class="kpi-label">Средняя оценка</span>
+                <p class="kpi-value" th:text="${(avgRating != null ? avgRating : '0.0') + ' ★'}">0.0 ★</p>
+            </div>
+        </section>
+
+        <!-- Filter & Search Toolbar -->
+        <section class="admin-toolbar" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+            <div class="status-tabs" role="tablist" aria-label="Фильтр отзывов">
+                <button type="button" class="status-tab active" data-filter="ALL" onclick="filterReviewsByStatus('ALL')">
+                    Все <span class="tab-badge" th:text="${#lists.size(reviews)}">0</span>
+                </button>
+                <button type="button" class="status-tab" data-filter="PENDING" onclick="filterReviewsByStatus('PENDING')">
+                    <span class="dot dot--pending"></span> На модерации
+                    <span class="tab-badge" th:text="${pendingCount != null ? pendingCount : 0}">0</span>
+                </button>
+                <button type="button" class="status-tab" data-filter="APPROVED" onclick="filterReviewsByStatus('APPROVED')">
+                    <span class="dot dot--delivered"></span> Одобренные
+                    <span class="tab-badge" th:text="${approvedCount != null ? approvedCount : 0}">0</span>
+                </button>
+            </div>
+
+            <div class="toolbar-controls">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="reviewSearchInput" placeholder="Поиск по покупателю, товару или тексту..." oninput="applyReviewsFilter()">
+                    <button type="button" id="clearReviewSearch" class="clear-search-btn" onclick="clearReviewsSearch()" style="display:none;" aria-label="Очистить">&times;</button>
+                </div>
+            </div>
+        </section>
+
+        <div class="results-bar" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+            <span>Показано <strong id="visibleReviewsCount" th:text="${#lists.size(reviews)}">0</strong> отзывов</span>
+        </div>
+
+        <div class="admin-table-wrap review-list" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+            <table id="reviewsTable">
                 <thead>
                 <tr class="reviews-param">
                     <th>Пользователь</th>
                     <th>Товар</th>
                     <th>Оценка и текст</th>
                     <th>Дата</th>
-                    <th>Статус публикации</th>
+                    <th>Статус</th>
+                    <th class="th-actions">Модерация</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="review : ${reviews}" class="review-item">
+                <tbody id="reviewsTableBody">
+                <tr th:each="review : ${reviews}"
+                    class="review-item"
+                    th:with="stName=${review.status != null ? review.status.name() : 'PENDING'},
+                             stDisplay=${review.status != null ? review.status.displayName : 'Не проверено'}"
+                    th:attr="data-status=${stName}">
                     <td class="review-user">
                         <strong th:text="${review.user != null and review.user.name != null ? review.user.name : (review.user != null ? review.user.login : 'Гость')}"></strong>
                         <span class="user-sub" th:if="${review.user != null}" th:text="${review.user.login}"></span>
@@ -95,33 +129,51 @@
                     <td class="review-date"
                         th:text="${review.date != null ? #temporals.format(review.date, 'dd.MM.yyyy HH:mm') : '—'}"></td>
                     <td class="review-status-cell">
-                        <div class="status-wrap"
-                             th:with="stName=${review.status != null ? review.status.name() : 'PENDING'},
-                                      stDisplay=${review.status != null ? review.status.displayName : 'Не проверено'}">
-                            <span class="status-badge"
-                                  th:classappend="${stName == 'APPROVED'} ? ' status-badge--approved' : ' status-badge--pending'"
-                                  th:text="${stDisplay}"></span>
-
-                            <form th:action="@{/reviews/updateStatus}" method="post" class="status-form">
+                        <span class="status-badge"
+                              th:classappend="${stName == 'APPROVED'} ? ' status-badge--approved' : ' status-badge--pending'"
+                              th:text="${stDisplay}">Не проверено</span>
+                    </td>
+                    <td class="cell-actions">
+                        <div class="action-buttons">
+                            <form th:if="${stName != 'APPROVED'}"
+                                  th:action="@{/reviews/updateStatus}"
+                                  method="post"
+                                  class="inline-form">
                                 <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
-                                <input type="hidden" th:name="reviewId" th:value="${review.id}">
-                                <select th:name="status" class="status-select">
-                                    <option th:each="statusOption : ${T(kz.ibrazaim.catalog.model.ReviewStatus).values()}"
-                                            th:value="${statusOption.name()}"
-                                            th:text="${statusOption.displayName}"
-                                            th:selected="${review.status == statusOption}">
-                                    </option>
-                                </select>
-                                <button type="submit" class="save-btn">Сохранить</button>
+                                <input type="hidden" name="reviewId" th:value="${review.id}">
+                                <input type="hidden" name="status" value="APPROVED">
+                                <button type="submit" class="adm-btn adm-btn--sm adm-btn--success">
+                                    <i class="fas fa-check"></i> Одобрить
+                                </button>
+                            </form>
+                            <form th:if="${stName == 'APPROVED'}"
+                                  th:action="@{/reviews/updateStatus}"
+                                  method="post"
+                                  class="inline-form">
+                                <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+                                <input type="hidden" name="reviewId" th:value="${review.id}">
+                                <input type="hidden" name="status" value="PENDING">
+                                <button type="submit" class="adm-btn adm-btn--sm adm-btn--outline">
+                                    <i class="fas fa-eye-slash"></i> Скрыть
+                                </button>
                             </form>
                         </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
+            <div id="noReviewsFilter" class="admin-empty" style="display:none;border:none;border-radius:0;">
+                <i class="fas fa-search"></i>
+                <h3>Отзывы не найдены</h3>
+                <p>Измените поисковый запрос или переключите фильтр статуса.</p>
+                <div class="empty-actions">
+                    <button type="button" class="adm-btn adm-btn--navy" onclick="resetReviewsFilter()">Сбросить фильтры</button>
+                </div>
+            </div>
         </div>
 
-        <div class="empty-reviews" th:if="${reviews == null or #lists.isEmpty(reviews)}">
+        <div class="admin-empty" th:if="${reviews == null or #lists.isEmpty(reviews)}">
             <i class="far fa-comment-dots"></i>
             <h3>Отзывов пока нет</h3>
             <p>Когда покупатели оставят отзывы к товарам, они появятся здесь для проверки.</p>
@@ -132,5 +184,63 @@
 
 <div th:insert="~{footer :: footer-code}"></div>
 <script th:src="@{/js/navbar-component.js}" defer></script>
+<script>
+    let currentReviewStatus = 'ALL';
+
+    function filterReviewsByStatus(status) {
+        currentReviewStatus = status;
+        document.querySelectorAll('.status-tab').forEach(tab => {
+            tab.classList.toggle('active', tab.getAttribute('data-filter') === status);
+        });
+        document.querySelectorAll('.kpi-card[data-filter]').forEach(card => {
+            card.classList.toggle('is-selected', card.getAttribute('data-filter') === status);
+        });
+        applyReviewsFilter();
+    }
+
+    function clearReviewsSearch() {
+        const inp = document.getElementById('reviewSearchInput');
+        if (inp) {
+            inp.value = '';
+            applyReviewsFilter();
+            inp.focus();
+        }
+    }
+
+    function resetReviewsFilter() {
+        const inp = document.getElementById('reviewSearchInput');
+        if (inp) inp.value = '';
+        filterReviewsByStatus('ALL');
+    }
+
+    function applyReviewsFilter() {
+        const query = (document.getElementById('reviewSearchInput')?.value || '').trim().toLowerCase();
+        const clearBtn = document.getElementById('clearReviewSearch');
+        if (clearBtn) clearBtn.style.display = query.length > 0 ? 'flex' : 'none';
+
+        const tbody = document.getElementById('reviewsTableBody');
+        if (!tbody) return;
+
+        let visibleCount = 0;
+        Array.from(tbody.querySelectorAll('tr.review-item')).forEach(row => {
+            const st = row.getAttribute('data-status') || 'PENDING';
+            const matchStatus = (currentReviewStatus === 'ALL' || st === currentReviewStatus);
+            const matchText = (!query || row.textContent.toLowerCase().includes(query));
+            const show = matchStatus && matchText;
+            row.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+
+        const countEl = document.getElementById('visibleReviewsCount');
+        if (countEl) countEl.textContent = String(visibleCount);
+
+        const emptyEl = document.getElementById('noReviewsFilter');
+        const tbl = document.getElementById('reviewsTable');
+        if (emptyEl && tbl) {
+            emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
+            tbl.style.display = visibleCount === 0 ? 'none' : 'table';
+        }
+    }
+</script>
 </body>
 </html>

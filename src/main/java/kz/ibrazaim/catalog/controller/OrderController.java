@@ -206,7 +206,7 @@ public class OrderController {
             redirectAttributes.addFlashAttribute("errorMessage", "Ошибка при обновлении статуса: " + ex.getMessage());
         }
 
-        if (redirectTo != null && redirectTo.startsWith("/orders")) {
+        if (isSafeOrdersRedirect(redirectTo)) {
             return "redirect:" + redirectTo;
         }
         return "redirect:/orders";
@@ -243,10 +243,20 @@ public class OrderController {
         orderService.updateOrderStatus(id, OrderStatus.CANCELED.name());
         redirectAttributes.addFlashAttribute("successMessage", "Заказ №00" + id + " отменён.");
 
-        if (redirectTo != null && redirectTo.startsWith("/orders")) {
+        if (isSafeOrdersRedirect(redirectTo)) {
             return "redirect:" + redirectTo;
         }
         return "redirect:/orders/" + id;
+    }
+
+    private boolean isSafeOrdersRedirect(String redirectTo) {
+        return redirectTo != null
+                && (redirectTo.equals("/orders") || redirectTo.startsWith("/orders/") || redirectTo.startsWith("/orders?"))
+                && !redirectTo.startsWith("//")
+                && !redirectTo.contains("://")
+                && !redirectTo.contains("\\")
+                && !redirectTo.contains("\r")
+                && !redirectTo.contains("\n");
     }
 
     @GetMapping("/orders/{id}")

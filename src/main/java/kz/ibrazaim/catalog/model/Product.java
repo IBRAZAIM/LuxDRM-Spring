@@ -21,6 +21,9 @@ public class Product {
 
     String name;
 
+    @Column(name = "sku", length = 64)
+    String sku;
+
     @Column(precision = 12, scale = 2)
     BigDecimal price;
 
@@ -37,6 +40,10 @@ public class Product {
     @Column(name = "deleted", nullable = false)
     boolean deleted = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "audience", nullable = false, length = 20)
+    ProductAudience audience = ProductAudience.UNISEX;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
@@ -49,6 +56,14 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ProductSize> sizes;
+
+    public ProductAudience getSafeAudience() {
+        return audience != null ? audience : ProductAudience.UNISEX;
+    }
+
+    public String getDisplaySku() {
+        return (sku != null && !sku.trim().isEmpty()) ? sku.trim() : "UXD-" + id;
+    }
 
     public BigDecimal getFinalPrice() {
         BigDecimal safePrice = price != null && price.compareTo(BigDecimal.ZERO) > 0 ? price : BigDecimal.ZERO;

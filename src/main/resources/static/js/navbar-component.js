@@ -1,6 +1,9 @@
 /* ════════════════════════════════════════════════════════════
    Навбар + общие UX-улучшения (подключается на всех страницах)
    ════════════════════════════════════════════════════════════ */
+(function () {
+    if (window.__uxdNavbarInit) return;
+    window.__uxdNavbarInit = true;
 
 /* ── 1. Боковое меню ───────────────────────────────────────── */
 (function () {
@@ -37,23 +40,79 @@
     }
     document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', window.closeSidebar));
 
-    // Закрытие по клику на пункт меню (удобно на мобильных)
-    sidebar.querySelectorAll('.panel-item a').forEach((a) => a.addEventListener('click', close));
+    // Закрытие по клику на пункт меню и свайпом влево на телефоне
+    sidebar.querySelectorAll('.panel-item a, .sidebar-cat-link, .sidebar-service-links a').forEach((a) => a.addEventListener('click', close));
 
-    // Подсветка текущего раздела: точное совпадение или вложенный путь
+    let sbTouchX = 0, sbTouchY = 0;
+    sidebar.addEventListener('touchstart', (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        sbTouchX = e.touches[0].clientX;
+        sbTouchY = e.touches[0].clientY;
+    }, { passive: true });
+    sidebar.addEventListener('touchend', (e) => {
+        if (!e.changedTouches || !e.changedTouches[0]) return;
+        const dx = e.changedTouches[0].clientX - sbTouchX;
+        const dy = e.changedTouches[0].clientY - sbTouchY;
+        if (dx < -55 && Math.abs(dy) < 65) close();
+    }, { passive: true });
+
+    // Подсветка текущего раздела: с учётом query-параметров (?section=..., ?category=..., ?sale=1)
     const path = window.location.pathname.replace(/\/+$/, '') || '/';
-    let best = null;
-    let bestLen = -1;
+    const params = new URLSearchParams(window.location.search);
+    const curSection = (params.get('section') || '').toLowerCase();
+    const curCategory = (params.get('category') || '').toLowerCase();
+    const curSale = params.get('sale') === '1';
+
+    function matchNavUrl(rawHref) {
+        if (!rawHref) return false;
+        const [hrefPathRaw, hrefQuery] = rawHref.split('?');
+        const hrefPath = (hrefPathRaw || '').replace(/\/+$/, '') || '/';
+        if (hrefQuery) {
+            if (hrefPath !== path) return false;
+            const hp = new URLSearchParams(hrefQuery);
+            if (hp.get('section')) return hp.get('section').toLowerCase() === curSection;
+            if (hp.get('category')) return hp.get('category').toLowerCase() === curCategory;
+            if (hp.get('sale')) return curSale;
+            return ('?' + hrefQuery) === window.location.search;
+        }
+        if (hrefPath === '/products') {
+            return path === '/products' && !curSection && !curCategory && !curSale;
+        }
+        return hrefPath === path || (hrefPath !== '/' && path.startsWith(hrefPath + '/'));
+    }
+
     sidebar.querySelectorAll('.panel-item').forEach((li) => li.classList.remove('active'));
     sidebar.querySelectorAll('.panel-item a').forEach((a) => {
-        const href = (a.getAttribute('href') || '').split('?')[0].replace(/\/+$/, '') || '/';
-        const match = href === path || (href !== '/' && path.startsWith(href + '/'));
-        if (match && href.length > bestLen) {
-            best = a;
-            bestLen = href.length;
+        if (matchNavUrl(a.getAttribute('href'))) {
+            a.closest('.panel-item').classList.add('active');
         }
     });
-    if (best) best.closest('.panel-item').classList.add('active');
+
+    document.querySelectorAll('.subnav-link').forEach((a) => {
+        a.classList.toggle('active', matchNavUrl(a.getAttribute('href')));
+    });
+
+    // Двухъярусная шапка: плавное сворачивание нижнего яруса при прокрутке вниз
+    const siteHeader = document.getElementById('siteHeader') || document.querySelector('.header');
+    if (siteHeader) {
+        let lastScrollY = window.scrollY;
+        let scrollTicking = false;
+        window.addEventListener('scroll', function () {
+            if (scrollTicking) return;
+            scrollTicking = true;
+            requestAnimationFrame(function () {
+                const y = window.scrollY;
+                const delta = y - lastScrollY;
+                if (y < 48 || delta < -6) {
+                    siteHeader.classList.remove('header--compact');
+                } else if (y > 96 && delta > 8) {
+                    siteHeader.classList.add('header--compact');
+                }
+                lastScrollY = y;
+                scrollTicking = false;
+            });
+        }, { passive: true });
+    }
 })();
 
 /* ── 2. Общие UX-помощники ─────────────────────────────────── */
@@ -239,4 +298,5 @@
             window.closeSidebar();
         }
     });
+})();
 })();

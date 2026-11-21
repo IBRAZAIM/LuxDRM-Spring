@@ -31,7 +31,15 @@ public class PromoCodeAdminController {
         if (user == null || !userService.hasAnyRole(user, Role.ADMIN, Role.MODER)) {
             return "redirect:/login";
         }
-        model.addAttribute("promos", promoCodeService.findAllPromos());
+        var promos = promoCodeService.findAllPromos();
+        long activeCount = promos.stream().filter(p -> p.isActive()).count();
+        long inactiveCount = promos.size() - activeCount;
+        long totalUses = promos.stream().mapToLong(p -> Math.max(0, p.getUsedCount())).sum();
+
+        model.addAttribute("promos", promos);
+        model.addAttribute("activePromosCount", activeCount);
+        model.addAttribute("inactivePromosCount", inactiveCount);
+        model.addAttribute("totalPromoUses", totalUses);
         model.addAttribute("cartItemsCount", cartService.getCartItemsCount(user, session));
         return "promos";
     }

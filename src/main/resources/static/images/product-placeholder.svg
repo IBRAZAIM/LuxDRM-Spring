@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" fill="none">
+  <rect width="600" height="800" fill="#F6F5F3"/>
+  <rect x="24" y="24" width="552" height="752" stroke="#E4E1DB" stroke-width="1.5"/>
+  <g transform="translate(300, 355)" stroke="#0A0A2E" stroke-opacity="0.28" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="-46" y="-36" width="92" height="72" rx="2"/>
+    <circle cx="-18" cy="-12" r="8"/>
+    <path d="M-46 22 L-14 -4 L8 14 L22 2 L46 24"/>
+  </g>
+  <line x1="268" y1="422" x2="332" y2="422" stroke="#C9A84C" stroke-width="1.5" stroke-opacity="0.7"/>
+  <text x="300" y="456" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" letter-spacing="8" fill="#0A0A2E" fill-opacity="0.72">UXD</text>
+  <text x="300" y="482" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="11" font-weight="600" letter-spacing="3.5" fill="#767682">ФОТО СКОРО ПОЯВИТСЯ</text>
+</svg>

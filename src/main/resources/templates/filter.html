@@ -12,18 +12,30 @@
             <div class="input-with-icon">
                 <i class="fas fa-search"></i>
                 <input type="text" id="search" name="search"
-                       th:value="${search}" placeholder="Название или описание товара..." title="Поиск товаров">
+                       th:value="${search}" placeholder="Название, артикул или описание товара..." title="Поиск товаров">
             </div>
         </div>
 
         <div class="form-group">
             <label for="categoryId" class="category-label">Категория</label>
-            <select id="categoryId" name="categoryId" class="category">
+            <select id="categoryId" name="categoryId" class="category" onchange="this.form.submit()">
                 <option value="">Все категории</option>
                 <option th:each="category : ${categories}"
                         th:value="${category.id}"
                         th:text="${category.getName()}"
                         th:selected="${category.id == selectedCategoryId}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="audienceFilter" class="category-label">Раздел</label>
+            <select id="audienceFilter" name="audience" class="category" onchange="this.form.submit()">
+                <option value="">Все разделы</option>
+                <option th:each="aud : ${audiences}"
+                        th:value="${aud.name()}"
+                        th:text="${aud.displayName}"
+                        th:selected="${aud.name() == selectedAudience}">
                 </option>
             </select>
         </div>
@@ -40,6 +52,17 @@
             <input type="number" id="maxPrice" name="maxPrice" step="100" min="0"
                    th:value="${param.maxPrice}" placeholder="Любая" title="Введите максимальную цену">
             <span id="maxPriceError" class="error-message"></span>
+        </div>
+
+        <div class="form-group form-group--sort">
+            <label for="sortSelect">Сортировка</label>
+            <select id="sortSelect" name="sort" class="category" onchange="this.form.submit()">
+                <option value="newest" th:selected="${selectedSort == null or selectedSort == 'newest'}">Сначала новые</option>
+                <option value="price_asc" th:selected="${selectedSort == 'price_asc'}">Цена: по возрастанию</option>
+                <option value="price_desc" th:selected="${selectedSort == 'price_desc'}">Цена: по убыванию</option>
+                <option value="stock_asc" th:selected="${selectedSort == 'stock_asc'}">Остаток: сначала мало</option>
+                <option value="stock_desc" th:selected="${selectedSort == 'stock_desc'}">Остаток: сначала много</option>
+            </select>
         </div>
 
         <div class="form-actions">

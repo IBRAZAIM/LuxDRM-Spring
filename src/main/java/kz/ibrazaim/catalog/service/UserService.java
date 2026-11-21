@@ -55,14 +55,15 @@ public class UserService {
             throw new IllegalArgumentException("Пользователь с таким email уже существует.");
         }
 
-        user.setEmail(email);
-        user.setLogin(email);
-        user.setPassword(encoder.encode(password));
-        user.setRole(Role.USER);
-        user.setName(trimNullable(user.getName()));
-        user.setSurname(trimNullable(user.getSurname()));
-        user.setRegistrationDate(LocalDateTime.now());
-        userRepository.save(user);
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setLogin(email);
+        newUser.setPassword(encoder.encode(password));
+        newUser.setRole(Role.USER);
+        newUser.setName(trimNullable(user.getName()));
+        newUser.setSurname(trimNullable(user.getSurname()));
+        newUser.setRegistrationDate(LocalDateTime.now());
+        userRepository.save(newUser);
     }
 
     @Transactional

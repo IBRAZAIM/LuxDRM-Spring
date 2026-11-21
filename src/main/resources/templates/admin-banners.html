@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление главной страницы — UXD Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/admin.css}">
+    <link rel="stylesheet" th:href="@{/admin-banners.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-body">
+<div th:insert="~{navbar :: navigation-panel}" class="navigation-panel"></div>
+
+<main class="admin-shell">
+    <div class="admin-container">
+
+        <div th:replace="~{fragments/admin-topbar :: topbar('banners', 'Оформление главной')}"></div>
+
+        <header class="admin-header">
+            <div>
+                <span class="admin-eyebrow">Панель управления UXD</span>
+                <h1 class="admin-title">Фоны и блоки главной страницы</h1>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/}" class="adm-btn adm-btn--outline">
+                    <i class="fas fa-external-link-alt"></i> Открыть главную
+                </a>
+            </div>
+        </header>
+
+        <div th:if="${successMessage}" class="admin-flash admin-flash--success" role="status">
+            <div class="admin-flash-content">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <button type="button" class="admin-flash__close" onclick="this.parentElement.remove()" aria-label="Закрыть">&times;</button>
+        </div>
+        <div th:if="${errorMessage ?: error}" class="admin-flash admin-flash--error" role="alert">
+            <div class="admin-flash-content">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${errorMessage != null ? errorMessage : error}"></span>
+            </div>
+            <button type="button" class="admin-flash__close" onclick="this.parentElement.remove()" aria-label="Закрыть">&times;</button>
+        </div>
+
+        <!-- 1. ГЛАВНЫЙ БАННЕР (HERO) -->
+        <section class="banners-section" th:if="${heroBanner != null}">
+            <div class="banners-section-head">
+                <span class="banners-kicker">Блок 01 · Первый экран</span>
+                <h2 class="banners-section-title">Главный баннер (Hero)</h2>
+            </div>
+
+            <div class="banner-card banner-card--wide">
+                <div class="banner-preview banner-preview--hero"
+                     th:classappend="(${heroBanner.hasImage()} ? ' has-image' : '') + ' banner-slot--' + ${heroBanner.slotKey}"
+                     th:style="${heroBanner.hasImage()} ? |background-image: url('${heroBanner.imageUrl}');| : null">
+                    <div class="banner-preview-overlay"></div>
+                    <div class="banner-preview-content">
+                        <span class="bp-sub" th:text="${heroBanner.subtitle}">Новая коллекция · UXD</span>
+                        <h3 class="bp-title" th:text="${heroBanner.title}">Домашний комфорт</h3>
+                    </div>
+                    <span class="bp-status-badge" th:text="${heroBanner.hasImage() ? 'Своё фото' : 'Стандартный фон'}">Стандартный фон</span>
+                </div>
+
+                <div class="banner-card-body">
+                    <form th:action="@{/admin/banners/{slotKey}(slotKey=${heroBanner.slotKey})}"
+                          method="post"
+                          enctype="multipart/form-data"
+                          class="banner-form">
+                        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+
+                        <div class="banner-upload-row">
+                            <label class="banner-file-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Выбрать новое фоновое фото (JPG, PNG, WEBP)</span>
+                                <input type="file" name="imageFile" class="js-banner-file"
+                                       accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+                            </label>
+                            <span class="banner-file-name">Файл не выбран</span>
+                        </div>
+
+                        <div class="banner-fields-grid banner-fields-grid--3">
+                            <div class="bf-group">
+                                <label>Заголовок</label>
+                                <input type="text" name="title" th:value="${heroBanner.title}" maxlength="160" required>
+                            </div>
+                            <div class="bf-group">
+                                <label>Надзаголовок (eyebrow)</label>
+                                <input type="text" name="subtitle" th:value="${heroBanner.subtitle}" maxlength="255">
+                            </div>
+                            <div class="bf-group">
+                                <label>Ссылка кнопки</label>
+                                <input type="text" name="targetUrl" th:value="${heroBanner.targetUrl}" maxlength="255" required>
+                            </div>
+                        </div>
+
+                        <div class="banner-form-actions">
+                            <button type="submit" class="adm-btn adm-btn--navy">
+                                <i class="fas fa-save"></i> Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+
+                    <form th:if="${heroBanner.hasImage()}"
+                          th:action="@{/admin/banners/{slotKey}/reset-image(slotKey=${heroBanner.slotKey})}"
+                          method="post"
+                          class="banner-reset-form">
+                        <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+                        <button type="submit" class="adm-btn adm-btn--outline adm-btn--sm">
+                            <i class="fas fa-rotate-left"></i> Сбросить фон
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. РАЗДЕЛЫ САЙТА (МУЖСКОЕ · ЖЕНСКОЕ · ДЕТСКОЕ) -->
+        <section class="banners-section" th:if="${sectionBanners != null and !#lists.isEmpty(sectionBanners)}">
+            <div class="banners-section-head">
+                <span class="banners-kicker">Блок 02 · Направления</span>
+                <h2 class="banners-section-title">Разделы сайта (Мужское · Женское · Детское)</h2>
+            </div>
+
+            <div class="banners-grid banners-grid--3">
+                <div class="banner-card" th:each="banner : ${sectionBanners}">
+                    <div class="banner-preview"
+                         th:classappend="(${banner.hasImage()} ? ' has-image' : '') + ' banner-slot--' + ${banner.slotKey}"
+                         th:style="${banner.hasImage()} ? |background-image: url('${banner.imageUrl}');| : null">
+                        <div class="banner-preview-overlay"></div>
+                        <div class="banner-preview-content">
+                            <span class="bp-sub" th:text="${banner.subtitle}">Коллекция</span>
+                            <h3 class="bp-title" th:text="${banner.title}">Мужское</h3>
+                        </div>
+                        <span class="bp-status-badge" th:text="${banner.hasImage() ? 'Своё фото' : 'Стандартный фон'}">Стандартный фон</span>
+                    </div>
+
+                    <div class="banner-card-body">
+                        <form th:action="@{/admin/banners/{slotKey}(slotKey=${banner.slotKey})}"
+                              method="post"
+                              enctype="multipart/form-data"
+                              class="banner-form">
+                            <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+
+                            <div class="banner-upload-row">
+                                <label class="banner-file-label">
+                                    <i class="fas fa-image"></i>
+                                    <span>Загрузить фон</span>
+                                    <input type="file" name="imageFile" class="js-banner-file"
+                                           accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+                                </label>
+                                <span class="banner-file-name">Файл не выбран</span>
+                            </div>
+
+                            <div class="banner-fields-grid">
+                                <div class="bf-group">
+                                    <label>Заголовок</label>
+                                    <input type="text" name="title" th:value="${banner.title}" maxlength="160" required>
+                                </div>
+                                <div class="bf-group">
+                                    <label>Подзаголовок</label>
+                                    <input type="text" name="subtitle" th:value="${banner.subtitle}" maxlength="255">
+                                </div>
+                                <div class="bf-group">
+                                    <label>Ссылка</label>
+                                    <input type="text" name="targetUrl" th:value="${banner.targetUrl}" maxlength="255" required>
+                                </div>
+                            </div>
+
+                            <div class="banner-form-actions">
+                                <button type="submit" class="adm-btn adm-btn--navy adm-btn--sm">
+                                    <i class="fas fa-save"></i> Сохранить
+                                </button>
+                            </div>
+                        </form>
+
+                        <form th:if="${banner.hasImage()}"
+                              th:action="@{/admin/banners/{slotKey}/reset-image(slotKey=${banner.slotKey})}"
+                              method="post"
+                              class="banner-reset-form">
+                            <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+                            <button type="submit" class="adm-btn adm-btn--outline adm-btn--sm">
+                                <i class="fas fa-rotate-left"></i> Сбросить фон
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. БЛОКИ КАТЕГОРИЙ -->
+        <section class="banners-section" th:if="${categoryBanners != null and !#lists.isEmpty(categoryBanners)}">
+            <div class="banners-section-head">
+                <span class="banners-kicker">Блок 03 · Коллекции</span>
+                <h2 class="banners-section-title">Блоки категорий</h2>
+            </div>
+
+            <div class="banners-grid banners-grid--2">
+                <div class="banner-card" th:each="banner : ${categoryBanners}">
+                    <div class="banner-preview"
+                         th:classappend="(${banner.hasImage()} ? ' has-image' : '') + ' banner-slot--' + ${banner.slotKey}"
+                         th:style="${banner.hasImage()} ? |background-image: url('${banner.imageUrl}');| : null">
+                        <div class="banner-preview-overlay"></div>
+                        <div class="banner-preview-content">
+                            <h3 class="bp-title" th:text="${banner.title}">Пижамы</h3>
+                        </div>
+                        <span class="bp-status-badge" th:text="${banner.hasImage() ? 'Своё фото' : 'Стандартный фон'}">Стандартный фон</span>
+                    </div>
+
+                    <div class="banner-card-body">
+                        <form th:action="@{/admin/banners/{slotKey}(slotKey=${banner.slotKey})}"
+                              method="post"
+                              enctype="multipart/form-data"
+                              class="banner-form">
+                            <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+
+                            <div class="banner-upload-row">
+                                <label class="banner-file-label">
+                                    <i class="fas fa-image"></i>
+                                    <span>Загрузить фон</span>
+                                    <input type="file" name="imageFile" class="js-banner-file"
+                                           accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+                                </label>
+                                <span class="banner-file-name">Файл не выбран</span>
+                            </div>
+
+                            <div class="banner-fields-grid banner-fields-grid--2">
+                                <div class="bf-group">
+                                    <label>Название блока</label>
+                                    <input type="text" name="title" th:value="${banner.title}" maxlength="160" required>
+                                </div>
+                                <div class="bf-group">
+                                    <label>Ссылка</label>
+                                    <input type="text" name="targetUrl" th:value="${banner.targetUrl}" maxlength="255" required>
+                                </div>
+                            </div>
+
+                            <div class="banner-form-actions">
+                                <button type="submit" class="adm-btn adm-btn--navy adm-btn--sm">
+                                    <i class="fas fa-save"></i> Сохранить
+                                </button>
+                            </div>
+                        </form>
+
+                        <form th:if="${banner.hasImage()}"
+                              th:action="@{/admin/banners/{slotKey}/reset-image(slotKey=${banner.slotKey})}"
+                              method="post"
+                              class="banner-reset-form">
+                            <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
+                            <button type="submit" class="adm-btn adm-btn--outline adm-btn--sm">
+                                <i class="fas fa-rotate-left"></i> Сбросить фон
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<div th:insert="~{footer :: footer-code}"></div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.banner-card').forEach(card => {
+            const fileInput = card.querySelector('.js-banner-file');
+            const preview = card.querySelector('.banner-preview');
+            const fileNameEl = card.querySelector('.banner-file-name');
+            if (!fileInput || !preview) return;
+
+            function applyPreviewFile(file) {
+                if (!file || !file.type || !file.type.startsWith('image/')) return;
+                const url = URL.createObjectURL(file);
+                preview.style.backgroundImage = `url("${url}")`;
+                preview.classList.add('has-image');
+                if (fileNameEl) fileNameEl.textContent = file.name;
+            }
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files && fileInput.files[0]) {
+                    applyPreviewFile(fileInput.files[0]);
+                }
+            });
+
+            preview.addEventListener('dragover', e => {
+                e.preventDefault();
+                preview.classList.add('is-dragover');
+            });
+            preview.addEventListener('dragleave', () => {
+                preview.classList.remove('is-dragover');
+            });
+            preview.addEventListener('drop', e => {
+                e.preventDefault();
+                preview.classList.remove('is-dragover');
+                if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    const dt = new DataTransfer();
+                    dt.items.add(e.dataTransfer.files[0]);
+                    fileInput.files = dt.files;
+                    applyPreviewFile(e.dataTransfer.files[0]);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

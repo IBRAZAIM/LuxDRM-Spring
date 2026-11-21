@@ -3,430 +3,540 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Личный кабинет — LUXDRM Spring</title>
+    <title>Личный кабинет — UNDER X DESIRE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <style>
         :root {
-            --p-bg: #f6f5f3;
-            --p-card: #ffffff;
-            --p-ink: #111111;
-            --p-navy: #0a0a2e;
-            --p-crimson: #8b1a3a;
-            --p-gold: #c9a84c;
-            --p-muted: #5a5a5a;
-            --p-dim: #9a9a9a;
-            --p-border: #e4e1db;
-            --p-serif: 'Cormorant Garamond', Georgia, serif;
-            --p-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+            --acc-bg: #ffffff;
+            --acc-surface: #faf9f7;
+            --acc-ink: #111118;
+            --acc-navy: #0a0a2e;
+            --acc-crimson: #8b1a3a;
+            --acc-muted: #686873;
+            --acc-dim: #9a9aa4;
+            --acc-border: #e6e4de;
+            --acc-serif: 'Cormorant Garamond', Georgia, serif;
+            --acc-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body.profile-page {
-            background: var(--p-bg);
-            color: var(--p-ink);
-            font-family: var(--p-sans);
+            background: var(--acc-bg);
+            color: var(--acc-ink);
+            font-family: var(--acc-sans);
             margin: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .profile-shell {
-            max-width: 1320px;
+        .acc-shell {
+            max-width: 1220px;
             margin: 0 auto;
-            padding: 32px 28px 80px;
+            padding: 24px 40px 96px;
         }
 
-        .profile-bc {
+        /* ─── ХЛЕБНЫЕ КРОШКИ ─── */
+        .acc-bc {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 10px;
+            gap: 8px;
+            font-size: 9.5px;
             font-weight: 600;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: var(--p-dim);
+            color: var(--acc-dim);
             margin-bottom: 28px;
         }
-        .profile-bc a {
-            color: var(--p-dim);
+        .acc-bc a {
+            color: var(--acc-dim);
             text-decoration: none;
-            transition: color .18s;
+            transition: color .18s ease;
         }
-        .profile-bc a:hover { color: var(--p-navy); }
-        .profile-bc .sep { font-size: 8px; opacity: 0.6; }
-        .profile-bc .cur { color: var(--p-navy); }
+        .acc-bc a:hover { color: var(--acc-navy); }
+        .acc-bc .sep { font-size: 8px; }
+        .acc-bc .cur { color: var(--acc-navy); }
 
-        .profile-page-head {
+        /* ─── ВЕРХНЕЕ ПРИВЕТСТВИЕ ─── */
+        .acc-head {
             display: flex;
-            align-items: baseline;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 16px;
-            margin-bottom: 36px;
             padding-bottom: 24px;
-            border-bottom: 1px solid var(--p-border);
-            position: relative;
+            border-bottom: 1px solid var(--acc-border);
+            margin-bottom: 40px;
         }
-        .profile-page-head::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: var(--p-crimson);
-        }
-        .profile-page-title {
-            margin: 0;
-            font-family: var(--p-serif);
-            font-size: clamp(36px, 4vw, 54px);
-            font-weight: 300;
-            font-style: italic;
-            letter-spacing: -0.02em;
-            line-height: 1.05;
-            color: var(--p-navy);
-        }
-
-        .profile-hero {
-            background: var(--p-navy);
-            border: none;
-            border-top: 2px solid var(--p-crimson);
-            padding: 34px 36px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-            margin-bottom: 28px;
-            color: #ffffff;
-        }
-
-        .profile-identity {
-            display: flex;
-            align-items: center;
-            gap: 22px;
-        }
-
-        .profile-avatar {
-            width: 68px;
-            height: 68px;
-            border-radius: 0;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--p-serif);
-            font-size: 30px;
-            font-style: italic;
-            font-weight: 400;
-            letter-spacing: 0.04em;
-            flex-shrink: 0;
-        }
-
-        .profile-name {
-            margin: 0 0 8px;
-            font-family: var(--p-serif);
-            font-size: 34px;
-            font-weight: 300;
-            font-style: italic;
-            line-height: 1.05;
-            color: #ffffff;
-        }
-
-        .profile-meta {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px 14px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.65);
-        }
-
-        .profile-role-pill {
-            display: inline-block;
-            padding: 4px 10px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.16em;
+        .acc-eyebrow {
+            display: block;
+            font-size: 9.5px;
+            font-weight: 600;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            color: var(--p-gold);
-            border-radius: 0;
-        }
-
-        .profile-hero-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-logout-btn {
-            height: 42px;
-            padding: 0 22px;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 0;
-            background: transparent;
-            color: #ffffff;
-            font-family: inherit;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background .2s, border-color .2s, color .2s;
-        }
-        .profile-logout-btn:hover {
-            border-color: var(--p-crimson);
-            background: var(--p-crimson);
-            color: #ffffff;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin-bottom: 28px;
-        }
-
-        .stat-card {
-            background: var(--p-card);
-            border: 1px solid var(--p-border);
-            padding: 20px 24px;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: border-color .2s, transform .2s;
-        }
-        .stat-card:hover {
-            border-color: var(--p-navy);
-            transform: translateY(-2px);
-        }
-
-        .stat-label {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--p-dim);
+            color: var(--acc-dim);
             margin-bottom: 8px;
         }
-
-        .stat-value {
-            font-family: var(--p-serif);
-            font-size: 38px;
+        .acc-greeting {
+            margin: 0;
+            font-family: var(--acc-serif);
+            font-size: clamp(28px, 3.2vw, 40px);
             font-weight: 400;
-            color: var(--p-navy);
-            line-height: 1;
+            color: var(--acc-navy);
+            line-height: 1.08;
+            letter-spacing: -0.01em;
         }
-
-        .stat-arrow {
-            font-size: 18px;
-            color: var(--p-dim);
-        }
-
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 28px;
-        }
-
-        .profile-card {
-            background: var(--p-card);
-            border: 1px solid var(--p-border);
-            padding: 28px 30px;
-        }
-
-        .card-heading {
-            margin: 0 0 6px;
-            font-family: var(--p-serif);
-            font-size: 28px;
-            font-weight: 300;
-            font-style: italic;
-            color: var(--p-navy);
-        }
-
-        .card-sub {
-            margin: 0 0 22px;
+        .acc-email-sub {
+            margin: 6px 0 0;
             font-size: 12px;
-            color: var(--p-muted);
+            color: var(--acc-muted);
+            font-weight: 400;
         }
 
-        .p-field {
-            margin-bottom: 16px;
+        /* ─── ДВУХКОЛОНОЧНАЯ СТРУКТУРА ─── */
+        .acc-layout {
+            display: grid;
+            grid-template-columns: 230px minmax(0, 1fr);
+            gap: 56px;
+            align-items: start;
         }
 
-        .p-label {
-            display: block;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--p-muted);
-            margin-bottom: 7px;
+        /* ─── ЛЕВОЕ МЕНЮ КАБИНЕТА ─── */
+        .acc-nav {
+            display: flex;
+            flex-direction: column;
         }
-
-        .p-input {
+        .acc-nav-group {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--acc-border);
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+        }
+        .acc-nav-btn,
+        .acc-nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             width: 100%;
-            box-sizing: border-box;
-            height: 44px;
-            padding: 0 14px;
-            border: 1px solid var(--p-border);
-            background: #faf9f7;
-            font-family: inherit;
-            font-size: 13px;
-            color: var(--p-ink);
-            outline: none;
-            transition: border-color .2s, background .2s;
+            padding: 11px 0;
+            background: none;
+            border: none;
+            text-align: left;
+            font-family: var(--acc-sans);
+            font-size: 11.5px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--acc-muted);
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: color .18s ease;
         }
-        .p-input:focus {
-            border-color: var(--p-navy);
-            background: #ffffff;
+        .acc-nav-btn:hover,
+        .acc-nav-link:hover {
+            color: var(--acc-navy);
+        }
+        .acc-nav-btn:focus,
+        .acc-nav-btn:focus-visible {
+            outline: none !important;
+        }
+        .acc-nav-btn.is-active {
+            color: var(--acc-navy);
+            font-weight: 700;
+        }
+        .acc-nav-btn.is-active::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--acc-crimson);
+        }
+        .acc-nav-count {
+            font-size: 10.5px;
+            color: var(--acc-dim);
+            font-weight: 500;
+        }
+        .acc-logout-form {
+            margin: 4px 0 0;
+        }
+        .acc-logout-link {
+            background: none;
+            border: none;
+            padding: 8px 0;
+            font-family: var(--acc-sans);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--acc-dim);
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color .18s ease;
+        }
+        .acc-logout-link:hover {
+            color: var(--acc-crimson);
         }
 
-        .p-submit {
-            height: 44px;
-            padding: 0 24px;
-            border: none;
-            background: var(--p-navy);
-            color: #fff;
-            font-family: inherit;
+        /* ─── ПРАВАЯ ОБЛАСТЬ КОНТЕНТА ─── */
+        .acc-pane {
+            display: none;
+            animation: accFade .22s ease;
+        }
+        .acc-pane.is-active {
+            display: block;
+        }
+        @keyframes accFade {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .acc-sec-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--acc-border);
+        }
+        .acc-sec-title {
+            margin: 0;
+            font-family: var(--acc-serif);
+            font-size: 26px;
+            font-weight: 400;
+            color: var(--acc-navy);
+        }
+        .acc-sec-sub {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: var(--acc-muted);
+        }
+        .acc-sec-link {
             font-size: 10px;
-            font-weight: 700;
+            font-weight: 600;
             letter-spacing: 0.16em;
             text-transform: uppercase;
-            cursor: pointer;
-            transition: background .2s;
+            color: var(--acc-navy);
+            text-decoration: none;
+            border-bottom: 1px solid var(--acc-navy);
+            padding-bottom: 2px;
+            transition: color .18s ease, border-color .18s ease;
         }
-        .p-submit:hover { background: var(--p-crimson); }
+        .acc-sec-link:hover {
+            color: var(--acc-crimson);
+            border-color: var(--acc-crimson);
+        }
 
-        .p-alert {
+        /* ─── УВЕДОМЛЕНИЯ ─── */
+        .acc-alert {
             padding: 12px 16px;
             font-size: 12px;
             font-weight: 500;
-            margin-bottom: 16px;
-            border: 1px solid transparent;
+            margin-bottom: 24px;
+            border-left: 2px solid var(--acc-navy);
+            background: var(--acc-surface);
+            color: var(--acc-navy);
         }
-        .p-alert--success {
-            background: #ecfdf5;
-            border-color: #a7f3d0;
-            color: #065f46;
-        }
-        .p-alert--error {
-            background: #fef2f2;
-            border-color: #fecaca;
-            color: #991b1b;
+        .acc-alert--error {
+            border-left-color: var(--acc-crimson);
+            color: var(--acc-crimson);
+            background: #fdf7f8;
         }
 
-        .orders-section-head {
+        /* ─── СПИСОК ЗАКАЗОВ (EDITORIAL ROWS) ─── */
+        .acc-orders-list {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 18px;
+            flex-direction: column;
         }
-
-        .orders-all-link {
-            font-size: 10px;
-            font-weight: 700;
+        .acc-order-row {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--acc-border);
+        }
+        .acc-order-row:first-child {
+            padding-top: 4px;
+        }
+        .acc-order-num {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--acc-navy);
+            letter-spacing: 0.04em;
+        }
+        .acc-order-date {
+            font-size: 11.5px;
+            color: var(--acc-dim);
+            margin-top: 3px;
+        }
+        .acc-order-track {
+            font-size: 11px;
+            color: var(--acc-navy);
+            margin-top: 4px;
+        }
+        .acc-order-meta-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 600;
             letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: var(--p-navy);
+            color: var(--acc-dim);
+            margin-bottom: 4px;
+        }
+        .acc-order-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--acc-ink);
+        }
+        .acc-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--acc-navy);
+            flex-shrink: 0;
+        }
+        .acc-status-dot--paid { background: #15803d; }
+        .acc-status-dot--warn { background: #b45309; }
+        .acc-status-dot--err  { background: var(--acc-crimson); }
+
+        .acc-order-total {
+            font-family: var(--acc-serif);
+            font-size: 21px;
+            font-weight: 500;
+            color: var(--acc-navy);
+            white-space: nowrap;
+        }
+        .acc-order-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .acc-btn-outline,
+        .acc-btn-Accent {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 34px;
+            padding: 0 16px;
+            font-family: var(--acc-sans);
+            font-size: 9.5px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
             text-decoration: none;
-            border-bottom: 1px solid currentColor;
-            padding-bottom: 2px;
+            transition: background .18s ease, color .18s ease, border-color .18s ease;
+            white-space: nowrap;
+        }
+        .acc-btn-outline {
+            border: 1px solid var(--acc-border);
+            color: var(--acc-navy);
+            background: transparent;
+        }
+        .acc-btn-outline:hover {
+            border-color: var(--acc-navy);
+            background: var(--acc-navy);
+            color: #ffffff;
+        }
+        .acc-btn-Accent {
+            border: 1px solid var(--acc-crimson);
+            background: var(--acc-crimson);
+            color: #ffffff;
+        }
+        .acc-btn-Accent:hover {
+            background: #6e132d;
+            border-color: #6e132d;
         }
 
-        .orders-table-wrap {
-            overflow-x: auto;
+        .acc-empty {
+            padding: 36px 0;
+        }
+        .acc-empty-text {
+            font-size: 13.5px;
+            color: var(--acc-muted);
+            margin: 0 0 18px;
         }
 
-        .p-orders-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
+        /* ─── ФОРМЫ (ЧИСТЫЕ ЛИНИИ БЕЗ РАМОК-КОРОБОК) ─── */
+        .acc-form-block {
+            margin-bottom: 36px;
         }
-        .p-orders-table th {
-            text-align: left;
-            font-size: 9px;
+        .acc-form-group-title {
+            font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: var(--p-dim);
-            padding: 12px 14px;
-            border-bottom: 1.5px solid var(--p-navy);
+            color: var(--acc-navy);
+            margin: 0 0 18px;
         }
-        .p-orders-table td {
-            padding: 16px 14px;
-            border-bottom: 1px solid var(--p-border);
-            vertical-align: middle;
+        .acc-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px 28px;
+            margin-bottom: 22px;
         }
-        .p-orders-table tbody tr:hover td {
-            background: #faf9f7;
+        .acc-grid-addr {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px 28px;
+            margin-bottom: 28px;
         }
-
-        .p-status-pill {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 0;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            background: #faf9f7;
-            border: 1px solid var(--p-border);
-            color: var(--p-navy);
-        }
-
-        .p-order-actions {
+        .acc-stack-narrow {
+            max-width: 440px;
             display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
+            flex-direction: column;
+            gap: 22px;
+            margin-bottom: 28px;
         }
-
-        .p-btn-pay {
-            background: var(--p-crimson);
-            color: #fff;
-            text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 0;
+        .acc-field {
+            display: flex;
+            flex-direction: column;
+        }
+        .acc-label {
             font-size: 9.5px;
-            font-weight: 700;
-            letter-spacing: 0.14em;
+            font-weight: 600;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
+            color: var(--acc-muted);
+            margin-bottom: 6px;
         }
-        .p-btn-view {
-            border: 1px solid var(--p-navy);
-            color: var(--p-navy);
-            text-decoration: none;
-            padding: 7px 14px;
+        .acc-input {
+            width: 100%;
+            box-sizing: border-box;
+            height: 38px;
+            padding: 0 2px;
+            border: none;
+            border-bottom: 1px solid var(--acc-border);
             border-radius: 0;
-            font-size: 9.5px;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            transition: background .18s, color .18s;
-        }
-        .p-btn-view:hover {
-            background: var(--p-navy);
-            color: #ffffff;
-        }
-
-        .p-empty {
-            padding: 24px 0 8px;
-            color: var(--p-muted);
+            background: transparent;
+            font-family: var(--acc-sans);
             font-size: 13.5px;
+            font-weight: 500;
+            color: var(--acc-ink);
+            outline: none;
+            transition: border-color .2s ease;
+        }
+        .acc-input::placeholder {
+            color: #c2c0b8;
+            font-weight: 400;
+        }
+        .acc-input:focus,
+        .acc-input:focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+            border-bottom-color: var(--acc-navy);
         }
 
-        @media (max-width: 900px) {
-            .profile-stats,
-            .profile-grid {
+        .acc-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 44px;
+            padding: 0 32px;
+            border: 1px solid var(--acc-navy);
+            background: var(--acc-navy);
+            color: #ffffff;
+            font-family: var(--acc-sans);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background .2s ease, color .2s ease;
+        }
+        .acc-submit:hover {
+            background: transparent;
+            color: var(--acc-navy);
+        }
+
+        /* ─── АДАПТИВ ─── */
+        @media (max-width: 860px) {
+            .acc-shell {
+                padding: 18px 20px 64px;
+            }
+            .acc-head {
+                margin-bottom: 24px;
+                padding-bottom: 18px;
+            }
+            .acc-layout {
                 grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            .acc-nav {
+                flex-direction: row;
+                align-items: center;
+                overflow-x: auto;
+                scrollbar-width: none;
+                border-bottom: 1px solid var(--acc-border);
+                gap: 22px;
+                padding-bottom: 0;
+            }
+            .acc-nav::-webkit-scrollbar { display: none; }
+            .acc-nav-group {
+                flex-direction: row;
+                border-bottom: none;
+                padding-bottom: 0;
+                margin-bottom: 0;
+                gap: 22px;
+                flex-shrink: 0;
+            }
+            .acc-nav-btn,
+            .acc-nav-link {
+                width: auto;
+                white-space: nowrap;
+                padding: 12px 0;
+                gap: 6px;
+                border-bottom: 2px solid transparent;
+            }
+            .acc-nav-btn.is-active {
+                border-bottom-color: var(--acc-navy);
+            }
+            .acc-nav-btn.is-active::before {
+                display: none;
+            }
+            .acc-logout-form {
+                margin: 0;
+                flex-shrink: 0;
+            }
+            .acc-logout-link {
+                white-space: nowrap;
+                padding: 12px 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .acc-shell {
+                padding: 14px 16px 56px;
+            }
+            .acc-order-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px 16px;
+                padding: 16px 0;
+            }
+            .acc-order-actions {
+                grid-column: 1 / -1;
+                justify-content: flex-start;
+            }
+            .acc-grid-2,
+            .acc-grid-addr {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .acc-submit {
+                width: 100%;
             }
         }
     </style>
@@ -434,226 +544,274 @@
 <body class="profile-page">
 <div th:insert="~{navbar :: navigation-panel}"></div>
 
-<main class="profile-shell">
-    <nav class="profile-bc" aria-label="Навигация">
+<main class="acc-shell">
+    <nav class="acc-bc" aria-label="Хлебные крошки">
         <a th:href="@{/}">Главная</a>
         <span class="sep">·</span>
         <span class="cur">Личный кабинет</span>
     </nav>
 
-    <header class="profile-page-head">
-        <h1 class="profile-page-title">Личный кабинет</h1>
+    <header class="acc-head">
+        <div>
+            <span class="acc-eyebrow">Личный кабинет</span>
+            <h1 class="acc-greeting"
+                th:text="${user.name != null and !#strings.isEmpty(user.name) ? 'Здравствуйте, ' + user.name : 'Личный кабинет'}">Здравствуйте</h1>
+            <p class="acc-email-sub" th:text="${user.email != null ? user.email : user.login}">user@example.com</p>
+        </div>
     </header>
 
-    <!-- Карточка пользователя -->
-    <section class="profile-hero">
-        <div class="profile-identity">
-            <div class="profile-avatar"
-                 th:text="${user.name != null and !#strings.isEmpty(user.name) ? #strings.toUpperCase(#strings.substring(user.name, 0, 1)) : (user.email != null and !#strings.isEmpty(user.email) ? #strings.toUpperCase(#strings.substring(user.email, 0, 1)) : 'U')}">U</div>
-            <div>
-                <h2 class="profile-name"
-                    th:text="${(user.name != null ? user.name : '') + (user.surname != null and !#strings.isEmpty(user.surname) ? ' ' + user.surname : '')}">Пользователь</h2>
-                <div class="profile-meta">
-                    <span th:text="${user.email != null ? user.email : user.login}">email@example.com</span>
-                    <span class="profile-role-pill" th:text="${user.role != null ? user.role.displayName : 'Пользователь'}">Пользователь</span>
-                    <span th:if="${user.registrationDate != null}"
-                          th:text="'С нами с ' + ${#temporals.format(user.registrationDate, 'dd.MM.yyyy')}">С нами с 01.01.2026</span>
-                </div>
+    <div class="acc-layout">
+        <!-- Левая навигация кабинета -->
+        <aside class="acc-nav" aria-label="Разделы личного кабинета">
+            <div class="acc-nav-group">
+                <button type="button" class="acc-nav-btn is-active" data-acc-tab="orders">
+                    <span>Заказы</span>
+                    <span class="acc-nav-count" th:if="${ordersCount != null and ordersCount > 0}" th:text="${ordersCount}">0</span>
+                </button>
+                <button type="button" class="acc-nav-btn" data-acc-tab="details">
+                    <span>Личные данные</span>
+                </button>
+                <button type="button" class="acc-nav-btn" data-acc-tab="security">
+                    <span>Безопасность</span>
+                </button>
             </div>
-        </div>
-        <div class="profile-hero-actions">
-            <form th:action="@{/logout}" method="post" style="margin:0;">
+
+            <div class="acc-nav-group">
+                <a th:href="@{/wishlist}" class="acc-nav-link">
+                    <span>Избранное</span>
+                    <span class="acc-nav-count" th:if="${wishlistCount != null and wishlistCount > 0}" th:text="${wishlistCount}">0</span>
+                </a>
+                <a th:href="@{/cart}" class="acc-nav-link" th:if="${cartCount != null and cartCount > 0}">
+                    <span>Корзина</span>
+                    <span class="acc-nav-count" th:text="${cartCount}">0</span>
+                </a>
+            </div>
+
+            <form th:action="@{/logout}" method="post" class="acc-logout-form">
                 <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
-                <button type="submit" class="profile-logout-btn">Выйти</button>
+                <button type="submit" class="acc-logout-link">Выйти из аккаунта</button>
             </form>
-        </div>
-    </section>
+        </aside>
 
-    <!-- Быстрая статистика -->
-    <section class="profile-stats">
-        <a th:href="@{/orders}" class="stat-card">
-            <div>
-                <div class="stat-label">Мои заказы</div>
-                <div class="stat-value" th:text="${ordersCount}">0</div>
-            </div>
-            <span class="stat-arrow">→</span>
-        </a>
-        <a th:href="@{/wishlist}" class="stat-card">
-            <div>
-                <div class="stat-label">Избранное</div>
-                <div class="stat-value" th:text="${wishlistCount}">0</div>
-            </div>
-            <span class="stat-arrow">→</span>
-        </a>
-        <a th:href="@{/cart}" class="stat-card">
-            <div>
-                <div class="stat-label">В корзине</div>
-                <div class="stat-value" th:text="${cartCount}">0</div>
-            </div>
-            <span class="stat-arrow">→</span>
-        </a>
-    </section>
+        <!-- Правая часть: вкладки -->
+        <div class="acc-content">
 
-    <!-- Формы редактирования профиля и смены пароля -->
-    <section class="profile-grid">
-        <div class="profile-card">
-            <h2 class="card-heading">Личные данные и доставка</h2>
-            <p class="card-sub">Контактные данные и сохранённый адрес для быстрого оформления заказов</p>
-
-            <div th:if="${profileSuccess != null}" class="p-alert p-alert--success" th:text="${profileSuccess}"></div>
-            <div th:if="${profileError != null}" class="p-alert p-alert--error" th:text="${profileError}"></div>
-
-            <form th:action="@{/profile/update}" method="post">
-                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
-                <div class="p-field">
-                    <label class="p-label" for="profName">Имя *</label>
-                    <input type="text" id="profName" name="name" class="p-input"
-                           th:value="${user.name}" maxlength="80" required>
-                </div>
-                <div class="p-field">
-                    <label class="p-label" for="profSurname">Фамилия</label>
-                    <input type="text" id="profSurname" name="surname" class="p-input"
-                           th:value="${user.surname}" maxlength="80">
-                </div>
-                <div class="p-field">
-                    <label class="p-label" for="profEmail">Email *</label>
-                    <input type="email" id="profEmail" name="email" class="p-input"
-                           th:value="${user.email != null ? user.email : user.login}" maxlength="255" required>
-                </div>
-                <div class="p-field">
-                    <label class="p-label" for="profPhone">Телефон</label>
-                    <input type="tel" id="profPhone" name="phone" class="p-input"
-                           th:value="${user.phone}" placeholder="+7 (700) 000-00-00" maxlength="40">
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                    <div class="p-field">
-                        <label class="p-label" for="profCountry">Страна</label>
-                        <input type="text" id="profCountry" name="country" class="p-input"
-                               th:value="${user.country}" placeholder="Казахстан" maxlength="100">
+            <!-- ВКЛАДКА 1: ЗАКАЗЫ -->
+            <section class="acc-pane is-active" id="acc-pane-orders">
+                <div class="acc-sec-head">
+                    <div>
+                        <h2 class="acc-sec-title">История заказов</h2>
+                        <p class="acc-sec-sub">Статусы доставки и оплаты ваших покупок</p>
                     </div>
-                    <div class="p-field">
-                        <label class="p-label" for="profCity">Город</label>
-                        <input type="text" id="profCity" name="city" class="p-input"
-                               th:value="${user.city}" placeholder="Астана" maxlength="100">
-                    </div>
+                    <a th:if="${recentOrders != null and !#lists.isEmpty(recentOrders)}"
+                       th:href="@{/orders}" class="acc-sec-link">Все заказы</a>
                 </div>
-                <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
-                    <div class="p-field">
-                        <label class="p-label" for="profAddress">Улица, дом, квартира</label>
-                        <input type="text" id="profAddress" name="address" class="p-input"
-                               th:value="${user.address}" placeholder="ул. Манаса 46/1, кв. 44" maxlength="255">
-                    </div>
-                    <div class="p-field">
-                        <label class="p-label" for="profZip">Индекс</label>
-                        <input type="text" id="profZip" name="postalCode" class="p-input"
-                               th:value="${user.postalCode}" placeholder="010000" maxlength="32">
-                    </div>
-                </div>
-                <button type="submit" class="p-submit">Сохранить изменения</button>
-            </form>
-        </div>
 
-        <div class="profile-card">
-            <h2 class="card-heading">Безопасность</h2>
-            <p class="card-sub">Смена пароля учётной записи (минимум 6 символов)</p>
+                <div class="acc-orders-list" th:if="${recentOrders != null and !#lists.isEmpty(recentOrders)}">
+                    <div class="acc-order-row"
+                         th:each="order : ${recentOrders}"
+                         th:with="tx=${paymentTxMap != null ? paymentTxMap.get(order.id) : null},
+                                  stName=${order.status != null ? order.status.name() : 'PENDING'},
+                                  stDisplay=${order.status != null ? order.status.displayName : 'В ожидании'}">
+                        <div>
+                            <div class="acc-order-num" th:text="'Заказ №00' + ${order.id}">Заказ №001</div>
+                            <div class="acc-order-date"
+                                 th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy · HH:mm') : '—'}">01.01.2026</div>
+                            <div class="acc-order-track"
+                                 th:if="${order.trackingNumber != null and !#strings.isEmpty(order.trackingNumber)}"
+                                 th:text="'Трек-номер: ' + ${order.trackingNumber}"></div>
+                        </div>
 
-            <div th:if="${passwordSuccess != null}" class="p-alert p-alert--success" th:text="${passwordSuccess}"></div>
-            <div th:if="${passwordError != null}" class="p-alert p-alert--error" th:text="${passwordError}"></div>
+                        <div>
+                            <span class="acc-order-meta-label">Статус</span>
+                            <span class="acc-order-status">
+                                <span class="acc-status-dot"></span>
+                                <span th:text="${stDisplay}">В ожидании</span>
+                            </span>
+                        </div>
 
-            <form th:action="@{/profile/password}" method="post">
-                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
-                <div class="p-field">
-                    <label class="p-label" for="currPass">Текущий пароль *</label>
-                    <input type="password" id="currPass" name="currentPassword" class="p-input" required>
-                </div>
-                <div class="p-field">
-                    <label class="p-label" for="newPass">Новый пароль *</label>
-                    <input type="password" id="newPass" name="newPassword" class="p-input" minlength="6" maxlength="72" required>
-                </div>
-                <div class="p-field">
-                    <label class="p-label" for="confPass">Подтверждение пароля *</label>
-                    <input type="password" id="confPass" name="confirmPassword" class="p-input" minlength="6" maxlength="72" required>
-                </div>
-                <button type="submit" class="p-submit">Изменить пароль</button>
-            </form>
-        </div>
-    </section>
+                        <div>
+                            <span class="acc-order-meta-label">Оплата</span>
+                            <span class="acc-order-status" th:if="${tx != null}">
+                                <span class="acc-status-dot"
+                                      th:classappend="${tx.paymentStatus.name() == 'PAID' ? ' acc-status-dot--paid' : (tx.paymentStatus.name() == 'FAILED' ? ' acc-status-dot--err' : ' acc-status-dot--warn')}"></span>
+                                <span th:text="${tx.paymentStatus.displayName}">Оплачено</span>
+                            </span>
+                            <span class="acc-order-status" th:unless="${tx != null}" style="color:var(--acc-dim);">—</span>
+                        </div>
 
-    <!-- Последние заказы -->
-    <section class="profile-card">
-        <div class="orders-section-head">
-            <div>
-                <h2 class="card-heading">Последние заказы</h2>
-                <p class="card-sub" style="margin-bottom:0;">История ваших последних покупок и статусы оплаты</p>
-            </div>
-            <a th:href="@{/orders}" class="orders-all-link">Все заказы →</a>
-        </div>
-
-        <div class="orders-table-wrap" th:if="${recentOrders != null and !#lists.isEmpty(recentOrders)}">
-            <table class="p-orders-table">
-                <thead>
-                <tr>
-                    <th>Заказ</th>
-                    <th>Дата</th>
-                    <th>Статус</th>
-                    <th>Оплата</th>
-                    <th>Сумма</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="order : ${recentOrders}"
-                    th:with="tx=${paymentTxMap != null ? paymentTxMap.get(order.id) : null},
-                             stName=${order.status != null ? order.status.name() : 'PENDING'},
-                             stDisplay=${order.status != null ? order.status.displayName : 'В ожидании'}">
-                    <td>
-                        <strong th:text="'№00' + ${order.id}">№001</strong>
-                        <div th:if="${order.serialNumber != null}" style="font-size:11px;color:#6b7280;" th:text="${order.serialNumber}"></div>
-                        <div th:if="${order.trackingNumber != null and !#strings.isEmpty(order.trackingNumber)}"
-                             style="font-size:11px;color:#1e3a8a;font-weight:600;"
-                             th:text="'Трек: ' + ${order.trackingNumber}"></div>
-                    </td>
-                    <td th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : '—'}"></td>
-                    <td>
-                        <span class="p-status-pill" th:text="${stDisplay}">В ожидании</span>
-                    </td>
-                    <td>
-                        <span th:if="${tx != null}"
-                              class="p-status-pill"
-                              th:text="${tx.paymentStatus.displayName}"
-                              th:style="${tx.paymentStatus.name() == 'PAID' ? 'background:#ECFDF5;color:#065F46;' : (tx.paymentStatus.name() == 'FAILED' ? 'background:#FEF2F2;color:#991B1B;' : (tx.paymentStatus.name() == 'AWAITING_PAYMENT' ? 'background:#FFFBEB;color:#92400E;' : ''))}"></span>
-                        <span th:unless="${tx != null}" style="color:#9ca3af;font-size:12px;">—</span>
-                    </td>
-                    <td>
-                        <strong class="js-money" th:attr="data-raw=${order.totalPrice != null ? order.totalPrice : 0}" th:text="${order.totalPrice}">0</strong>
-                    </td>
-                    <td>
-                        <div class="p-order-actions">
+                        <div class="acc-order-actions">
+                            <span class="acc-order-total js-money"
+                                  th:attr="data-raw=${order.totalPrice != null ? order.totalPrice : 0}"
+                                  th:text="${order.totalPrice}">0 ₸</span>
                             <a th:if="${stName == 'PENDING' and tx != null and (tx.paymentStatus.name() == 'AWAITING_PAYMENT' or tx.paymentStatus.name() == 'FAILED')}"
                                th:href="@{/orders/{id}/pay(id=${order.id})}"
-                               class="p-btn-pay">Оплатить</a>
-                            <a th:href="@{/orders/{id}(id=${order.id})}" class="p-btn-view">Детали</a>
+                               class="acc-btn-Accent">Оплатить</a>
+                            <a th:href="@{/orders/{id}(id=${order.id})}" class="acc-btn-outline">Детали</a>
                         </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+                    </div>
+                </div>
 
-        <div class="p-empty" th:if="${recentOrders == null or #lists.isEmpty(recentOrders)}">
-            У вас пока нет оформленных заказов. <a th:href="@{/products}" style="color:#0c0c3d;font-weight:600;">Перейти в каталог</a>
+                <div class="acc-empty" th:if="${recentOrders == null or #lists.isEmpty(recentOrders)}">
+                    <p class="acc-empty-text">У вас пока нет оформленных заказов.</p>
+                    <a th:href="@{/products}" class="acc-btn-outline">Перейти к коллекциям</a>
+                </div>
+            </section>
+
+            <!-- ВКЛАДКА 2: ЛИЧНЫЕ ДАННЫЕ И АДРЕС -->
+            <section class="acc-pane" id="acc-pane-details">
+                <div class="acc-sec-head">
+                    <div>
+                        <h2 class="acc-sec-title">Личные данные и доставка</h2>
+                        <p class="acc-sec-sub">Контактная информация и адрес по умолчанию для быстрого оформления</p>
+                    </div>
+                </div>
+
+                <div th:if="${profileSuccess != null}" class="acc-alert" th:text="${profileSuccess}"></div>
+                <div th:if="${profileError != null}" class="acc-alert acc-alert--error" th:text="${profileError}"></div>
+
+                <form th:action="@{/profile/update}" method="post">
+                    <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+
+                    <div class="acc-form-block">
+                        <h3 class="acc-form-group-title">Контактные данные</h3>
+                        <div class="acc-grid-2">
+                            <div class="acc-field">
+                                <label class="acc-label" for="profName">Имя *</label>
+                                <input type="text" id="profName" name="name" class="acc-input"
+                                       th:value="${user.name}" maxlength="80" required>
+                            </div>
+                            <div class="acc-field">
+                                <label class="acc-label" for="profSurname">Фамилия</label>
+                                <input type="text" id="profSurname" name="surname" class="acc-input"
+                                       th:value="${user.surname}" maxlength="80">
+                            </div>
+                            <div class="acc-field">
+                                <label class="acc-label" for="profEmail">Электронная почта *</label>
+                                <input type="email" id="profEmail" name="email" class="acc-input"
+                                       th:value="${user.email != null ? user.email : user.login}" maxlength="255" required>
+                            </div>
+                            <div class="acc-field">
+                                <label class="acc-label" for="profPhone">Телефон</label>
+                                <input type="tel" id="profPhone" name="phone" class="acc-input"
+                                       th:value="${user.phone}" placeholder="+7 (700) 000-00-00" maxlength="40">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="acc-form-block">
+                        <h3 class="acc-form-group-title">Адрес доставки</h3>
+                        <div class="acc-grid-2">
+                            <div class="acc-field">
+                                <label class="acc-label" for="profCountry">Страна</label>
+                                <input type="text" id="profCountry" name="country" class="acc-input"
+                                       th:value="${user.country}" placeholder="Казахстан" maxlength="100">
+                            </div>
+                            <div class="acc-field">
+                                <label class="acc-label" for="profCity">Город</label>
+                                <input type="text" id="profCity" name="city" class="acc-input"
+                                       th:value="${user.city}" placeholder="Алматы" maxlength="100">
+                            </div>
+                        </div>
+                        <div class="acc-grid-addr">
+                            <div class="acc-field">
+                                <label class="acc-label" for="profAddress">Улица, дом, квартира</label>
+                                <input type="text" id="profAddress" name="address" class="acc-input"
+                                       th:value="${user.address}" placeholder="пр. Достык 120, кв. 15" maxlength="255">
+                            </div>
+                            <div class="acc-field">
+                                <label class="acc-label" for="profZip">Почтовый индекс</label>
+                                <input type="text" id="profZip" name="postalCode" class="acc-input"
+                                       th:value="${user.postalCode}" placeholder="050000" maxlength="32">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="acc-submit">Сохранить изменения</button>
+                </form>
+            </section>
+
+            <!-- ВКЛАДКА 3: БЕЗОПАСНОСТЬ -->
+            <section class="acc-pane" id="acc-pane-security">
+                <div class="acc-sec-head">
+                    <div>
+                        <h2 class="acc-sec-title">Безопасность</h2>
+                        <p class="acc-sec-sub">Изменение пароля учётной записи (минимум 6 символов)</p>
+                    </div>
+                </div>
+
+                <div th:if="${passwordSuccess != null}" class="acc-alert" th:text="${passwordSuccess}"></div>
+                <div th:if="${passwordError != null}" class="acc-alert acc-alert--error" th:text="${passwordError}"></div>
+
+                <form th:action="@{/profile/password}" method="post">
+                    <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+                    <div class="acc-stack-narrow">
+                        <div class="acc-field">
+                            <label class="acc-label" for="currPass">Текущий пароль *</label>
+                            <input type="password" id="currPass" name="currentPassword" class="acc-input" required>
+                        </div>
+                        <div class="acc-field">
+                            <label class="acc-label" for="newPass">Новый пароль *</label>
+                            <input type="password" id="newPass" name="newPassword" class="acc-input" minlength="6" maxlength="72" required>
+                        </div>
+                        <div class="acc-field">
+                            <label class="acc-label" for="confPass">Подтвердите новый пароль *</label>
+                            <input type="password" id="confPass" name="confirmPassword" class="acc-input" minlength="6" maxlength="72" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="acc-submit">Обновить пароль</button>
+                </form>
+            </section>
+
         </div>
-    </section>
+    </div>
 </main>
 
 <div th:insert="~{footer :: footer-code}"></div>
 <script th:src="@{/js/navbar-component.js}" defer></script>
-<script>
+<script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.js-money').forEach(function (el) {
             var n = Number(String(el.dataset.raw || el.textContent || '0').replace(/[^\d.-]/g, '') || 0);
             el.textContent = Math.round(n).toLocaleString('ru-RU') + '\u00a0₸';
         });
+
+        var btns = document.querySelectorAll('[data-acc-tab]');
+        var panes = {
+            orders: document.getElementById('acc-pane-orders'),
+            details: document.getElementById('acc-pane-details'),
+            security: document.getElementById('acc-pane-security')
+        };
+
+        function activateTab(tabName) {
+            if (!panes[tabName]) tabName = 'orders';
+            btns.forEach(function (b) {
+                b.classList.toggle('is-active', b.getAttribute('data-acc-tab') === tabName);
+            });
+            Object.keys(panes).forEach(function (k) {
+                if (panes[k]) panes[k].classList.toggle('is-active', k === tabName);
+            });
+        }
+
+        btns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var t = btn.getAttribute('data-acc-tab');
+                activateTab(t);
+                try { history.replaceState(null, '', '#' + t); } catch (_) {}
+            });
+        });
+
+        var hasProfileFlash = /*[[${profileSuccess != null or profileError != null}]]*/ false;
+        var hasPasswordFlash = /*[[${passwordSuccess != null or passwordError != null}]]*/ false;
+        var hash = (window.location.hash || '').replace('#', '');
+
+        if (hasPasswordFlash) {
+            activateTab('security');
+        } else if (hasProfileFlash) {
+            activateTab('details');
+        } else if (hash && panes[hash]) {
+            activateTab(hash);
+        }
     });
 </script>
 </body>

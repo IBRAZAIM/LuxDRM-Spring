@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Удаление товара — UXD Admin</title>
     <link rel="stylesheet" th:href="@{/deleteForm.css}">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
 </head>
 <body>
+<div th:insert="~{navbar :: navigation-panel}"></div>
 <div class="form">
     <h1>Удаление товара</h1>
     <p>Вы действительно хотите удалить товар <strong th:text="${product.getName()}"></strong> (ID: <span th:text="${product.getId()}"></span>)?</p>
@@ -17,5 +19,6 @@
         <input type="submit" value="Да, удалить" class="delete-button">
     </form>
 </div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
 </body>
 </html>

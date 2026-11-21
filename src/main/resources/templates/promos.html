@@ -3,312 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Промокоды — LUXDRM Admin</title>
+    <title>Промокоды — UXD Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/admin.css}">
+    <link rel="stylesheet" th:href="@{/promos.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <style>
-        body {
-            background: #f6f5f3;
-            color: #111111;
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-        }
-        .promos-shell {
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 36px 28px 80px;
-        }
-        .promos-head {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 32px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid #e4e1db;
-            position: relative;
-            flex-wrap: wrap;
-        }
-        .promos-head::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: #8b1a3a;
-        }
-        .promos-eyebrow {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #8b1a3a;
-            margin-bottom: 8px;
-        }
-        .promos-title {
-            margin: 0;
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: clamp(34px, 3.8vw, 50px);
-            font-weight: 300;
-            font-style: italic;
-            color: #0a0a2e;
-            line-height: 1.05;
-        }
-        .promo-alert {
-            padding: 12px 16px;
-            margin-bottom: 18px;
-            font-size: 13px;
-            font-weight: 500;
-            border: 1px solid transparent;
-        }
-        .promo-alert--ok {
-            background: #ecfdf5;
-            border-color: #a7f3d0;
-            color: #065f46;
-        }
-        .promo-alert--err {
-            background: #fef2f2;
-            border-color: #fecaca;
-            color: #991b1b;
-        }
-        .promo-panel {
-            background: #ffffff;
-            border: 1px solid #e4e1db;
-            padding: 28px 30px;
-            margin-bottom: 24px;
-        }
-        .promo-panel-title {
-            margin: 0 0 18px;
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 28px;
-            font-weight: 300;
-            font-style: italic;
-            color: #0a0a2e;
-        }
-        .promo-form-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-        .pf-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .pf-group--full {
-            grid-column: 1 / -1;
-        }
-        .pf-label {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: #5a5a5a;
-        }
-        .pf-input {
-            height: 44px;
-            padding: 0 14px;
-            border: 1px solid #e4e1db;
-            background: #faf9f7;
-            font-family: inherit;
-            font-size: 13px;
-            color: #111111;
-            box-sizing: border-box;
-        }
-        .pf-input:focus {
-            outline: none;
-            border-color: #0a0a2e;
-            background: #ffffff;
-        }
-        .pf-check {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            margin-top: 6px;
-        }
-        .pf-submit {
-            height: 46px;
-            padding: 0 28px;
-            background: #0a0a2e;
-            color: #ffffff;
-            border: none;
-            font-family: inherit;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .pf-submit:hover {
-            background: #8b1a3a;
-        }
-        .promo-table-wrap {
-            overflow-x: auto;
-        }
-        .promo-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .promo-table th {
-            text-align: left;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #9a9a9a;
-            padding: 14px 12px;
-            border-bottom: 1.5px solid #0a0a2e;
-        }
-        .promo-table td {
-            padding: 16px 12px;
-            border-bottom: 1px solid #e4e1db;
-            vertical-align: middle;
-        }
-        .promo-table tbody tr:hover td {
-            background: #faf9f7;
-        }
-        .code-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            background: #0a0a2e;
-            color: #fff;
-            font-weight: 700;
-            font-size: 11px;
-            letter-spacing: 0.12em;
-        }
-        .status-pill {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 0;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-        .status-pill--active {
-            background: #ecfdf5;
-            color: #065f46;
-        }
-        .status-pill--off {
-            background: #faf9f7;
-            border: 1px solid #e4e1db;
-            color: #5a5a5a;
-        }
-        .tbl-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-        .btn-mini {
-            height: 34px;
-            padding: 0 14px;
-            border: 1px solid #0a0a2e;
-            background: transparent;
-            color: #0a0a2e;
-            font-family: inherit;
-            font-size: 9.5px;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-        }
-        .btn-mini:hover {
-            background: #0a0a2e;
-            color: #ffffff;
-        }
-        .btn-mini--del {
-            color: #8b1a3a;
-            border-color: #fecaca;
-        }
-        .btn-mini--del:hover {
-            background: #8b1a3a;
-            border-color: #8b1a3a;
-            color: #ffffff;
-        }
-        @media (max-width: 900px) {
-            .promo-form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
-<body>
+<body class="admin-body">
 <div th:insert="~{navbar :: navigation-panel}"></div>
 
-<main class="promos-shell">
-    <div class="promos-head">
-        <div>
-            <div class="promos-eyebrow">Администрирование</div>
-            <h1 class="promos-title">Управление промокодами</h1>
+<main class="admin-shell">
+    <div class="admin-container">
+
+        <div th:replace="~{fragments/admin-topbar :: topbar('promos', 'Промокоды')}"></div>
+
+        <header class="admin-header">
+            <div>
+                <span class="admin-eyebrow">Панель управления UXD</span>
+                <h1 class="admin-title">Управление промокодами</h1>
+            </div>
+            <div class="header-actions">
+                <span class="total-badge" th:text="'Всего промокодов: ' + ${promos != null ? #lists.size(promos) : 0}">Всего промокодов: 0</span>
+                <a th:href="@{/orders}" class="adm-btn adm-btn--outline">
+                    <i class="fas fa-clipboard-list"></i> К заказам
+                </a>
+            </div>
+        </header>
+
+        <div th:if="${successMessage}" class="admin-flash admin-flash--success" role="status">
+            <div class="admin-flash-content">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <button type="button" class="admin-flash__close" onclick="this.parentElement.remove()" aria-label="Закрыть">&times;</button>
         </div>
-        <a th:href="@{/orders}" style="color:#0c0c3d;font-size:13px;font-weight:600;text-decoration:none;">← К заказам</a>
-    </div>
+        <div th:if="${errorMessage}" class="admin-flash admin-flash--error" role="alert">
+            <div class="admin-flash-content">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+            <button type="button" class="admin-flash__close" onclick="this.parentElement.remove()" aria-label="Закрыть">&times;</button>
+        </div>
 
-    <div th:if="${successMessage}" class="promo-alert promo-alert--ok" role="status" th:text="${successMessage}"></div>
-    <div th:if="${errorMessage}" class="promo-alert promo-alert--err" role="alert" th:text="${errorMessage}"></div>
+        <!-- KPI Summary -->
+        <section class="admin-kpi-grid admin-kpi-grid--3" aria-label="Сводка по промокодам">
+            <div class="kpi-card is-clickable is-selected" data-filter="ALL" onclick="filterPromosByStatus('ALL')">
+                <span class="kpi-label">Всего промокодов</span>
+                <p class="kpi-value" th:text="${promos != null ? #lists.size(promos) : 0}">0</p>
+            </div>
+            <div class="kpi-card kpi-card--delivered is-clickable" data-filter="ACTIVE" onclick="filterPromosByStatus('ACTIVE')">
+                <span class="kpi-label">Активные</span>
+                <p class="kpi-value" th:text="${activePromosCount != null ? activePromosCount : 0}">0</p>
+            </div>
+            <div class="kpi-card kpi-card--primary">
+                <span class="kpi-label">Всего применений</span>
+                <p class="kpi-value" th:text="${totalPromoUses != null ? totalPromoUses : 0}">0</p>
+            </div>
+        </section>
 
-    <!-- Форма создания / обновления -->
-    <section class="promo-panel">
-        <h2 class="promo-panel-title">Создать или обновить промокод</h2>
-        <form th:action="@{/promos/save}" method="post" class="promo-form-grid">
-            <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
-
-            <div class="pf-group">
-                <label class="pf-label" for="code">Код (латиница) *</label>
-                <input type="text" id="code" name="code" class="pf-input" placeholder="SPRING25" minlength="3" maxlength="64" required style="text-transform:uppercase;">
+        <!-- Форма создания / обновления -->
+        <section class="promo-panel" id="promoFormPanel">
+            <div class="promo-panel-head">
+                <h2 class="promo-panel-title" id="promoFormTitle">Создать или обновить промокод</h2>
+                <button type="button" id="promoResetBtn" class="adm-btn adm-btn--sm adm-btn--outline" style="display:none;" onclick="resetPromoForm()">
+                    <i class="fas fa-rotate-left"></i> Новый промокод
+                </button>
             </div>
 
-            <div class="pf-group">
-                <label class="pf-label" for="discountPercent">Скидка (%) *</label>
-                <input type="number" id="discountPercent" name="discountPercent" class="pf-input" min="1" max="90" value="10" required>
+            <form th:action="@{/promos/save}" method="post" class="promo-form-grid" id="promoForm">
+                <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
+
+                <div class="pf-group">
+                    <label class="pf-label" for="code">Код (латиница) *</label>
+                    <div class="pf-input-row">
+                        <input type="text" id="code" name="code" class="pf-input pf-code-input" placeholder="SPRING25" minlength="3" maxlength="64" required>
+                        <button type="button" class="adm-btn adm-btn--sm adm-btn--outline" onclick="generatePromoCode()" title="Сгенерировать код">
+                            <i class="fas fa-wand-magic-sparkles"></i> Сгенерировать
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pf-group">
+                    <label class="pf-label" for="discountPercent">Скидка (%) *</label>
+                    <input type="number" id="discountPercent" name="discountPercent" class="pf-input" min="1" max="90" value="10" required>
+                </div>
+
+                <div class="pf-group">
+                    <label class="pf-label" for="minOrderAmount">Мин. сумма заказа (₸)</label>
+                    <input type="number" id="minOrderAmount" name="minOrderAmount" class="pf-input" min="0" step="100" value="0">
+                </div>
+
+                <div class="pf-group">
+                    <label class="pf-label" for="maxUses">Лимит использований (пусто — без лимита)</label>
+                    <input type="number" id="maxUses" name="maxUses" class="pf-input" min="1" placeholder="Например: 100">
+                </div>
+
+                <div class="pf-group">
+                    <label class="pf-label" for="expiresAt">Действует до (необязательно)</label>
+                    <input type="datetime-local" id="expiresAt" name="expiresAt" class="pf-input">
+                </div>
+
+                <div class="pf-group">
+                    <label class="pf-label" for="description">Описание</label>
+                    <input type="text" id="description" name="description" class="pf-input" maxlength="255" placeholder="Весенняя акция">
+                </div>
+
+                <div class="pf-group pf-group--full">
+                    <label class="pf-check">
+                        <input type="checkbox" id="promoActiveCheckbox" name="active" value="true" checked>
+                        <span>Промокод активен сразу после сохранения</span>
+                    </label>
+                    <div class="pf-actions">
+                        <button type="submit" class="adm-btn adm-btn--navy">
+                            <i class="fas fa-save"></i> Сохранить промокод
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Toolbar фильтрации промокодов -->
+        <section class="admin-toolbar" th:if="${promos != null and !#lists.isEmpty(promos)}">
+            <div class="status-tabs" role="tablist" aria-label="Фильтр промокодов">
+                <button type="button" class="status-tab active" data-filter="ALL" onclick="filterPromosByStatus('ALL')">
+                    Все <span class="tab-badge" th:text="${#lists.size(promos)}">0</span>
+                </button>
+                <button type="button" class="status-tab" data-filter="ACTIVE" onclick="filterPromosByStatus('ACTIVE')">
+                    <span class="dot dot--delivered"></span> Активные
+                    <span class="tab-badge" th:text="${activePromosCount != null ? activePromosCount : 0}">0</span>
+                </button>
+                <button type="button" class="status-tab" data-filter="OFF" onclick="filterPromosByStatus('OFF')">
+                    <span class="dot dot--canceled"></span> Отключённые
+                    <span class="tab-badge" th:text="${inactivePromosCount != null ? inactivePromosCount : 0}">0</span>
+                </button>
             </div>
 
-            <div class="pf-group">
-                <label class="pf-label" for="minOrderAmount">Мин. сумма заказа (₸)</label>
-                <input type="number" id="minOrderAmount" name="minOrderAmount" class="pf-input" min="0" step="100" value="0">
+            <div class="toolbar-controls">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="promoSearchInput" placeholder="Поиск по коду или описанию..." oninput="applyPromosFilter()">
+                    <button type="button" id="clearPromoSearch" class="clear-search-btn" onclick="clearPromosSearch()" style="display:none;" aria-label="Очистить">&times;</button>
+                </div>
             </div>
+        </section>
 
-            <div class="pf-group">
-                <label class="pf-label" for="maxUses">Лимит использований (пусто — без лимита)</label>
-                <input type="number" id="maxUses" name="maxUses" class="pf-input" min="1" placeholder="Например: 100">
-            </div>
-
-            <div class="pf-group">
-                <label class="pf-label" for="expiresAt">Действует до (необязательно)</label>
-                <input type="datetime-local" id="expiresAt" name="expiresAt" class="pf-input">
-            </div>
-
-            <div class="pf-group">
-                <label class="pf-label" for="description">Описание</label>
-                <input type="text" id="description" name="description" class="pf-input" maxlength="255" placeholder="Весенняя акция">
-            </div>
-
-            <div class="pf-group pf-group--full" style="flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-                <label class="pf-check">
-                    <input type="checkbox" name="active" value="true" checked>
-                    <span>Промокод активен сразу после сохранения</span>
-                </label>
-                <button type="submit" class="pf-submit">Сохранить промокод</button>
-            </div>
-        </form>
-    </section>
-
-    <!-- Список промокодов -->
-    <section class="promo-panel">
-        <h2 class="promo-panel-title">Существующие промокоды</h2>
-        <div class="promo-table-wrap" th:if="${promos != null and !#lists.isEmpty(promos)}">
-            <table class="promo-table">
+        <!-- Список промокодов -->
+        <div class="admin-table-wrap" th:if="${promos != null and !#lists.isEmpty(promos)}">
+            <table id="promosTable">
                 <thead>
                 <tr>
                     <th>Код</th>
@@ -318,15 +163,28 @@
                     <th>Использований</th>
                     <th>Срок действия</th>
                     <th>Статус</th>
-                    <th></th>
+                    <th class="th-actions">Действия</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="promo : ${promos}">
-                    <td><span class="code-badge" th:text="${promo.code}">LUX10</span></td>
+                <tbody id="promosTableBody">
+                <tr th:each="promo : ${promos}"
+                    class="promo-row"
+                    th:attr="data-status=${promo.active ? 'ACTIVE' : 'OFF'}">
+                    <td>
+                        <span class="code-badge js-copyable"
+                              th:attr="data-copy=${promo.code}"
+                              title="Нажмите, чтобы скопировать код"
+                              th:text="${promo.code}">LUX10</span>
+                    </td>
                     <td><strong th:text="${promo.discountPercent} + '%'">10%</strong></td>
-                    <td th:text="${promo.description != null ? promo.description : '—'}"></td>
-                    <td th:text="${promo.minOrderAmount != null and promo.minOrderAmount > 0 ? promo.minOrderAmount + ' ₸' : 'Без порога'}"></td>
+                    <td th:text="${promo.description != null and !promo.description.isEmpty() ? promo.description : '—'}"></td>
+                    <td>
+                        <span th:if="${promo.minOrderAmount != null and promo.minOrderAmount > 0}"
+                              class="js-money"
+                              th:attr="data-raw=${promo.minOrderAmount}"
+                              th:text="${promo.minOrderAmount + ' ₸'}"></span>
+                        <span th:unless="${promo.minOrderAmount != null and promo.minOrderAmount > 0}" style="color:var(--adm-dim);">Без порога</span>
+                    </td>
                     <td th:text="${promo.usedCount + (promo.maxUses != null ? ' / ' + promo.maxUses : ' / ∞')}"></td>
                     <td th:text="${promo.expiresAt != null ? #temporals.format(promo.expiresAt, 'dd.MM.yyyy HH:mm') : 'Бессрочно'}"></td>
                     <td>
@@ -334,28 +192,181 @@
                               th:classappend="${promo.active} ? ' status-pill--active' : ' status-pill--off'"
                               th:text="${promo.active} ? 'Активен' : 'Отключён'"></span>
                     </td>
-                    <td>
-                        <div class="tbl-actions">
-                            <form th:action="@{/promos/{id}/toggle(id=${promo.id})}" method="post" style="margin:0;">
+                    <td class="cell-actions">
+                        <div class="action-buttons">
+                            <button type="button"
+                                    class="adm-btn adm-btn--sm adm-btn--outline"
+                                    onclick="editPromo(this)"
+                                    th:attr="data-code=${promo.code},
+                                             data-discount=${promo.discountPercent},
+                                             data-min-amount=${promo.minOrderAmount != null ? promo.minOrderAmount.stripTrailingZeros().toPlainString() : '0'},
+                                             data-max-uses=${promo.maxUses != null ? promo.maxUses : ''},
+                                             data-expires=${promo.expiresAt != null ? #temporals.format(promo.expiresAt, 'yyyy-MM-dd''T''HH:mm') : ''},
+                                             data-description=${promo.description != null ? promo.description : ''},
+                                             data-active=${promo.active}"
+                                    title="Загрузить в форму для изменения">
+                                <i class="fa-regular fa-pen-to-square"></i> Изменить
+                            </button>
+                            <form th:action="@{/promos/{id}/toggle(id=${promo.id})}" method="post" class="inline-form">
                                 <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
-                                <button type="submit" class="btn-mini" th:text="${promo.active} ? 'Отключить' : 'Включить'"></button>
+                                <button type="submit" class="adm-btn adm-btn--sm adm-btn--outline"
+                                        th:text="${promo.active} ? 'Отключить' : 'Включить'"></button>
                             </form>
                             <form th:action="@{/promos/{id}/delete(id=${promo.id})}" method="post"
-                                  data-confirm="Удалить этот промокод?" style="margin:0;">
+                                  data-confirm="Удалить этот промокод?" class="inline-form">
                                 <th:block th:replace="~{fragments/csrf :: csrfToken}"/>
-                                <button type="submit" class="btn-mini btn-mini--del">Удалить</button>
+                                <button type="submit" class="adm-btn adm-btn--sm adm-btn--danger" title="Удалить">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
                             </form>
                         </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
+            <div id="noPromosFilter" class="admin-empty" style="display:none;border:none;border-radius:0;">
+                <i class="fas fa-search"></i>
+                <h3>Промокоды не найдены</h3>
+                <p>Измените поисковый запрос или переключите фильтр статуса.</p>
+                <div class="empty-actions">
+                    <button type="button" class="adm-btn adm-btn--navy" onclick="resetPromosFilter()">Сбросить фильтры</button>
+                </div>
+            </div>
         </div>
-        <p th:if="${promos == null or #lists.isEmpty(promos)}" style="color:#6b7280;font-size:13px;">Промокоды пока не добавлены.</p>
-    </section>
+
+        <div class="admin-empty" th:if="${promos == null or #lists.isEmpty(promos)}">
+            <i class="fas fa-ticket-alt"></i>
+            <h3>Промокодов пока нет</h3>
+            <p>Создайте первый промокод с помощью формы выше.</p>
+        </div>
+
+    </div>
 </main>
+
+<div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
 
 <div th:insert="~{footer :: footer-code}"></div>
 <script th:src="@{/js/navbar-component.js}" defer></script>
+<script>
+    let currentPromoStatus = 'ALL';
+
+    function showCopyToast(text) {
+        const toast = document.getElementById('copyToast');
+        if (!toast) return;
+        toast.textContent = text;
+        toast.classList.add('visible');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.classList.remove('visible'), 1800);
+    }
+
+    function generatePromoCode() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let suffix = '';
+        for (let i = 0; i < 6; i++) {
+            suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const codeInput = document.getElementById('code');
+        if (codeInput) {
+            codeInput.value = 'UXD-' + suffix;
+            codeInput.focus();
+        }
+    }
+
+    function editPromo(btn) {
+        const code = btn.getAttribute('data-code') || '';
+        document.getElementById('code').value = code;
+        document.getElementById('discountPercent').value = btn.getAttribute('data-discount') || '10';
+        document.getElementById('minOrderAmount').value = btn.getAttribute('data-min-amount') || '0';
+        document.getElementById('maxUses').value = btn.getAttribute('data-max-uses') || '';
+        document.getElementById('expiresAt').value = btn.getAttribute('data-expires') || '';
+        document.getElementById('description').value = btn.getAttribute('data-description') || '';
+        document.getElementById('promoActiveCheckbox').checked = btn.getAttribute('data-active') === 'true';
+
+        document.getElementById('promoFormTitle').textContent = 'Редактирование промокода: ' + code;
+        document.getElementById('promoResetBtn').style.display = 'inline-flex';
+        document.getElementById('promoFormPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetPromoForm() {
+        document.getElementById('promoForm').reset();
+        document.getElementById('discountPercent').value = '10';
+        document.getElementById('minOrderAmount').value = '0';
+        document.getElementById('promoActiveCheckbox').checked = true;
+        document.getElementById('promoFormTitle').textContent = 'Создать или обновить промокод';
+        document.getElementById('promoResetBtn').style.display = 'none';
+    }
+
+    function filterPromosByStatus(status) {
+        currentPromoStatus = status;
+        document.querySelectorAll('.status-tab').forEach(tab => {
+            tab.classList.toggle('active', tab.getAttribute('data-filter') === status);
+        });
+        document.querySelectorAll('.kpi-card[data-filter]').forEach(card => {
+            card.classList.toggle('is-selected', card.getAttribute('data-filter') === status);
+        });
+        applyPromosFilter();
+    }
+
+    function clearPromosSearch() {
+        const inp = document.getElementById('promoSearchInput');
+        if (inp) {
+            inp.value = '';
+            applyPromosFilter();
+            inp.focus();
+        }
+    }
+
+    function resetPromosFilter() {
+        const inp = document.getElementById('promoSearchInput');
+        if (inp) inp.value = '';
+        filterPromosByStatus('ALL');
+    }
+
+    function applyPromosFilter() {
+        const query = (document.getElementById('promoSearchInput')?.value || '').trim().toLowerCase();
+        const clearBtn = document.getElementById('clearPromoSearch');
+        if (clearBtn) clearBtn.style.display = query.length > 0 ? 'flex' : 'none';
+
+        const tbody = document.getElementById('promosTableBody');
+        if (!tbody) return;
+
+        let visibleCount = 0;
+        Array.from(tbody.querySelectorAll('tr.promo-row')).forEach(row => {
+            const st = row.getAttribute('data-status') || 'ACTIVE';
+            const matchStatus = (currentPromoStatus === 'ALL' || st === currentPromoStatus);
+            const matchText = (!query || row.textContent.toLowerCase().includes(query));
+            const show = matchStatus && matchText;
+            row.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+
+        const emptyEl = document.getElementById('noPromosFilter');
+        const tbl = document.getElementById('promosTable');
+        if (emptyEl && tbl) {
+            emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
+            tbl.style.display = visibleCount === 0 ? 'none' : 'table';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.js-money').forEach(el => {
+            const raw = parseFloat(el.getAttribute('data-raw'));
+            if (!isNaN(raw)) {
+                el.textContent = Math.round(raw).toLocaleString('ru-RU') + '\u00a0₸';
+            }
+        });
+
+        document.querySelectorAll('.js-copyable').forEach(el => {
+            el.addEventListener('click', () => {
+                const val = el.getAttribute('data-copy') || el.textContent.trim();
+                if (!val || !navigator.clipboard) return;
+                navigator.clipboard.writeText(val).then(() => {
+                    showCopyToast('Промокод скопирован: ' + val);
+                }).catch(() => {});
+            });
+        });
+    });
+</script>
 </body>
 </html>

@@ -9,44 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/admin.css}">
     <link rel="stylesheet" th:href="@{/orders.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="admin-body">
 <div th:insert="~{navbar :: navigation-panel}"></div>
 
 <main class="admin-shell">
     <div class="admin-container">
 
         <!-- Breadcrumb & Admin Top Navigation -->
-        <div class="admin-topbar">
-            <nav class="admin-breadcrumb" aria-label="Навигация">
-                <a th:href="@{/}">Главная</a>
-                <span class="sep">/</span>
-                <span>Администрирование</span>
-                <span class="sep">/</span>
-                <span class="cur">Все заказы</span>
-            </nav>
-
-            <div class="admin-nav-pills">
-                <a th:href="@{/products}" class="admin-pill">
-                    <i class="fas fa-boxes-stacked"></i> Товары
-                </a>
-                <a th:href="@{/orders}" class="admin-pill active">
-                    <i class="fas fa-clipboard-list"></i> Заказы
-                </a>
-                <a th:href="@{/categories}" class="admin-pill">
-                    <i class="fas fa-folder"></i> Категории
-                </a>
-                <a th:href="@{/reviews}" class="admin-pill">
-                    <i class="fas fa-star"></i> Отзывы
-                </a>
-                <a th:href="@{/sales}" class="admin-pill">
-                    <i class="fas fa-chart-line"></i> Аналитика
-                </a>
-            </div>
-        </div>
+        <div th:replace="~{fragments/admin-topbar :: topbar('orders', 'Все заказы')}"></div>
 
         <!-- Page Header -->
         <header class="admin-header">
@@ -55,56 +30,56 @@
                 <h1 class="admin-title">Все заказы</h1>
             </div>
             <div class="admin-header-meta">
-                <span class="orders-total-badge" th:text="'Всего: ' + ${totalOrdersCount != null ? totalOrdersCount : #lists.size(orders)}">Всего: 0</span>
+                <span class="total-badge" th:text="'Всего: ' + ${totalOrdersCount != null ? totalOrdersCount : #lists.size(orders)}">Всего: 0</span>
             </div>
         </header>
 
         <!-- Flash Alerts -->
-        <div th:if="${successMessage}" class="alert alert-success" role="status">
-            <div class="alert-content">
+        <div th:if="${successMessage}" class="admin-flash admin-flash--success" role="status">
+            <div class="admin-flash-content">
                 <i class="fas fa-check-circle"></i>
                 <span th:text="${successMessage}"></span>
             </div>
-            <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Закрыть">✕</button>
+            <button type="button" class="admin-flash__close" onclick="this.parentElement.remove()" aria-label="Закрыть">&times;</button>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-error" role="alert">
-            <div class="alert-content">
+        <div th:if="${errorMessage}" class="admin-flash admin-flash--error" role="alert">
+            <div class="admin-flash-content">
                 <i class="fas fa-exclamation-circle"></i>
                 <span th:text="${errorMessage}"></span>
             </div>
-            <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Закрыть">✕</button>
+            <button type="button" class="admin-flash__close" onclick="this.parentElement.remove()" aria-label="Закрыть">&times;</button>
         </div>
 
         <!-- KPI Summary Cards -->
-        <section class="kpi-grid" aria-label="Сводка по заказам">
+        <section class="admin-kpi-grid admin-kpi-grid--6" aria-label="Сводка по заказам">
             <div class="kpi-card kpi-card--primary">
                 <span class="kpi-label">Выручка (активные)</span>
                 <p class="kpi-value js-money" th:attr="data-raw=${totalRevenue != null ? totalRevenue : 0}" th:text="${(totalRevenue != null ? totalRevenue : 0) + ' ₸'}">0 ₸</p>
             </div>
-            <div class="kpi-card" onclick="filterByStatus('ALL')" style="cursor:pointer;">
+            <div class="kpi-card is-clickable is-selected" data-filter="ALL" onclick="filterByStatus('ALL')">
                 <span class="kpi-label">Всего заказов</span>
                 <p class="kpi-value" th:text="${totalOrdersCount != null ? totalOrdersCount : #lists.size(orders)}">0</p>
             </div>
-            <div class="kpi-card kpi-card--pending" onclick="filterByStatus('PENDING')" style="cursor:pointer;">
+            <div class="kpi-card kpi-card--pending is-clickable" data-filter="PENDING" onclick="filterByStatus('PENDING')">
                 <span class="kpi-label">В ожидании</span>
                 <p class="kpi-value" th:text="${pendingCount != null ? pendingCount : 0}">0</p>
             </div>
-            <div class="kpi-card kpi-card--shipped" onclick="filterByStatus('SHIPPED')" style="cursor:pointer;">
+            <div class="kpi-card kpi-card--shipped is-clickable" data-filter="SHIPPED" onclick="filterByStatus('SHIPPED')">
                 <span class="kpi-label">Отправлено</span>
                 <p class="kpi-value" th:text="${shippedCount != null ? shippedCount : 0}">0</p>
             </div>
-            <div class="kpi-card kpi-card--delivered" onclick="filterByStatus('DELIVERED')" style="cursor:pointer;">
+            <div class="kpi-card kpi-card--delivered is-clickable" data-filter="DELIVERED" onclick="filterByStatus('DELIVERED')">
                 <span class="kpi-label">Доставлено</span>
                 <p class="kpi-value" th:text="${deliveredCount != null ? deliveredCount : 0}">0</p>
             </div>
-            <div class="kpi-card kpi-card--canceled" onclick="filterByStatus('CANCELED')" style="cursor:pointer;">
+            <div class="kpi-card kpi-card--canceled is-clickable" data-filter="CANCELED" onclick="filterByStatus('CANCELED')">
                 <span class="kpi-label">Отменено</span>
                 <p class="kpi-value" th:text="${canceledCount != null ? canceledCount : 0}">0</p>
             </div>
         </section>
 
         <!-- Filter & Search Toolbar -->
-        <section class="orders-toolbar">
+        <section class="admin-toolbar">
             <div class="status-tabs" role="tablist" aria-label="Фильтр по статусу">
                 <button type="button" class="status-tab active" data-filter="ALL" onclick="filterByStatus('ALL')">
                     Все <span class="tab-badge" th:text="${totalOrdersCount != null ? totalOrdersCount : #lists.size(orders)}">0</span>
@@ -131,7 +106,7 @@
                 <div class="search-box">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" id="orderSearchInput" placeholder="Поиск по № заказа, клиенту, телефону, товару..." oninput="applyOrdersFilter()">
-                    <button type="button" id="clearSearchBtn" class="clear-search-btn" onclick="clearOrderSearch()" style="display:none;" aria-label="Очистить">✕</button>
+                    <button type="button" id="clearSearchBtn" class="clear-search-btn" onclick="clearOrderSearch()" style="display:none;" aria-label="Очистить">&times;</button>
                 </div>
                 <select id="orderSortSelect" class="sort-select" onchange="applyOrdersFilter()" aria-label="Сортировка заказов">
                     <option value="date_desc">Сначала новые</option>
@@ -147,7 +122,7 @@
         </div>
 
         <!-- Orders Table -->
-        <div class="order-list table-container" th:if="${orders != null and !#lists.isEmpty(orders)}">
+        <div class="admin-table-wrap order-list table-container" th:if="${orders != null and !#lists.isEmpty(orders)}">
             <table id="ordersTable">
                 <thead>
                 <tr class="orders-param">
@@ -157,7 +132,7 @@
                     <th>Доставка / Оплата</th>
                     <th>Сумма</th>
                     <th>Статус заказа</th>
-                    <th></th>
+                    <th class="th-actions"></th>
                 </tr>
                 </thead>
                 <tbody id="ordersTableBody">
@@ -171,7 +146,11 @@
                     <!-- 1. Номер заказа и дата -->
                     <td class="cell-order-id">
                         <a th:href="@{'/orders/' + ${order.id}}" class="order-number-link" th:text="'№ 00' + ${order.id}">№ 001</a>
-                        <span class="order-serial" th:if="${order.serialNumber != null}" th:text="${order.serialNumber}">ORD-XXXX</span>
+                        <span class="order-serial js-copyable"
+                              th:if="${order.serialNumber != null}"
+                              th:text="${order.serialNumber}"
+                              th:attr="data-copy=${order.serialNumber}"
+                              title="Нажмите, чтобы скопировать код заказа">ORD-XXXX</span>
                         <span class="order-date" th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : '—'}"></span>
                     </td>
 
@@ -180,7 +159,10 @@
                         <div class="customer-name"
                              th:text="${(order.fullName != null and !order.fullName.isEmpty()) ? order.fullName : (order.user != null and order.user.name != null and !order.user.name.isEmpty() ? order.user.name : (order.user != null ? order.user.login : 'Гость'))}">
                         </div>
-                        <div class="customer-contact" th:if="${order.phone != null and !order.phone.isEmpty()}">
+                        <div class="customer-contact js-copyable"
+                             th:if="${order.phone != null and !order.phone.isEmpty()}"
+                             th:attr="data-copy=${order.phone}"
+                             title="Нажмите, чтобы скопировать телефон">
                             <i class="fas fa-phone-alt"></i>
                             <span th:text="${order.phone}"></span>
                         </div>
@@ -231,11 +213,12 @@
                             <span class="meta-pill"
                                   th:if="${tx != null}"
                                   th:text="${tx.paymentStatus.displayName}"
-                                  th:style="${tx.paymentStatus.name() == 'PAID' ? 'background:#ECFDF5;color:#065F46;border-color:#A7F3D0;' : (tx.paymentStatus.name() == 'FAILED' ? 'background:#FEF2F2;color:#991B1B;border-color:#FECACA;' : (tx.paymentStatus.name() == 'AWAITING_PAYMENT' ? 'background:#FFFBEB;color:#92400E;border-color:#FDE68A;' : ''))}">Оплачен</span>
-                            <span class="meta-pill"
+                                  th:classappend="${tx.paymentStatus.name() == 'PAID' ? ' meta-pill--paid' : (tx.paymentStatus.name() == 'FAILED' ? ' meta-pill--failed' : (tx.paymentStatus.name() == 'AWAITING_PAYMENT' ? ' meta-pill--wait' : ''))}">Оплачен</span>
+                            <span class="meta-pill meta-pill--track js-copyable"
                                   th:if="${order.trackingNumber != null and !#strings.isEmpty(order.trackingNumber)}"
+                                  th:attr="data-copy=${order.trackingNumber}"
                                   th:text="'Трек: ' + ${order.trackingNumber}"
-                                  style="background:#EEF2FF;color:#1E3A8A;border-color:#C7D2FE;"></span>
+                                  title="Нажмите, чтобы скопировать трек-номер"></span>
                         </div>
                     </td>
 
@@ -267,23 +250,23 @@
                                                 th:selected="${order.status == s}">
                                         </option>
                                     </select>
-                                    <button type="submit" class="status-save-btn" title="Сохранить статус">
+                                    <button type="submit" class="status-save-btn" title="Сохранить изменения">
                                         Сохранить
                                     </button>
                                 </div>
                                 <input type="text"
                                        name="trackingNumber"
+                                       class="tracking-input"
                                        th:value="${order.trackingNumber}"
                                        placeholder="Трек-номер доставки"
-                                       oninput="this.closest('.status-form').classList.add('is-dirty')"
-                                       style="width:100%;margin-top:6px;padding:6px 9px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;">
+                                       oninput="this.closest('.status-form').classList.add('is-dirty')">
                             </form>
                         </div>
                     </td>
 
                     <!-- 7. Подробнее -->
                     <td class="cell-actions">
-                        <a th:href="@{'/orders/' + ${order.id}}" class="order-link" title="Открыть карточку заказа">
+                        <a th:href="@{'/orders/' + ${order.id}}" class="adm-btn adm-btn--sm adm-btn--outline order-link" title="Открыть карточку заказа">
                             <span>Подробнее</span>
                             <i class="fas fa-arrow-right"></i>
                         </a>
@@ -293,17 +276,19 @@
             </table>
 
             <!-- Сообщение если фильтр ничего не нашёл -->
-            <div id="noFilterResults" class="empty-orders" style="display: none;">
-                <div class="empty-orders-icon"><i class="fas fa-search"></i></div>
+            <div id="noFilterResults" class="admin-empty" style="display: none; border: none; border-radius: 0;">
+                <i class="fas fa-search"></i>
                 <h3>Заказы не найдены</h3>
                 <p>Попробуйте изменить параметры поиска или выбрать другой фильтр статуса.</p>
-                <button type="button" class="btn-reset-filter" onclick="resetOrdersFilter()">Сбросить фильтры</button>
+                <div class="empty-actions">
+                    <button type="button" class="adm-btn adm-btn--navy" onclick="resetOrdersFilter()">Сбросить фильтры</button>
+                </div>
             </div>
         </div>
 
         <!-- Пустое состояние если заказов вообще нет -->
-        <div th:if="${orders == null or #lists.isEmpty(orders)}" class="empty-orders">
-            <div class="empty-orders-icon"><i class="fas fa-box-open"></i></div>
+        <div th:if="${orders == null or #lists.isEmpty(orders)}" class="admin-empty">
+            <i class="fas fa-box-open"></i>
             <h3>Заказов пока нет</h3>
             <p>Новые заказы покупателей будут отображаться здесь автоматически.</p>
         </div>
@@ -311,10 +296,21 @@
     </div>
 </main>
 
+<div id="copyToast" class="copy-toast" role="status" aria-live="polite"></div>
+
 <div th:insert="~{footer :: footer-code}"></div>
 <script th:src="@{/js/navbar-component.js}" defer></script>
 <script>
     let currentStatusFilter = 'ALL';
+
+    function showCopyToast(text) {
+        const toast = document.getElementById('copyToast');
+        if (!toast) return;
+        toast.textContent = text;
+        toast.classList.add('visible');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.classList.remove('visible'), 1800);
+    }
 
     function formatMoneyValues() {
         document.querySelectorAll('.js-money').forEach(el => {
@@ -330,7 +326,11 @@
         document.querySelectorAll('.status-tab').forEach(tab => {
             tab.classList.toggle('active', tab.getAttribute('data-filter') === status);
         });
+        document.querySelectorAll('.kpi-card[data-filter]').forEach(card => {
+            card.classList.toggle('is-selected', card.getAttribute('data-filter') === status);
+        });
         applyOrdersFilter();
+        history.replaceState(null, '', status === 'ALL' ? location.pathname : '#status=' + status);
     }
 
     function clearOrderSearch() {
@@ -404,35 +404,42 @@
     document.addEventListener('DOMContentLoaded', () => {
         formatMoneyValues();
 
-        // Подтверждение отмены заказа (возвращает товары на склад)
+        // Сохранение статуса и/или трек-номера + подтверждение отмены заказа
         document.querySelectorAll('.status-form').forEach(form => {
             const select = form.querySelector('select[name="status"]');
+            const trackingInput = form.querySelector('input[name="trackingNumber"]');
             if (!select) return;
-            const initial = select.value;
+            const initialStatus = select.value;
+            const initialTracking = trackingInput ? trackingInput.value.trim() : '';
             form.addEventListener('submit', e => {
-                if (select.value === initial) {
+                const currentTracking = trackingInput ? trackingInput.value.trim() : '';
+                if (select.value === initialStatus && currentTracking === initialTracking) {
                     e.preventDefault();
                     return;
                 }
-                if (select.value === 'CANCELED' &&
+                if (select.value === 'CANCELED' && select.value !== initialStatus &&
                     !confirm('Отменить заказ? Товары будут возвращены на склад.')) {
                     e.preventDefault();
                 }
             });
         });
 
-        // Фильтр по статусу сохраняется в адресе (#status=PENDING) — переживает обновление страницы
+        // Копирование кода заказа, телефона и трек-номера по клику
+        document.querySelectorAll('.js-copyable').forEach(el => {
+            el.addEventListener('click', () => {
+                const val = el.getAttribute('data-copy') || el.textContent.trim();
+                if (!val || !navigator.clipboard) return;
+                navigator.clipboard.writeText(val).then(() => {
+                    showCopyToast('Скопировано: ' + val);
+                }).catch(() => {});
+            });
+        });
+
         const m = location.hash.match(/status=([A-Z]+)/);
         if (m && document.querySelector('.status-tab[data-filter="' + m[1] + '"]')) {
             filterByStatus(m[1]);
         }
     });
-
-    const _origFilterByStatus = filterByStatus;
-    filterByStatus = function (status) {
-        _origFilterByStatus(status);
-        history.replaceState(null, '', status === 'ALL' ? location.pathname : '#status=' + status);
-    };
 </script>
 </body>
 </html>

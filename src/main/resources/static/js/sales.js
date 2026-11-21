@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
     "use strict";
 
     const PERIODS = new Set(["TODAY", "WEEK", "MONTH", "QUARTER", "YEAR", "ALL", "CUSTOM"]);
@@ -204,19 +204,19 @@
             plugins: {
                 legend: {
                     labels: {
-                        color: "#4b5563",
+                        color: "#5A5A6E",
                         boxWidth: 10,
                         boxHeight: 10,
                         usePointStyle: true,
                         pointStyle: "circle",
-                        font: { family: "Manrope", size: 11, weight: "700" }
+                        font: { family: "Montserrat", size: 11, weight: "600" }
                     }
                 },
                 tooltip: {
-                    backgroundColor: "rgba(12, 16, 22, 0.92)",
+                    backgroundColor: "rgba(12, 12, 61, 0.94)",
                     titleColor: "#f8fafc",
                     bodyColor: "#e5e7eb",
-                    borderColor: "rgba(255,255,255,0.08)",
+                    borderColor: "rgba(255,255,255,0.1)",
                     borderWidth: 1,
                     padding: 10
                 }
@@ -224,12 +224,12 @@
             scales: {
                 x: {
                     grid: { color: "rgba(148, 163, 184, 0.14)", drawBorder: false },
-                    ticks: { color: "#6b7280", font: { family: "Manrope", size: 11, weight: "700" } }
+                    ticks: { color: "#6b7280", font: { family: "Montserrat", size: 11, weight: "600" } }
                 },
                 y: {
                     beginAtZero: true,
                     grid: { color: "rgba(148, 163, 184, 0.14)", drawBorder: false },
-                    ticks: { color: "#6b7280", font: { family: "Manrope", size: 11, weight: "700" } }
+                    ticks: { color: "#6b7280", font: { family: "Montserrat", size: 11, weight: "600" } }
                 }
             }
         };
@@ -253,9 +253,9 @@
                     datasets: [{
                         label: "Выручка",
                         data: series.sales,
-                        borderColor: "#1f365f",
+                        borderColor: "#0C0C3D",
                         borderWidth: 2,
-                        backgroundColor: buildChartGradient(ctx, "rgba(31,54,95,0.22)", "rgba(31,54,95,0.02)"),
+                        backgroundColor: buildChartGradient(ctx, "rgba(12,12,61,0.20)", "rgba(12,12,61,0.02)"),
                         fill: true,
                         tension: 0.35,
                         pointRadius: 2.5,
@@ -304,15 +304,15 @@
                             type: "bar",
                             label: "Посещения",
                             data: series.visits,
-                            borderRadius: 8,
-                            backgroundColor: "rgba(31,54,95,0.78)",
+                            borderRadius: 6,
+                            backgroundColor: "rgba(12,12,61,0.82)",
                             borderSkipped: false
                         },
                         {
                             type: "line",
                             label: "Заказы",
                             data: series.orders,
-                            borderColor: "#0f9a94",
+                            borderColor: "#9A073D",
                             borderWidth: 2,
                             pointRadius: 2,
                             pointHoverRadius: 4,
@@ -349,9 +349,9 @@
                     datasets: [{
                         label: "Конверсия",
                         data: series.conversion,
-                        borderColor: "#0f9a94",
+                        borderColor: "#9A073D",
                         borderWidth: 2,
-                        backgroundColor: buildChartGradient(ctx, "rgba(15,154,148,0.22)", "rgba(15,154,148,0.02)"),
+                        backgroundColor: buildChartGradient(ctx, "rgba(154,7,61,0.20)", "rgba(154,7,61,0.02)"),
                         fill: true,
                         tension: 0.35,
                         pointRadius: 2.5,
@@ -456,20 +456,20 @@
             : currentConversion;
 
         const insights = [
-            `Выручка за период: ${formatTenge(totalSales)}.`,
-            `Заказы: ${formatCount(totalOrders)}, посещения: ${formatCount(totalVisits)}, конверсия: ${formatPercent(currentConversion)}.`,
-            `Средний чек: ${formatTenge(payload.averageOrderValue)}; доход с визита: ${formatTenge(payload.revenuePerVisit)}.`
+            { tag: "Выручка", text: `Выручка за период: ${formatTenge(totalSales)}.` },
+            { tag: "Активность", text: `Заказы: ${formatCount(totalOrders)}, посещения: ${formatCount(totalVisits)}, конверсия: ${formatPercent(currentConversion)}.` },
+            { tag: "Средний чек", text: `Средний чек: ${formatTenge(payload.averageOrderValue)}; доход с визита: ${formatTenge(payload.revenuePerVisit)}.` }
         ];
 
         if (peakSales.index >= 0 && labels[peakSales.index]) {
-            insights.push(`Пик выручки: ${formatTenge(peakSales.value)} (${normalizeLabel(labels[peakSales.index])}).`);
+            insights.push({ tag: "Пик выручки", text: `Пик выручки: ${formatTenge(peakSales.value)} (${normalizeLabel(labels[peakSales.index])}).` });
         }
 
         if (peakOrders.index >= 0 && labels[peakOrders.index]) {
-            insights.push(`Пик заказов: ${formatCount(peakOrders.value)} (${normalizeLabel(labels[peakOrders.index])}).`);
+            insights.push({ tag: "Пик заказов", text: `Пик заказов: ${formatCount(peakOrders.value)} (${normalizeLabel(labels[peakOrders.index])}).` });
         }
 
-        insights.push(`Средняя конверсия по периоду: ${formatPercent(averageConversion)}.`);
+        insights.push({ tag: "Конверсия", text: `Средняя конверсия по периоду: ${formatPercent(averageConversion)}.` });
 
         const hasAnyActivity = salesSeries.some((value) => toNumber(value) > 0)
             || ordersSeries.some((value) => toNumber(value) > 0)
@@ -477,12 +477,13 @@
 
         if (!hasAnyActivity) {
             insights.length = 0;
-            insights.push("За выбранный период нет активности. Попробуйте расширить диапазон дат.");
+            insights.push({ tag: "Статус", text: "За выбранный период нет активности. Попробуйте расширить диапазон дат." });
         }
 
-        insights.slice(0, 6).forEach((text) => {
+        insights.slice(0, 6).forEach((entry) => {
             const item = document.createElement("li");
-            item.textContent = text;
+            item.dataset.tag = entry.tag;
+            item.textContent = entry.text;
             insightsList.appendChild(item);
         });
     }

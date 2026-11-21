@@ -985,30 +985,26 @@ body {
     }
     .checkout-grid {
         grid-template-columns: 1fr;
+        gap: 32px;
     }
     .checkout-summary {
         position: static;
     }
 }
 
-@media (max-width: 640px) {
-    .checkout-page {
-        padding: 24px 16px 72px;
-    }
-    .summary-box {
-        padding: 28px 20px 24px;
-    }
-    .summary-total-row {
-        margin-left: -20px;
-        margin-right: -20px;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-}
-
 @media (max-width: 768px) {
+    .checkout-page {
+        padding: 24px 20px 72px;
+    }
+    .checkout-bc {
+        margin-bottom: 20px;
+    }
+    .checkout-header {
+        margin-bottom: 28px;
+        padding-bottom: 20px;
+    }
     .step-card {
-        padding: 20px;
+        padding: 20px 18px;
     }
     .form-grid,
     .choice-grid,
@@ -1017,10 +1013,52 @@ body {
     }
     .payment-tiles-row {
         grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
     .my-location-widget {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 14px;
+    }
+    .my-location-map {
+        width: 100%;
+        height: 120px;
+    }
+}
+
+@media (max-width: 640px) {
+    .checkout-page {
+        padding: 20px 16px 64px;
+    }
+    .summary-box {
+        padding: 24px 18px 22px;
+    }
+    .summary-total-row {
+        margin-left: -18px;
+        margin-right: -18px;
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .summary-final-val {
+        font-size: 32px;
+    }
+    .geo-actions {
+        width: 100%;
+    }
+    .geo-map-btn,
+    .geo-detect-btn,
+    .geo-edit-toggle {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+    .payment-extra-options {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .gateway-info-panel {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
     }
 }
 
@@ -1305,7 +1343,59 @@ body {
     border-color: var(--c-navy);
 }
 @media (max-width: 640px) {
-    #leafletCheckoutMap { height: 280px; }
-    .map-modal-foot { flex-direction: column; align-items: stretch; }
-    .map-modal-foot-btns { justify-content: flex-end; }
+    .map-modal-backdrop { padding: 10px; }
+    .map-modal-head { padding: 12px 14px; flex-wrap: wrap; }
+    .map-modal-title { font-size: 20px; }
+    .map-modal-search-bar { padding: 10px 14px; }
+    #leafletCheckoutMap { height: 260px; }
+    .map-modal-foot { flex-direction: column; align-items: stretch; padding: 12px 14px; gap: 10px; }
+    .map-modal-foot-btns { justify-content: stretch; }
+    .map-btn-cancel, .map-btn-confirm { flex: 1; }
+}
+
+/* ─── CHECKOUT PROGRESS INDICATOR ─── */
+.checkout-progress {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.cp-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9a9a9a;
+}
+.cp-step a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: inherit;
+    text-decoration: none;
+}
+.cp-num {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc8c0;
+    font-size: 10px;
+    font-weight: 700;
+}
+.cp-done { color: #0a0a2e; }
+.cp-done .cp-num { border-color: #0a0a2e; background: #faf9f7; color: #0a0a2e; }
+.cp-active { color: #0a0a2e; font-weight: 700; }
+.cp-active .cp-num { background: #8b1a3a; border-color: #8b1a3a; color: #fff; }
+.cp-sep {
+    width: 28px;
+    height: 1px;
+    background: #dcd8d0;
 }

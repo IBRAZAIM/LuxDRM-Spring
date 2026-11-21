@@ -1,6 +1,7 @@
 package kz.ibrazaim.catalog.repository;
 
 import kz.ibrazaim.catalog.model.Product;
+import kz.ibrazaim.catalog.model.ProductAudience;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -42,12 +43,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @EntityGraph(attributePaths = {"category"})
     @Query("SELECT p FROM Product p WHERE p.deleted = false " +
-           "AND (:search IS NULL OR :search = '' OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+           "AND (:search IS NULL OR :search = '' " +
+           "OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%'))) " +
            "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+           "AND (:audience IS NULL OR p.audience = :audience) " +
            "AND p.price >= :minPrice AND p.price <= :maxPrice")
     Page<Product> searchProducts(
             @Param("search") String search,
             @Param("categoryId") Long categoryId,
+            @Param("audience") ProductAudience audience,
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
             Pageable pageable

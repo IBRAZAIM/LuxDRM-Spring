@@ -3,158 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Корзина — LUXDRM Spring</title>
+    <title>Корзина — UXD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/tokens.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/cart.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
-    <style>
-        .promo-box {
-            margin: 18px 0 4px;
-            padding: 16px 0 6px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .promo-label {
-            display: block;
-            font-family: var(--f-ui);
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.42);
-            margin-bottom: 10px;
-        }
-        .promo-form {
-            display: flex;
-            gap: 0;
-        }
-        .promo-input {
-            flex: 1;
-            min-width: 0;
-            height: 40px;
-            padding: 0 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-right: none;
-            background: rgba(255, 255, 255, 0.96);
-            font-family: var(--f-ui);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--c-navy);
-            outline: none;
-            transition: border-color .2s, background .2s;
-        }
-        .promo-input::placeholder {
-            color: rgba(10, 10, 46, 0.4);
-            font-weight: 500;
-        }
-        .promo-input:focus {
-            background: #fff;
-            border-color: var(--c-gold);
-        }
-        .promo-apply-btn {
-            height: 40px;
-            padding: 0 16px;
-            border: 1px solid var(--c-crimson);
-            background: var(--c-crimson);
-            color: #fff;
-            font-family: var(--f-ui);
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background .2s, border-color .2s, color .2s;
-            white-space: nowrap;
-        }
-        .promo-apply-btn:hover {
-            background: var(--c-gold);
-            border-color: var(--c-gold);
-            color: var(--c-navy);
-        }
-        .promo-applied-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 10px 12px;
-            border: 1px solid rgba(107, 207, 149, 0.35);
-            background: rgba(107, 207, 149, 0.1);
-            font-family: var(--f-ui);
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            color: var(--c-free);
-        }
-        .promo-applied-bar.hidden {
-            display: none;
-        }
-        .promo-remove-btn {
-            border: none;
-            background: none;
-            color: rgba(255, 255, 255, 0.75);
-            font-family: var(--f-ui);
-            font-size: 9.5px;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            cursor: pointer;
-            padding: 2px 4px;
-            text-decoration: underline;
-            transition: color .2s;
-        }
-        .promo-remove-btn:hover {
-            color: #fff;
-        }
-        .promo-msg {
-            margin-top: 7px;
-            font-family: var(--f-ui);
-            font-size: 11px;
-            min-height: 15px;
-        }
-        .promo-msg.is-error { color: #fca5a5; }
-        .promo-msg.is-success { color: var(--c-free); }
-        .promo-hints {
-            margin-top: 8px;
-            font-family: var(--f-ui);
-            font-size: 10px;
-            letter-spacing: 0.04em;
-            color: rgba(255, 255, 255, 0.45);
-        }
-        .promo-hints code {
-            font-family: var(--f-ui);
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            color: var(--c-gold);
-            cursor: pointer;
-            border-bottom: 1px dashed rgba(201, 168, 76, 0.55);
-            margin-right: 8px;
-            transition: color .2s, border-color .2s;
-        }
-        .promo-hints code:hover {
-            color: #fff;
-            border-bottom-color: #fff;
-        }
-        .summary-line.summary-promo .summary-line-label strong {
-            color: var(--c-gold);
-            letter-spacing: 0.1em;
-        }
-        .summary-line.summary-promo .summary-line-val {
-            font-family: var(--f-display);
-            font-size: 17px;
-            font-weight: 400;
-            color: var(--c-gold);
-        }
-        .summary-line.summary-promo .summary-line-val::before {
-            content: '−';
-        }
-        .summary-line.summary-promo.hidden {
-            display: none;
-        }
-    </style>
 </head>
 <body class="cart-page">
 <div th:insert="~{navbar :: navigation-panel}"></div>
@@ -209,10 +65,11 @@
                             <!-- Image -->
                             <div class="cart-cell-img">
                                 <a th:href="@{/products/{id}(id=${cartItem.product.id})}" target="_blank" rel="noopener" tabindex="-1">
-                                    <img th:src="${#lists.isEmpty(cartItem.product.images) ? '/images/no-image.png' : cartItem.product.images.get(0).image}"
+                                    <img th:src="${#lists.isEmpty(cartItem.product.images) ? '/images/product-placeholder.svg' : cartItem.product.images.get(0).image}"
                                          th:alt="${cartItem.product.name}"
                                          loading="lazy"
-                                         width="84" height="104">
+                                         width="84" height="104"
+                                         onerror="this.onerror=null;this.src='/images/product-placeholder.svg';">
                                 </a>
                             </div>
 
@@ -297,10 +154,11 @@
 
                             <!-- Product image -->
                             <div class="card-img">
-                                <img th:src="${#lists.isEmpty(cartItem.product.images) ? '/images/no-image.png' : cartItem.product.images.get(0).image}"
+                                <img th:src="${#lists.isEmpty(cartItem.product.images) ? '/images/product-placeholder.svg' : cartItem.product.images.get(0).image}"
                                      th:alt="${cartItem.product.name}"
                                      loading="lazy"
-                                     width="96" height="118">
+                                     width="96" height="118"
+                                     onerror="this.onerror=null;this.src='/images/product-placeholder.svg';">
                             </div>
 
                             <!-- Product name -->
@@ -507,7 +365,7 @@
                                 <polyline points="23 7 13.5 15.5 8.5 10.5 1 17"></polyline>
                                 <polyline points="17 7 23 7 23 13"></polyline>
                             </svg>
-                            Возврат в течение 14 дней
+                            Возврат при браке 14 дней (ст. 30 РК)
                         </div>
                     </div>
                 </div><!-- /summary-inner -->

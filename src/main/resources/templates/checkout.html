@@ -6,7 +6,8 @@
     <title>Оформление заказа — UXD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/tokens.css}">
     <link rel="stylesheet" th:href="@{/navbar.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" th:href="@{/checkout.css}">
@@ -27,6 +28,13 @@
     <header class="checkout-header">
         <span class="checkout-eyebrow">Защищённое оформление UXD</span>
         <h1 class="checkout-title">Оформление заказа</h1>
+        <ol class="checkout-progress" aria-label="Этапы оформления заказа">
+            <li class="cp-step cp-done"><a th:href="@{/cart}"><span class="cp-num">1</span>Корзина</a></li>
+            <li class="cp-sep" aria-hidden="true"></li>
+            <li class="cp-step cp-active" aria-current="step"><span class="cp-num">2</span>Оформление</li>
+            <li class="cp-sep" aria-hidden="true"></li>
+            <li class="cp-step"><span class="cp-num">3</span>Оплата</li>
+        </ol>
     </header>
 
     <form th:action="@{/checkout}" method="post" class="checkout-grid" id="checkoutForm">
@@ -188,13 +196,13 @@
                     <div class="field-group">
                         <label for="address" class="field-label">Улица, дом, квартира *</label>
                         <input type="text" id="address" name="address" class="field-input"
-                               th:value="${(user != null and user.address != null and !#strings.isEmpty(user.address)) ? user.address : (lastOrder != null and lastOrder.address != null ? lastOrder.address : 'ул. Манаса 46/1, кв. 44')}"
-                               placeholder="ул. Манаса 46/1, кв. 44" required>
+                               th:value="${(user != null and user.address != null and !#strings.isEmpty(user.address)) ? user.address : (lastOrder != null and lastOrder.address != null ? lastOrder.address : '')}"
+                               placeholder="Например: ул. Манаса 46/1, кв. 44" required>
                     </div>
                     <div class="field-group">
                         <label for="postalCode" class="field-label">Почтовый индекс *</label>
                         <input type="text" id="postalCode" name="postalCode" class="field-input"
-                               th:value="${(user != null and user.postalCode != null and !#strings.isEmpty(user.postalCode)) ? user.postalCode : (lastOrder != null and lastOrder.postalCode != null ? lastOrder.postalCode : '010000')}"
+                               th:value="${(user != null and user.postalCode != null and !#strings.isEmpty(user.postalCode)) ? user.postalCode : (lastOrder != null and lastOrder.postalCode != null ? lastOrder.postalCode : '')}"
                                placeholder="010000" maxlength="20" required>
                     </div>
                 </div>
@@ -420,7 +428,7 @@
                 <label class="policy-check">
                     <input type="checkbox" class="checkbox-input" id="option5" required checked>
                     <span class="choice-indicator"></span>
-                    <span class="policy-text">Я соглашаюсь с условиями <a th:href="@{/contact#privacy}">Политики конфиденциальности</a> и правилами возврата</span>
+                    <span class="policy-text">Я соглашаюсь с <a th:href="@{/contact#privacy}">Политикой конфиденциальности</a> и <a th:href="@{/delivery#returns}">правилами возврата белья (ст. 30 РК)</a></span>
                 </label>
 
                 <!-- ГЛАВНАЯ КОНВЕРСИОННАЯ КНОПКА -->
@@ -437,7 +445,7 @@
                     </div>
                     <div class="cg-item">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                        <span>Возврат и обмен — 14 дней</span>
+                        <span>Возврат при браке — 14 дней (ст. 30 РК)</span>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 package kz.ibrazaim.catalog.controller;
 
 import kz.ibrazaim.catalog.model.Review;
+import kz.ibrazaim.catalog.model.ReviewStatus;
 import kz.ibrazaim.catalog.model.Role;
 import kz.ibrazaim.catalog.model.User;
 import kz.ibrazaim.catalog.service.CartService;
@@ -36,7 +37,20 @@ public class ReviewController {
         }
 
         List<Review> reviews = reviewService.findALl();
+        long pendingCount = reviews.stream()
+                .filter(r -> r.getStatus() == null || r.getStatus() == ReviewStatus.PENDING)
+                .count();
+        long approvedCount = reviews.stream()
+                .filter(r -> r.getStatus() == ReviewStatus.APPROVED)
+                .count();
+        double avgRating = reviews.isEmpty()
+                ? 0.0
+                : Math.round(reviews.stream().mapToInt(Review::getEstimation).average().orElse(0.0) * 10.0) / 10.0;
+
         model.addAttribute("reviews", reviews);
+        model.addAttribute("pendingCount", pendingCount);
+        model.addAttribute("approvedCount", approvedCount);
+        model.addAttribute("avgRating", avgRating);
         model.addAttribute("cartItemsCount", cartService.getCartItemsCountByUser(user));
         return "reviews";
     }

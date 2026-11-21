@@ -2,56 +2,98 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Обновление товара — UXD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обновление товара — UXD Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <link rel="stylesheet" th:href="@{/admin.css}">
     <link rel="stylesheet" th:href="@{/updateForm.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="admin-body">
+<div th:insert="~{navbar :: navigation-panel}"></div>
+<div class="admin-form-shell">
+    <div th:replace="~{fragments/admin-topbar :: subpageTopbar('products', 'Товары', '/products', 'Редактирование')}"></div>
 <div class="container">
-    <div style="margin-bottom: 16px;">
-        <a th:href="@{/products}" style="color: #6b6b85; text-decoration: none; font-size: 13px; font-weight: 600;">← Назад к списку товаров</a>
+    <div class="top-nav-row">
+        <a th:href="@{/products}" class="top-back-link">← Назад к списку товаров</a>
+        <a th:href="@{/products/{id}(id=${product.id})}" class="top-view-link">Открыть на сайте ↗</a>
     </div>
     <h1>Обновление товара</h1>
     <p class="subtitle">Изменения сохраняются сразу после отправки</p>
 
-    <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+    <div th:if="${error}" class="alert-error" role="alert" th:text="${error}"></div>
+    <div th:if="${success}" class="alert-success" role="status" th:text="${success}"></div>
 
-    <form th:action="@{/products/update/{id}(id=${product.id})}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/products/update/{id}(id=${product.id})}" method="post" enctype="multipart/form-data">
         <th:block th:replace="~{fragments/csrf :: csrfToken}"></th:block>
-        <input type="hidden" th:field="*{id}">
 
         <div class="form-section">
-            <div class="form-group">
-                <label>Название товара</label>
-                <input type="text" th:field="*{name}" placeholder="Название товара" required>
-            </div>
-
-            <div class="form-row-grid">
+            <div class="form-row-grid form-row-grid--name-sku">
                 <div class="form-group">
-                    <label>Цена (₸)</label>
-                    <input type="number" th:field="*{price}" placeholder="₸" min="0" step="1" required>
+                    <label for="productName">Название товара</label>
+                    <input id="productName" type="text" name="name" th:value="${product.name}" placeholder="Название товара" maxlength="255" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Скидка (%)</label>
-                    <input type="number" th:field="*{discount}" placeholder="0" min="0" max="99" step="1">
-                </div>
-
-                <div class="form-group">
-                    <label>Остаток на складе (шт.)</label>
-                    <input type="number" th:field="*{stock}" placeholder="Количество на складе" min="0" required>
+                    <label for="productSku">Артикул (SKU) *</label>
+                    <input id="productSku" type="text" name="sku" th:value="${product.displaySku}" placeholder="Например: UXD-101" maxlength="64" required>
                 </div>
             </div>
 
+            <div class="form-row-grid form-row-grid--2">
+                <div class="form-group" th:if="${categories != null and !#lists.isEmpty(categories)}">
+                    <label for="categoryId">Категория</label>
+                    <select id="categoryId" name="categoryId">
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.name}"
+                                th:selected="${product.category != null and product.category.id == cat.id}"></option>
+                    </select>
+                    <span class="hint">При смене категории характеристики обновятся после сохранения</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="productAudience">Раздел сайта *</label>
+                    <select id="productAudience" name="audience" required>
+                        <option th:each="aud : ${audiences}"
+                                th:value="${aud.name()}"
+                                th:text="${aud.name() == 'UNISEX' ? 'Унисекс (Мужское + Женское)' : aud.displayName}"
+                                th:selected="${product.safeAudience == aud}">Унисекс</option>
+                    </select>
+                    <span class="hint">Определяет раздел витрины: Мужское, Женское, Детское</span>
+                </div>
+            </div>
+
+            <div class="form-row-grid form-row-grid--2">
+                <div class="form-group">
+                    <label for="productPrice">Цена (₸)</label>
+                    <input id="productPrice" type="number" name="price"
+                           th:value="${product.price != null ? product.price.stripTrailingZeros().toPlainString() : '0'}"
+                           placeholder="₸" min="0" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="productDiscount">Скидка (%)</label>
+                    <input id="productDiscount" type="number" name="discount"
+                           th:value="${product.discount != null ? product.discount.stripTrailingZeros().toPlainString() : '0'}"
+                           placeholder="0" min="0" max="99" step="any">
+                </div>
+            </div>
+
+            <div class="price-preview-bar" id="finalPricePreview" aria-live="polite"></div>
+
             <div class="form-group">
-                <label>Описание</label>
-                <textarea th:field="*{description}" placeholder="Подробное описание товара" maxlength="5000"></textarea>
+                <label for="productDescription">Описание</label>
+                <textarea id="productDescription" name="description" placeholder="Подробное описание товара" maxlength="5000" th:text="${product.description}"></textarea>
             </div>
         </div>
 
         <div class="form-section">
             <label>Характеристики</label>
-            <div class="options-list">
+            <div class="options-list" th:classappend="${#maps.isEmpty(options)} ? ' empty' : ''">
                 <div class="option-row" th:each="entry : ${options}">
                     <input type="hidden" name="optionIds" th:value="${entry.key.id}">
                     <span class="option-name" th:text="${entry.key.name}"></span>
@@ -60,33 +102,42 @@
                            placeholder="Введите значение">
                 </div>
 
-                <div th:if="${#lists.isEmpty(options)}" class="empty-text">
+                <div th:if="${#maps.isEmpty(options)}" class="empty-text">
                     Характеристики отсутствуют
                 </div>
             </div>
         </div>
 
-        <!-- Размеры -->
+        <!-- Размеры и остатки -->
         <div class="form-section">
             <div class="section-header">
-                <label>Размеры</label>
+                <div class="sizes-label-wrap">
+                    <label>Размеры и остатки</label>
+                    <span class="sizes-total-badge" id="sizesTotalStock" th:text="'Итого: ' + ${product.stock} + ' шт.'">Итого: 0 шт.</span>
+                </div>
                 <div class="preset-chips">
                     <button type="button" class="preset-chip" onclick="addPresetSizes(['XS','S','M','L','XL'])">+ XS–XL</button>
                     <button type="button" class="preset-chip" onclick="addPresetSizes(['S','M','L'])">+ S–L</button>
+                    <button type="button" class="preset-chip" onclick="addPresetSizes(['36','37','38','39','40','41'])">+ 36–41</button>
+                    <button type="button" class="preset-chip" onclick="addPresetSizes(['40','41','42','43','44','45','46'])">+ 40–46</button>
                     <button type="button" class="preset-chip" onclick="addPresetSizes(['One Size'])">+ One Size</button>
                 </div>
             </div>
-            <div id="sizes" class="items-list" data-empty-text="Пока нет размеров. Нажмите + чтобы добавить.">
-                <span class="empty-text" th:if="${#lists.isEmpty(sizes)}">Пока нет размеров. Нажмите + чтобы добавить.</span>
-                <div class="option-row" th:each="s : ${sizes}" style="display: flex; align-items: center; gap: 6px;">
-                    <input type="text" name="sizes" th:value="${s.size}" placeholder="Размер">
-                    <button type="button" class="remove-btn" onclick="this.parentElement.remove(); checkEmpty(document.getElementById('sizes'));">
+            <div id="sizes" class="items-list" data-empty-text="Пока нет размеров. Выберите шаблон выше или добавьте свой.">
+                <span class="empty-text" th:if="${#lists.isEmpty(sizes)}">Пока нет размеров. Выберите шаблон выше или добавьте свой.</span>
+                <div class="size-stock-row" th:each="s : ${sizes}">
+                    <input type="text" class="size-name-input" name="sizes" th:value="${s.size}" placeholder="Размер" required>
+                    <div class="size-stock-field">
+                        <input type="number" class="size-stock-input" name="sizeStocks" th:value="${s.stock}" min="0" step="1" oninput="updateTotalSizesStock()" title="Остаток для размера" required>
+                        <span>шт.</span>
+                    </div>
+                    <button type="button" class="remove-btn" onclick="this.parentElement.remove(); checkEmpty(document.getElementById('sizes')); updateTotalSizesStock();" title="Удалить размер">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
-            <button type="button" class="add-product-btn" onclick="addSizeItem('')" title="Добавить размер">
-                <i class="fas fa-plus"></i>
+            <button type="button" class="add-product-btn" onclick="addSizeItem('', 10)" title="Добавить размер">
+                <i class="fas fa-plus"></i><span>Добавить свой размер</span>
             </button>
         </div>
 
@@ -96,9 +147,11 @@
             <div class="upload-previews" id="existingPreviews">
                 <div class="upload-preview-card" th:each="img, stat : ${images}">
                     <input type="hidden" name="existingImages" th:value="${img.image}">
-                    <img th:src="@{${img.image}}" alt="Фото товара">
+                    <img th:src="@{${img.image}}" th:alt="${product.name}"
+                         onerror="this.onerror=null;this.src='/images/product-placeholder.svg';">
                     <span class="upload-preview-card__badge" th:if="${stat.index == 0}">Главное фото</span>
-                    <button type="button" class="upload-preview-card__remove" title="Удалить фото" onclick="this.parentElement.remove();">
+                    <button type="button" class="upload-preview-card__main-btn" th:if="${stat.index > 0}" onclick="makeMainExisting(this)">Сделать главным</button>
+                    <button type="button" class="upload-preview-card__remove" title="Удалить фото" onclick="removeExistingImage(this)">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -117,37 +170,120 @@
         </div>
 
         <div class="form-actions sticky">
+            <a th:href="@{/products}" class="btn-secondary">Отмена</a>
             <button class="btn-primary" type="submit">Сохранить изменения</button>
         </div>
     </form>
 </div>
 <script>
-    function addSizeItem(initialValue) {
+    function refreshExistingBadges() {
+        const container = document.getElementById('existingPreviews');
+        if (!container) return;
+        const cards = container.querySelectorAll('.upload-preview-card');
+        cards.forEach((card, idx) => {
+            const oldBadge = card.querySelector('.upload-preview-card__badge');
+            if (oldBadge) oldBadge.remove();
+            const oldMainBtn = card.querySelector('.upload-preview-card__main-btn');
+            if (oldMainBtn) oldMainBtn.remove();
+
+            if (idx === 0) {
+                const badge = document.createElement('span');
+                badge.className = 'upload-preview-card__badge';
+                badge.textContent = 'Главное фото';
+                card.appendChild(badge);
+            } else {
+                const mainBtn = document.createElement('button');
+                mainBtn.type = 'button';
+                mainBtn.className = 'upload-preview-card__main-btn';
+                mainBtn.textContent = 'Сделать главным';
+                mainBtn.onclick = function () { makeMainExisting(mainBtn); };
+                card.appendChild(mainBtn);
+            }
+        });
+    }
+
+    function makeMainExisting(btn) {
+        const card = btn.closest('.upload-preview-card');
+        const container = document.getElementById('existingPreviews');
+        if (!card || !container) return;
+        container.prepend(card);
+        refreshExistingBadges();
+    }
+
+    function removeExistingImage(btn) {
+        const card = btn.closest('.upload-preview-card');
+        if (card) {
+            card.remove();
+            refreshExistingBadges();
+        }
+    }
+
+    function updateTotalSizesStock() {
+        const badge = document.getElementById('sizesTotalStock');
+        if (!badge) return;
+        let total = 0;
+        document.querySelectorAll('#sizes input[name="sizeStocks"]').forEach(inp => {
+            const val = parseInt(inp.value, 10);
+            if (!isNaN(val) && val > 0) total += val;
+        });
+        badge.textContent = 'Итого: ' + total + ' шт.';
+    }
+
+    function addSizeItem(initialValue, initialStock = 10) {
         const list = document.getElementById('sizes');
         const emptyText = list.querySelector('.empty-text');
         if (emptyText) emptyText.remove();
 
         const container = document.createElement('div');
-        container.className = 'option-row';
-        container.style.display = 'flex';
-        container.style.alignItems = 'center';
-        container.style.gap = '6px';
+        container.className = 'size-stock-row';
 
         const input = document.createElement('input');
         input.type = 'text';
+        input.className = 'size-name-input';
         input.placeholder = 'Размер';
         input.name = 'sizes';
+        input.required = true;
         if (initialValue) input.value = initialValue;
         container.appendChild(input);
+
+        const stockField = document.createElement('div');
+        stockField.className = 'size-stock-field';
+
+        const stockInput = document.createElement('input');
+        stockInput.type = 'number';
+        stockInput.className = 'size-stock-input';
+        stockInput.name = 'sizeStocks';
+        stockInput.min = '0';
+        stockInput.step = '1';
+        stockInput.required = true;
+        stockInput.value = String(Math.max(0, parseInt(initialStock, 10) || 0));
+        stockInput.title = 'Остаток для размера';
+        stockInput.oninput = updateTotalSizesStock;
+
+        const unit = document.createElement('span');
+        unit.textContent = 'шт.';
+
+        stockField.appendChild(stockInput);
+        stockField.appendChild(unit);
+        container.appendChild(stockField);
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'remove-btn';
+        removeBtn.title = 'Удалить размер';
         removeBtn.innerHTML = '<i class="fas fa-times"></i>';
-        removeBtn.onclick = () => { container.remove(); checkEmpty(list); };
+        removeBtn.onclick = () => {
+            container.remove();
+            checkEmpty(list);
+            updateTotalSizesStock();
+        };
         container.appendChild(removeBtn);
 
         list.appendChild(container);
+        updateTotalSizesStock();
+        if (!initialValue) {
+            input.focus();
+        }
     }
 
     function addPresetSizes(sizesArray) {
@@ -155,13 +291,13 @@
             .map(inp => inp.value.trim().toUpperCase());
         sizesArray.forEach(size => {
             if (!existing.includes(size.toUpperCase())) {
-                addSizeItem(size);
+                addSizeItem(size, 10);
             }
         });
     }
 
     function checkEmpty(list) {
-        if (!list.querySelector('.option-row')) {
+        if (!list.querySelector('.size-stock-row')) {
             const empty = document.createElement('span');
             empty.className = 'empty-text';
             empty.innerText = list.dataset.emptyText;
@@ -242,6 +378,41 @@
             addFiles(e.dataTransfer.files);
         }
     });
+
+    function updateFinalPricePreview() {
+        const priceEl = document.getElementById('productPrice');
+        const discountEl = document.getElementById('productDiscount');
+        const previewEl = document.getElementById('finalPricePreview');
+        if (!priceEl || !previewEl) return;
+
+        const priceVal = parseFloat(String(priceEl.value || '').replace(',', '.'));
+        const discRaw = parseFloat(String(discountEl ? discountEl.value : '0').replace(',', '.'));
+        const discount = isNaN(discRaw) ? 0 : Math.min(99, Math.max(0, discRaw));
+
+        if (isNaN(priceVal) || priceVal <= 0) {
+            previewEl.innerHTML = 'Итоговая цена на сайте: <strong>0&nbsp;₸</strong>';
+            return;
+        }
+        const finalPrice = Math.max(0, Math.round(priceVal * (1 - discount / 100)));
+        const saving = Math.max(0, Math.round(priceVal) - finalPrice);
+        const fmt = (n) => n.toLocaleString('ru-RU') + '\u00a0₸';
+
+        if (discount > 0 && saving > 0) {
+            previewEl.innerHTML = 'Итоговая цена на сайте: <strong>' + fmt(finalPrice) +
+                '</strong> <span class="price-preview-saving">(скидка ' + fmt(saving) + ')</span>';
+        } else {
+            previewEl.innerHTML = 'Итоговая цена на сайте: <strong>' + fmt(Math.round(priceVal)) + '</strong>';
+        }
+    }
+
+    document.getElementById('productPrice')?.addEventListener('input', updateFinalPricePreview);
+    document.getElementById('productDiscount')?.addEventListener('input', updateFinalPricePreview);
+    document.addEventListener('DOMContentLoaded', () => {
+        updateFinalPricePreview();
+        updateTotalSizesStock();
+    });
 </script>
+</div>
+<script th:src="@{/js/navbar-component.js}" defer></script>
 </body>
 </html>
