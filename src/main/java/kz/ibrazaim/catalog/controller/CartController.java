@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,16 @@ public class CartController {
     private final CartService cartService;
     private final UserService userService;
     private final PromoCodeService promoCodeService;
+
+    @GetMapping("/api/summary")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getCartSummary(HttpSession session) {
+        User user = userService.getUser();
+        if (user != null) {
+            cartService.mergeGuestCartToUser(session, user);
+        }
+        return ResponseEntity.ok(buildCartPayload(user, session, null));
+    }
 
     @PostMapping("/delete")
     public Object deleteItem(
@@ -174,6 +185,35 @@ public class CartController {
         payload.put("promoPercent", promo != null ? promo.getPercent() : 0);
         payload.put("promoDiscount", promoDiscount);
         payload.put("finalPrice", finalPrice);
+        payload.put("freeShippingThreshold", 50000);
+
+        List<Map<String, Object>> itemList = new ArrayList<>(cartItems.size());
+        for (CartItem item : cartItems) {
+            if (item.getProduct() == null) continue;
+            var p = item.getProduct();
+            String imgUrl = "/images/product-placeholder.svg";
+            if (p.getImages() != null && !p.getImages().isEmpty()
+                    && p.getImages().get(0) != null
+                    && p.getImages().get(0).getImage() != null
+                    && !p.getImages().get(0).getImage().isBlank()) {
+                imgUrl = p.getImages().get(0).getImage();
+            }
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("id", item.getId());
+            row.put("productId", p.getId());
+            row.put("name", p.getName() != null ? p.getName() : "");
+            row.put("category", p.getCategory() != null && p.getCategory().getName() != null ? p.getCategory().getName() : "UXD");
+            row.put("size", item.getSize() != null ? item.getSize() : "");
+            row.put("quantity", item.getQuantity());
+            row.put("unitPrice", p.getPrice() != null ? p.getPrice() : BigDecimal.ZERO);
+            row.put("finalUnitPrice", p.getFinalPrice());
+            row.put("discount", p.getDiscount() != null ? p.getDiscount().intValue() : 0);
+            row.put("lineSubtotal", cartService.lineSubtotal(item));
+            row.put("lineFinalPrice", cartService.lineFinalPrice(item));
+            row.put("image", imgUrl);
+            itemList.add(row);
+        }
+        payload.put("items", itemList);
 
         if (updatedItemId != null) {
             cartItems.stream()

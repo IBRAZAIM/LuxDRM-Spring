@@ -299,4 +299,277 @@
         }
     });
 })();
+
+/* ── ПОЛНОЦЕННАЯ БОКОВАЯ КОРЗИНА (UXD CART DRAWER) ──────────── */
+(function () {
+    'use strict';
+
+    function getCsrfHeaders() {
+        const badge = document.getElementById('navWishlistCount');
+        const headers = {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        };
+        if (badge) {
+            const token = badge.getAttribute('data-csrf-token');
+            const headerName = badge.getAttribute('data-csrf-header') || 'X-CSRF-TOKEN';
+            if (token) headers[headerName] = token;
+        }
+        return headers;
+    }
+
+    function fmtKzt(val) {
+        const n = Math.round(Number(val || 0));
+        return n.toLocaleString('ru-RU') + '\u00a0₸';
+    }
+
+    function escHtml(s) {
+        return String(s || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function syncNavCartBadge(count) {
+        const badge = document.getElementById('navCartCount') || document.querySelector('.cart-count:not(#navWishlistCount)');
+        if (!badge) return;
+        const num = Number(count || 0);
+        badge.textContent = String(num);
+        badge.style.display = num > 0 ? 'flex' : 'none';
+    }
+
+    function ensureDrawer() {
+        let backdrop = document.getElementById('uxdCartDrawerBackdrop');
+        let drawer = document.getElementById('uxdCartDrawer');
+        if (backdrop && drawer) return { backdrop, drawer };
+
+        backdrop = document.createElement('div');
+        backdrop.id = 'uxdCartDrawerBackdrop';
+        backdrop.className = 'uxd-cd-backdrop';
+        backdrop.addEventListener('click', window.closeUxdCartDrawer);
+        document.body.appendChild(backdrop);
+
+        drawer = document.createElement('aside');
+        drawer.id = 'uxdCartDrawer';
+        drawer.className = 'uxd-cd';
+        drawer.setAttribute('role', 'dialog');
+        drawer.setAttribute('aria-label', 'Корзина покупок');
+        drawer.innerHTML =
+            '<div class="uxd-cd__head">' +
+                '<div class="uxd-cd__head-title">' +
+                    '<span class="uxd-cd__heading">Корзина</span>' +
+                    '<span class="uxd-cd__count" id="uxdCdCount"></span>' +
+                '</div>' +
+                '<button type="button" class="uxd-cd__close" aria-label="Закрыть корзину">✕</button>' +
+            '</div>' +
+            '<div class="uxd-cd__ship" id="uxdCdShip" style="display:none;">' +
+                '<div class="uxd-cd__ship-text" id="uxdCdShipText"></div>' +
+                '<div class="uxd-cd__ship-track" aria-hidden="true"><div class="uxd-cd__ship-fill" id="uxdCdShipFill"></div></div>' +
+            '</div>' +
+            '<div class="uxd-cd__body" id="uxdCdBody"></div>' +
+            '<div class="uxd-cd__foot" id="uxdCdFoot" style="display:none;">' +
+                '<div class="uxd-cd__saving" id="uxdCdSaving" style="display:none;">' +
+                    '<span>Ваша экономия</span>' +
+                    '<strong id="uxdCdSavingVal"></strong>' +
+                '</div>' +
+                '<div class="uxd-cd__total-row">' +
+                    '<span class="uxd-cd__total-lbl">Итого</span>' +
+                    '<span class="uxd-cd__total-val" id="uxdCdTotal">0 ₸</span>' +
+                '</div>' +
+                '<a href="/checkout" class="uxd-cd__btn uxd-cd__btn--primary">Оформить заказ</a>' +
+                '<a href="/cart" class="uxd-cd__btn uxd-cd__btn--secondary">Перейти в корзину</a>' +
+            '</div>';
+
+        drawer.querySelector('.uxd-cd__close').addEventListener('click', window.closeUxdCartDrawer);
+
+        let sx = 0, sy = 0;
+        drawer.addEventListener('touchstart', function (e) {
+            if (!e.touches || !e.touches[0]) return;
+            sx = e.touches[0].clientX;
+            sy = e.touches[0].clientY;
+        }, { passive: true });
+        drawer.addEventListener('touchend', function (e) {
+            if (!e.changedTouches || !e.changedTouches[0]) return;
+            const dx = e.changedTouches[0].clientX - sx;
+            const dy = e.changedTouches[0].clientY - sy;
+            if (dx > 60 && Math.abs(dy) < 65) window.closeUxdCartDrawer();
+        }, { passive: true });
+
+        drawer.addEventListener('click', function (e) {
+            const qtyBtn = e.target.closest('.uxd-cd__qty-btn');
+            if (qtyBtn && !qtyBtn.disabled) {
+                const row = qtyBtn.closest('.uxd-cd__item');
+                const id = row && row.dataset.itemId;
+                const nextQty = Number(qtyBtn.dataset.nextQty || 1);
+                if (!id) return;
+                row.classList.add('is-busy');
+                fetch('/cart/update/' + encodeURIComponent(id), {
+                    method: 'POST',
+                    headers: getCsrfHeaders(),
+                    body: 'quantity=' + encodeURIComponent(nextQty)
+                })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (data) { if (data) renderDrawerData(data); })
+                    .catch(function () { row.classList.remove('is-busy'); });
+                return;
+            }
+
+            const delBtn = e.target.closest('.uxd-cd__del');
+            if (delBtn) {
+                const row = delBtn.closest('.uxd-cd__item');
+                const id = row && row.dataset.itemId;
+                if (!id) return;
+                row.classList.add('is-busy');
+                fetch('/cart/delete', {
+                    method: 'POST',
+                    headers: getCsrfHeaders(),
+                    body: 'id=' + encodeURIComponent(id)
+                })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (data) { if (data) renderDrawerData(data); })
+                    .catch(function () { row.classList.remove('is-busy'); });
+            }
+        });
+
+        document.body.appendChild(drawer);
+        return { backdrop, drawer };
+    }
+
+    function renderDrawerData(data) {
+        const drawer = document.getElementById('uxdCartDrawer');
+        if (!drawer || !data) return;
+
+        const items = Array.isArray(data.items) ? data.items : [];
+        const count = Number(data.cartItemsCount || 0);
+        syncNavCartBadge(count);
+
+        const countEl = drawer.querySelector('#uxdCdCount');
+        if (countEl) countEl.textContent = count > 0 ? ('· ' + (data.cartItemsLabel || (count + ' шт.'))) : '';
+
+        const shipBox = drawer.querySelector('#uxdCdShip');
+        const shipTxt = drawer.querySelector('#uxdCdShipText');
+        const shipFill = drawer.querySelector('#uxdCdShipFill');
+        const bodyEl = drawer.querySelector('#uxdCdBody');
+        const footEl = drawer.querySelector('#uxdCdFoot');
+
+        if (!items.length) {
+            if (shipBox) shipBox.style.display = 'none';
+            if (footEl) footEl.style.display = 'none';
+            bodyEl.innerHTML =
+                '<div class="uxd-cd__empty">' +
+                    '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">' +
+                        '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>' +
+                        '<line x1="3" y1="6" x2="21" y2="6"></line>' +
+                        '<path d="M16 10a4 4 0 0 1-8 0"></path>' +
+                    '</svg>' +
+                    '<p class="uxd-cd__empty-title">Ваша корзина пуста</p>' +
+                    '<p class="uxd-cd__empty-sub">Добавьте понравившиеся модели из каталога, чтобы оформить заказ.</p>' +
+                    '<a href="/products" class="uxd-cd__btn uxd-cd__btn--primary" style="width:100%;max-width:240px;">Перейти в каталог</a>' +
+                '</div>';
+            return;
+        }
+
+        const threshold = Number(data.freeShippingThreshold || 50000);
+        const finalPrice = Math.max(0, Number(data.finalPrice || 0));
+        const pct = Math.min(100, Math.round((finalPrice / threshold) * 100));
+        if (shipBox && shipTxt && shipFill) {
+            shipBox.style.display = 'block';
+            shipFill.style.width = pct + '%';
+            if (finalPrice >= threshold) {
+                shipBox.classList.add('is-unlocked');
+                shipTxt.textContent = 'Бесплатная доставка по Казахстану активирована';
+            } else {
+                shipBox.classList.remove('is-unlocked');
+                const left = Math.ceil(threshold - finalPrice);
+                shipTxt.innerHTML = 'До бесплатной доставки осталось <strong>' + fmtKzt(left) + '</strong>';
+            }
+        }
+
+        bodyEl.innerHTML = items.map(function (it) {
+            const disc = Number(it.discount || 0);
+            const hasDisc = disc > 0;
+            const qty = Math.max(1, Number(it.quantity || 1));
+            const priceHtml = hasDisc
+                ? '<span class="uxd-cd__price is-sale">' + fmtKzt(it.lineFinalPrice) + '</span>' +
+                  '<span class="uxd-cd__old-price">' + fmtKzt(it.lineSubtotal) + '</span>' +
+                  '<span class="uxd-cd__ticket">−' + disc + '%</span>'
+                : '<span class="uxd-cd__price">' + fmtKzt(it.lineFinalPrice) + '</span>';
+
+            return (
+                '<div class="uxd-cd__item" data-item-id="' + escHtml(it.id) + '">' +
+                    '<a href="/products/' + encodeURIComponent(it.productId) + '" class="uxd-cd__thumb-link">' +
+                        '<img class="uxd-cd__thumb" src="' + escHtml(it.image || '/images/product-placeholder.svg') + '" alt="' + escHtml(it.name) + '" loading="lazy" onerror="this.onerror=null;this.src=\'/images/product-placeholder.svg\';">' +
+                    '</a>' +
+                    '<div class="uxd-cd__info">' +
+                        '<div class="uxd-cd__cat">' + escHtml(it.category) + '</div>' +
+                        '<a href="/products/' + encodeURIComponent(it.productId) + '" class="uxd-cd__name">' + escHtml(it.name) + '</a>' +
+                        (it.size ? '<div class="uxd-cd__size">Размер: ' + escHtml(it.size) + '</div>' : '') +
+                        '<div class="uxd-cd__prices">' + priceHtml + '</div>' +
+                        '<div class="uxd-cd__controls">' +
+                            '<div class="uxd-cd__stepper">' +
+                                '<button type="button" class="uxd-cd__qty-btn" data-next-qty="' + (qty - 1) + '"' + (qty <= 1 ? ' disabled' : '') + ' aria-label="Уменьшить">−</button>' +
+                                '<span class="uxd-cd__qty-val">' + qty + '</span>' +
+                                '<button type="button" class="uxd-cd__qty-btn" data-next-qty="' + (qty + 1) + '"' + (qty >= 20 ? ' disabled' : '') + ' aria-label="Увеличить">+</button>' +
+                            '</div>' +
+                            '<button type="button" class="uxd-cd__del">Удалить</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
+            );
+        }).join('');
+
+        const totalSaved = Number(data.discountAmount || 0) + Number(data.promoDiscount || 0);
+        const savEl = drawer.querySelector('#uxdCdSaving');
+        const savVal = drawer.querySelector('#uxdCdSavingVal');
+        if (savEl && savVal) {
+            if (totalSaved > 0) {
+                savEl.style.display = 'flex';
+                savVal.textContent = '−' + fmtKzt(totalSaved);
+            } else {
+                savEl.style.display = 'none';
+            }
+        }
+        const totEl = drawer.querySelector('#uxdCdTotal');
+        if (totEl) totEl.textContent = fmtKzt(finalPrice);
+        if (footEl) footEl.style.display = 'flex';
+    }
+
+    window.openUxdCartDrawer = function () {
+        const { backdrop, drawer } = ensureDrawer();
+        const bodyEl = drawer.querySelector('#uxdCdBody');
+        if (bodyEl && !bodyEl.innerHTML.trim()) {
+            bodyEl.innerHTML = '<div class="uxd-cd__loading">Загрузка корзины…</div>';
+        }
+        requestAnimationFrame(function () {
+            backdrop.classList.add('is-open');
+            drawer.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+        });
+        fetch('/cart/api/summary', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) { if (data) renderDrawerData(data); })
+            .catch(function () {});
+    };
+
+    window.closeUxdCartDrawer = function () {
+        const backdrop = document.getElementById('uxdCartDrawerBackdrop');
+        const drawer = document.getElementById('uxdCartDrawer');
+        if (drawer) drawer.classList.remove('is-open');
+        if (backdrop) backdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    };
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') window.closeUxdCartDrawer();
+    });
+
+    document.addEventListener('click', function (e) {
+        const cartLink = e.target.closest('.header a.icon-link[href="/cart"]');
+        if (!cartLink) return;
+        const p = window.location.pathname.replace(/\/+$/, '');
+        if (p === '/cart' || p === '/checkout') return;
+        e.preventDefault();
+        window.openUxdCartDrawer();
+    });
+})();
 })();

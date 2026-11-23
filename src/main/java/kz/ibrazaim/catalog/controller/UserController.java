@@ -96,13 +96,22 @@ public class UserController {
         }
 
         int cartItemsCount = cartService.getCartItemsCount(user, session);
+        List<CartItem> currentItems = (user != null)
+                ? userService.findCartItemsByUser(user)
+                : cartService.getGuestCartItems(session);
+        BigDecimal cartTotal = cartService.finalPrice(currentItems);
         String redirectUrl = buyNow ? "/checkout" : "/cart";
         String requestedWith = request.getHeader("X-Requested-With");
         String accept = request.getHeader("Accept");
         if ("XMLHttpRequest".equalsIgnoreCase(requestedWith)
                 || (accept != null && accept.contains("application/json"))) {
             return org.springframework.http.ResponseEntity.ok(
-                    java.util.Map.of("ok", true, "cartItemsCount", cartItemsCount, "redirectUrl", redirectUrl)
+                    java.util.Map.of(
+                            "ok", true,
+                            "cartItemsCount", cartItemsCount,
+                            "cartTotal", cartTotal,
+                            "redirectUrl", redirectUrl
+                    )
             );
         }
         return "redirect:" + redirectUrl;

@@ -68,9 +68,18 @@
 .footer-social-btn:hover {
     transform: translateY(-1px);
 }
-.footer-social-btn--ig:hover { color: #E1306C; }
-.footer-social-btn--tt:hover { color: #FE2C55; }
-.footer-social-btn--tg:hover { color: #229ED9; }
+
+.footer-social-btn--ig:hover {
+    color: #E1306C;
+}
+
+.footer-social-btn--tt:hover {
+    color: #FE2C55;
+}
+
+.footer-social-btn--tg:hover {
+    color: #229ED9;
+}
 
 .footer-social-sep {
     color: #c8c5bc;

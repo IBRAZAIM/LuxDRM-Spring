@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Страница не найдена | UNDER X DESIRE</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/navbar.css}">
+    <style>
+        :root {
+            --e-bg: #ffffff;
+            --e-navy: #0a0a2e;
+            --e-crimson: #8b1a3a;
+            --e-gold: #b89648;
+            --e-muted: #686873;
+            --e-dim: #9a9aa4;
+            --e-border: #e6e4de;
+            --e-serif: 'Cormorant Garamond', Georgia, serif;
+            --e-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+            --e-mono: 'IBM Plex Mono', ui-monospace, monospace;
+        }
+
+        body.err404-page {
+            background: var(--e-bg);
+            color: var(--e-navy);
+            font-family: var(--e-sans);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .err404-canvas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 24px 72px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ─── ЕДИНАЯ СКУЛЬПТУРНАЯ КОМПОЗИЦИЯ: 4 [ ФОТОРЕАЛИСТИЧНАЯ БИРКА ] 4 ─── */
+        .err404-stage {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -2px;
+            margin-bottom: 24px;
+            user-select: none;
+        }
+
+        .err404-sculpture {
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: clamp(18px, 2.6vw, 34px);
+            position: relative;
+        }
+
+        .err404-digit {
+            font-family: var(--e-serif);
+            font-size: clamp(142px, 21vw, 268px);
+            font-weight: 400;
+            line-height: 0.76;
+            color: var(--e-navy);
+            letter-spacing: -0.04em;
+            pointer-events: none;
+            /* Выравниваем оптический центр цифр 4 ровно по центру картонной бирки и тиснёной «0» */
+            padding-bottom: clamp(48px, 6.4vw, 82px);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Центральный «0» — прозрачный PNG настоящей хлопковой бирки с 3D-поворотом */
+        .err404-zero-slot {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 3;
+        }
+
+        .tag-pendulum {
+            position: relative;
+            display: block;
+            width: clamp(128px, 16vw, 198px);
+            aspect-ratio: 448 / 1006;
+            transform-origin: top center;
+            will-change: transform;
+            cursor: pointer;
+            outline: none;
+            perspective: 1100px;
+        }
+
+        .tag-pendulum:focus-visible {
+            outline: 1.5px solid #9a9181;
+            outline-offset: 6px;
+        }
+
+        .garment-tag-flipper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+
+        .garment-tag-flipper.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .garment-tag__face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .garment-tag__face--back {
+            transform: rotateY(180deg);
+        }
+
+        .garment-tag__photo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* Контент на реальной хлопковой обратной стороне бирки */
+        .tag-back-overlay {
+            position: absolute;
+            top: 41%;
+            bottom: 11%;
+            left: 14%;
+            right: 14%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 6px;
+            box-sizing: border-box;
+            text-align: center;
+            color: #1e1d1a;
+        }
+
+        .tag-back__brand {
+            font-family: var(--e-serif);
+            font-size: clamp(9px, 1vw, 12px);
+            font-weight: 500;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #2b2924;
+        }
+
+        .tag-back__body {
+            border-top: 1px solid rgba(30, 29, 26, 0.16);
+            border-bottom: 1px solid rgba(30, 29, 26, 0.16);
+            padding: 10px 2px;
+            width: 100%;
+        }
+
+        .tag-back__title {
+            font-family: var(--e-serif);
+            font-size: clamp(16px, 2vw, 22px);
+            font-weight: 400;
+            line-height: 1.15;
+            color: #16161a;
+            margin-bottom: 4px;
+        }
+
+        .tag-back__sub {
+            font-family: var(--e-mono);
+            font-size: clamp(7.5px, 0.78vw, 9px);
+            color: #5c564b;
+            line-height: 1.35;
+        }
+
+        .tag-back__home-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: clamp(7px, 0.9vw, 10px) 8px;
+            border: 1px solid #161724;
+            background: #161724;
+            color: #f4efe6;
+            text-decoration: none;
+            font-family: var(--e-sans);
+            font-size: clamp(8.5px, 0.85vw, 10px);
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            border-radius: 2px;
+            box-sizing: border-box;
+            transition: background 0.18s ease, border-color 0.18s ease;
+        }
+
+        .tag-back__home-btn:hover {
+            background: #2f3042;
+            border-color: #2f3042;
+        }
+
+        /* ─── ЧИСТАЯ ТИПОГРАФИКА ПОД КОМПОЗИЦИЕЙ ─── */
+        .err404-title {
+            font-family: var(--e-serif);
+            font-size: clamp(24px, 3vw, 34px);
+            font-weight: 400;
+            color: var(--e-navy);
+            margin: 0 0 28px;
+            line-height: 1.2;
+        }
+
+        /* ─── ЛЁГКИЙ ЖИВОЙ ПОИСК БЕЗ КОРОБОК ─── */
+        .err404-search-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 28px;
+            text-align: left;
+        }
+
+        .err404-search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #d5d2ca;
+            padding-bottom: 7px;
+            transition: border-color 0.2s ease;
+        }
+        .err404-search-form:focus-within {
+            border-bottom-color: var(--e-navy);
+        }
+
+        .err404-search-icon {
+            color: var(--e-dim);
+            flex-shrink: 0;
+        }
+
+        .err404-search-input {
+            flex: 1;
+            min-width: 0;
+            border: none;
+            background: transparent;
+            font-family: var(--e-serif);
+            font-size: 19px;
+            font-style: italic;
+            color: var(--e-navy);
+            outline: none;
+            padding: 2px 0;
+        }
+        .err404-search-input::placeholder {
+            color: #aba8a0;
+        }
+        .err404-search-input:focus,
+        .err404-search-input:focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .err404-search-btn {
+            border: none;
+            background: transparent;
+            font-family: var(--e-sans);
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--e-navy);
+            cursor: pointer;
+            padding: 4px 2px;
+            transition: color 0.18s ease;
+        }
+        .err404-search-btn:hover {
+            color: var(--e-crimson);
+        }
+
+        .err404-results {
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 6px);
+            background: #ffffff;
+            border: 1px solid var(--e-border);
+            box-shadow: 0 18px 42px rgba(10, 10, 46, 0.09);
+            z-index: 20;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        /* ─── ГЛАВНАЯ ПРИОРИТЕТНАЯ КНОПКА «В КАТАЛОГ» ─── */
+        .err404-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 224px;
+            padding: 15px 34px;
+            background: var(--e-navy);
+            color: #ffffff;
+            text-decoration: none;
+            font-family: var(--e-sans);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            border: 1px solid var(--e-navy);
+            border-radius: 2px;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+        .err404-cta:hover {
+            background: #202048;
+            border-color: #202048;
+            transform: translateY(-1px);
+        }
+        .err404-cta__arrow {
+            font-size: 14px;
+            line-height: 1;
+            transition: transform 0.2s ease;
+        }
+        .err404-cta:hover .err404-cta__arrow {
+            transform: translateX(3px);
+        }
+
+        /* ─── АДАПТИВ: НОУТБУКИ С МАЛОЙ ВЫСОТОЙ, ПЛАНШЕТЫ, СМАРТФОНЫ ─── */
+        @media (max-height: 780px) and (min-width: 601px) {
+            .err404-canvas {
+                padding: 0 24px 36px;
+            }
+            .err404-stage {
+                margin-bottom: 16px;
+            }
+            .tag-pendulum {
+                width: clamp(122px, 14.5vw, 164px);
+            }
+            .err404-digit {
+                font-size: clamp(132px, 18vw, 218px);
+                padding-bottom: clamp(44px, 5.2vw, 68px);
+            }
+            .err404-title {
+                font-size: clamp(22px, 2.6vw, 30px);
+                margin-bottom: 18px;
+            }
+            .err404-search-wrap {
+                margin-bottom: 22px;
+            }
+            .err404-cta {
+                padding: 13px 30px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .err404-canvas {
+                padding: 0 20px 56px;
+            }
+            .err404-sculpture {
+                gap: clamp(14px, 2.4vw, 24px);
+            }
+            .tag-pendulum {
+                width: clamp(130px, 20vw, 170px);
+            }
+            .err404-digit {
+                font-size: clamp(132px, 22vw, 210px);
+                padding-bottom: clamp(46px, 7vw, 72px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .err404-canvas {
+                padding: 0 18px 48px;
+            }
+            .err404-stage {
+                margin-bottom: 18px;
+            }
+            .err404-sculpture {
+                gap: 12px;
+            }
+            .tag-pendulum {
+                width: 120px;
+            }
+            .err404-digit {
+                font-size: 118px;
+                padding-bottom: 46px;
+            }
+            .tag-back-overlay {
+                top: 40%;
+                bottom: 10%;
+                left: 12%;
+                right: 12%;
+                padding: 6px 4px;
+            }
+            .tag-back__brand {
+                font-size: 8px;
+                letter-spacing: 0.12em;
+            }
+            .tag-back__body {
+                padding: 6px 2px;
+            }
+            .tag-back__title {
+                font-size: 14px;
+            }
+            .tag-back__sub {
+                font-size: 7px;
+            }
+            .tag-back__home-btn {
+                padding: 6px 4px;
+                font-size: 8px;
+                white-space: nowrap;
+            }
+            .err404-title {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+            .err404-search-wrap {
+                max-width: 340px;
+                margin-bottom: 24px;
+            }
+            .err404-search-input {
+                font-size: 16px;
+            }
+            .err404-cta {
+                width: 100%;
+                max-width: 340px;
+                min-width: 0;
+                min-height: 48px;
+                padding: 14px 24px;
+                box-sizing: border-box;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .err404-canvas {
+                padding: 0 14px 40px;
+            }
+            .err404-sculpture {
+                gap: 8px;
+            }
+            .tag-pendulum {
+                width: 102px;
+            }
+            .err404-digit {
+                font-size: 98px;
+                padding-bottom: 39px;
+            }
+            .tag-back__brand {
+                font-size: 7px;
+            }
+            .tag-back__title {
+                font-size: 12.5px;
+            }
+            .tag-back__sub {
+                display: none;
+            }
+            .err404-title {
+                font-size: 22px;
+            }
+        }
+
+        @media (hover: none) {
+            .err404-cta:hover {
+                transform: none;
+                background: var(--e-navy);
+                border-color: var(--e-navy);
+            }
+            .err404-cta:active {
+                background: #202048;
+                transform: scale(0.985);
+            }
+            .err404-cta:hover .err404-cta__arrow {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body class="err404-page">
+<div th:insert="~{navbar :: navigation-panel}"></div>
+
+<main class="err404-canvas" id="err404Canvas">
+    <!-- Единая композиция: 4 [ ФОТОРЕАЛИСТИЧНАЯ ХЛОПКОВАЯ БИРКА С 3D-ПОВОРОТОМ ] 4 -->
+    <div class="err404-stage" aria-label="Ошибка 404">
+        <div class="err404-sculpture">
+            <span class="err404-digit" aria-hidden="true">4</span>
+
+            <div class="err404-zero-slot">
+                <div class="tag-pendulum" id="tagPendulum" role="button" tabindex="0"
+                     aria-pressed="false" title="Нажмите, чтобы перевернуть бирку">
+                    <div class="garment-tag-flipper" id="garmentTagFlipper">
+                        <!-- Лицевая сторона — прозрачный PNG студийного фото -->
+                        <div class="garment-tag__face garment-tag__face--front">
+                            <img th:src="@{/images/uxd-404-tag.png}" alt="UNDER X DESIRE — 0" class="garment-tag__photo" draggable="false">
+                        </div>
+                        <!-- Оборотная сторона — та же хлопковая бирка + кнопка «На главную» -->
+                        <div class="garment-tag__face garment-tag__face--back">
+                            <img th:src="@{/images/uxd-404-tag-back.png}" alt="" class="garment-tag__photo" draggable="false" aria-hidden="true">
+                            <div class="tag-back-overlay">
+                                <div class="tag-back__brand">Under X Desire</div>
+                                <div class="tag-back__body">
+                                    <div class="tag-back__title">Начнём сначала</div>
+                                    <div class="tag-back__sub">Вернитесь на главную витрину</div>
+                                </div>
+                                <a th:href="@{/}" class="tag-back__home-btn" id="tagHomeBtn">На главную</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <span class="err404-digit" aria-hidden="true">4</span>
+        </div>
+    </div>
+
+    <h1 class="err404-title">Этой вещи нет на вешалке.</h1>
+
+    <div class="err404-search-wrap">
+        <form th:action="@{/products}" method="get" class="err404-search-form" role="search">
+            <svg class="err404-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <circle cx="11" cy="11" r="7.5"/>
+                <line x1="16.5" y1="16.5" x2="21.5" y2="21.5"/>
+            </svg>
+            <input type="search" name="search" id="err404SearchInput" class="err404-search-input"
+                   placeholder="Найти модель или артикул…" autocomplete="off" required>
+            <button type="submit" class="err404-search-btn">Найти</button>
+        </form>
+        <div class="err404-results" id="err404Results"></div>
+    </div>
+
+    <a th:href="@{/products}" class="err404-cta">
+        Перейти в каталог
+        <span class="err404-cta__arrow" aria-hidden="true">&rarr;</span>
+    </a>
+</main>
+
+<script th:src="@{/js/navbar-component.js}" defer></script>
+<script>
+    // Спокойная физика маятника и 3D-поворот хлопковой бирки
+    (function initTagPendulum() {
+        var canvas = document.getElementById('err404Canvas');
+        var pendulum = document.getElementById('tagPendulum');
+        var flipper = document.getElementById('garmentTagFlipper');
+        if (!canvas || !pendulum || !flipper) return;
+
+        var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var angle = reducedMotion ? 0 : 3.2;
+        var velocity = 0;
+        var target = 0;
+        var stiffness = 0.036;
+        var damping = 0.955;
+
+        function toggleFlip() {
+            var flipped = flipper.classList.toggle('is-flipped');
+            pendulum.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+            if (!reducedMotion) {
+                velocity += (flipped ? 1 : -1) * 2.4;
+            }
+        }
+
+        pendulum.addEventListener('click', function (e) {
+            if (e.target.closest('#tagHomeBtn')) return;
+            toggleFlip();
+        });
+
+        pendulum.addEventListener('keydown', function (e) {
+            if (e.target.closest('#tagHomeBtn')) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleFlip();
+            }
+        });
+
+        if (reducedMotion) return;
+
+        function tick() {
+            var force = (target - angle) * stiffness;
+            velocity = (velocity + force) * damping;
+            angle += velocity;
+            pendulum.style.transform = 'rotate(' + angle.toFixed(3) + 'deg)';
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        canvas.addEventListener('mousemove', function (e) {
+            var rect = canvas.getBoundingClientRect();
+            var relX = ((e.clientX - rect.left) / rect.width) - 0.5;
+            target = -relX * 5.5;
+        });
+
+        canvas.addEventListener('mouseleave', function () {
+            target = 0;
+        });
+    })();
+
+    // Живой поиск по каталогу
+    (function init404LiveSearch() {
+        var inp = document.getElementById('err404SearchInput');
+        var box = document.getElementById('err404Results');
+        if (!inp || !box) return;
+        var timer = null;
+
+        function fmt(val) {
+            return Math.round(Number(val || 0)).toLocaleString('ru-RU') + '\u00a0₸';
+        }
+
+        function render(items) {
+            box.innerHTML = '';
+            if (!Array.isArray(items) || !items.length) {
+                var empty = document.createElement('div');
+                empty.className = 'nav-search-empty';
+                empty.textContent = 'Модели по вашему запросу не найдены';
+                box.appendChild(empty);
+                box.style.display = 'block';
+                return;
+            }
+            items.forEach(function (item) {
+                var a = document.createElement('a');
+                a.href = '/products/' + encodeURIComponent(item.id);
+                a.className = 'nav-search-item';
+
+                var img = document.createElement('img');
+                img.src = item.image || '/images/product-placeholder.svg';
+                img.alt = item.name || '';
+                img.className = 'nav-search-item__thumb';
+
+                var info = document.createElement('div');
+                info.className = 'nav-search-item__info';
+                var cat = document.createElement('div');
+                cat.className = 'nav-search-item__cat';
+                cat.textContent = (item.category || 'UXD') + (item.sku ? ' · ' + item.sku : '');
+                var title = document.createElement('div');
+                title.className = 'nav-search-item__title';
+                title.textContent = item.name || '';
+                info.appendChild(cat);
+                info.appendChild(title);
+
+                var pw = document.createElement('div');
+                pw.className = 'nav-search-item__price-wrap';
+                var fp = document.createElement('div');
+                fp.className = 'nav-search-item__price';
+                fp.textContent = fmt(item.finalPrice);
+                pw.appendChild(fp);
+
+                a.appendChild(img);
+                a.appendChild(info);
+                a.appendChild(pw);
+                box.appendChild(a);
+            });
+            box.style.display = 'block';
+        }
+
+        inp.addEventListener('input', function () {
+            clearTimeout(timer);
+            var q = inp.value.trim();
+            if (q.length < 2) {
+                box.style.display = 'none';
+                box.innerHTML = '';
+                return;
+            }
+            timer = setTimeout(function () {
+                fetch('/products/api/search?q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } })
+                    .then(function (r) { return r.ok ? r.json() : []; })
+                    .then(render)
+                    .catch(function () {});
+            }, 200);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.err404-search-wrap')) {
+                box.style.display = 'none';
+            }
+        });
+    })();
+</script>
+</body>
+</html>

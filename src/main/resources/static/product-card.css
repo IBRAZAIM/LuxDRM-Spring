@@ -540,6 +540,267 @@
     transform: translateX(-50%) translateY(0);
 }
 
+/* ─── ВЫЕЗЖАЮЩАЯ МИНИ-КОРЗИНА (CART DRAWER) ─── */
+.uxd-minicart-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 8, 28, 0.45);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.28s ease, visibility 0.28s ease;
+    z-index: 99998;
+}
+.uxd-minicart-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+.uxd-minicart {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 380px;
+    max-width: 92vw;
+    height: 100%;
+    background: #ffffff;
+    border-left: 1px solid #e6e4de;
+    box-shadow: -12px 0 40px rgba(10, 10, 46, 0.14);
+    transform: translateX(102%);
+    transition: transform 0.34s var(--uxd-ease);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+}
+.uxd-minicart.is-open {
+    transform: translateX(0);
+}
+.uxd-minicart__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e6e4de;
+}
+.uxd-minicart__title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--uxd-navy);
+}
+.uxd-minicart__close {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #e6e4de;
+    background: transparent;
+    color: #5c5c68;
+    font-size: 13px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: border-color 0.18s ease, color 0.18s ease;
+}
+.uxd-minicart__close:hover {
+    border-color: var(--uxd-navy);
+    color: var(--uxd-navy);
+}
+.uxd-minicart__item {
+    display: flex;
+    gap: 16px;
+    padding: 24px;
+    border-bottom: 1px solid #f0eee8;
+}
+.uxd-minicart__img {
+    width: 82px;
+    height: 108px;
+    object-fit: cover;
+    background: #f5f3ee;
+    flex-shrink: 0;
+}
+.uxd-minicart__meta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+.uxd-minicart__cat {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8e8e98;
+    margin-bottom: 4px;
+}
+.uxd-minicart__name {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--uxd-navy);
+    line-height: 1.2;
+    margin-bottom: 6px;
+}
+.uxd-minicart__size {
+    font-size: 11px;
+    color: #686873;
+    margin-bottom: 8px;
+}
+.uxd-minicart__price-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.uxd-minicart__price {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--uxd-navy);
+}
+.uxd-minicart__price.is-sale {
+    color: var(--uxd-accent);
+}
+.uxd-minicart__old-price {
+    font-size: 12px;
+    color: #9a9aa4;
+    text-decoration: line-through;
+}
+.uxd-minicart__ticket {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    padding: 0 9px 0 14px;
+    background: var(--uxd-accent);
+    color: #ffffff;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    border-radius: 2px;
+    box-shadow: 0 3px 10px rgba(139, 26, 58, 0.22);
+    transform: rotate(3deg);
+    -webkit-mask-image:
+        radial-gradient(circle 2.8px at 0 50%, transparent 0, transparent 2.8px, #000 3.3px),
+        radial-gradient(circle 2.8px at 100% 50%, transparent 0, transparent 2.8px, #000 3.3px);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        radial-gradient(circle 2.8px at 0 50%, transparent 0, transparent 2.8px, #000 3.3px),
+        radial-gradient(circle 2.8px at 100% 50%, transparent 0, transparent 2.8px, #000 3.3px);
+    mask-composite: intersect;
+}
+.uxd-minicart__ticket::before {
+    content: '';
+    position: absolute;
+    left: 5.5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.5px;
+    height: 3.5px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(232, 213, 163, 0.85);
+}
+.uxd-minicart__ticket::after {
+    content: '';
+    position: absolute;
+    inset: 2px 4px;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+}
+.uxd-minicart__foot {
+    margin-top: auto;
+    padding: 18px 24px 26px;
+    border-top: 1px solid #e6e4de;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.uxd-minicart__ship {
+    padding: 11px 13px;
+    background: #faf9f7;
+    border: 1px solid #e6e4de;
+    margin-bottom: 4px;
+}
+.uxd-minicart__ship-text {
+    font-size: 11px;
+    line-height: 1.45;
+    color: #5c5c68;
+    margin-bottom: 8px;
+}
+.uxd-minicart__ship-text strong {
+    color: var(--uxd-navy);
+    font-weight: 700;
+}
+.uxd-minicart__ship.is-unlocked .uxd-minicart__ship-text {
+    color: #15803d;
+    font-weight: 600;
+}
+.uxd-minicart__ship-track {
+    width: 100%;
+    height: 2px;
+    background: #e6e4de;
+    overflow: hidden;
+}
+.uxd-minicart__ship-fill {
+    height: 100%;
+    width: 0;
+    background: var(--uxd-navy);
+    transition: width 0.35s ease;
+}
+.uxd-minicart__ship.is-unlocked .uxd-minicart__ship-fill {
+    background: #15803d;
+}
+.uxd-minicart__count {
+    font-size: 11px;
+    color: #686873;
+    margin-bottom: 6px;
+}
+.uxd-minicart__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.uxd-minicart__btn--primary {
+    background: var(--uxd-navy);
+    color: #ffffff;
+    border: 1px solid var(--uxd-navy);
+}
+.uxd-minicart__btn--primary:hover {
+    background: var(--uxd-accent);
+    border-color: var(--uxd-accent);
+}
+.uxd-minicart__btn--secondary {
+    background: transparent;
+    color: var(--uxd-navy);
+    border: 1px solid var(--uxd-navy);
+}
+.uxd-minicart__btn--secondary:hover {
+    background: var(--uxd-navy);
+    color: #ffffff;
+}
+.uxd-minicart__continue {
+    background: none;
+    border: none;
+    padding: 6px 0 0;
+    font-family: inherit;
+    font-size: 10.5px;
+    color: #7a7a85;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+.uxd-minicart__continue:hover {
+    color: var(--uxd-navy);
+}
+
 /* ─── АДАПТИВ: КРУПНЫЕ ПРОДАЮЩИЕ КАРТОЧКИ НА МОБИЛЬНЫХ ─── */
 @media (max-width: 640px) {
     .uxd-card {

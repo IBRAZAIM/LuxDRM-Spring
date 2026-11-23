@@ -116,6 +116,131 @@
         }, 2500);
     }
 
+    function closeMiniCart() {
+        const drawer = document.getElementById('uxdMiniCart');
+        const backdrop = document.getElementById('uxdMiniCartBackdrop');
+        if (drawer) drawer.classList.remove('is-open');
+        if (backdrop) backdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    function openMiniCart(itemInfo) {
+        let backdrop = document.getElementById('uxdMiniCartBackdrop');
+        let drawer = document.getElementById('uxdMiniCart');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.id = 'uxdMiniCartBackdrop';
+            backdrop.className = 'uxd-minicart-backdrop';
+            backdrop.addEventListener('click', closeMiniCart);
+            document.body.appendChild(backdrop);
+        }
+        if (!drawer) {
+            drawer = document.createElement('aside');
+            drawer.id = 'uxdMiniCart';
+            drawer.className = 'uxd-minicart';
+            drawer.setAttribute('role', 'dialog');
+            drawer.setAttribute('aria-label', 'Товар добавлен в корзину');
+            drawer.innerHTML =
+                '<div class="uxd-minicart__head">' +
+                    '<span class="uxd-minicart__title">Добавлено в корзину</span>' +
+                    '<button type="button" class="uxd-minicart__close" aria-label="Закрыть">✕</button>' +
+                '</div>' +
+                '<div class="uxd-minicart__item">' +
+                    '<img class="uxd-minicart__img" id="uxdMcImg" src="" alt="">' +
+                    '<div class="uxd-minicart__meta">' +
+                        '<div class="uxd-minicart__cat" id="uxdMcCat"></div>' +
+                        '<div class="uxd-minicart__name" id="uxdMcName"></div>' +
+                        '<div class="uxd-minicart__size" id="uxdMcSize"></div>' +
+                        '<div class="uxd-minicart__price-row">' +
+                            '<span class="uxd-minicart__price" id="uxdMcPrice"></span>' +
+                            '<span class="uxd-minicart__old-price" id="uxdMcOldPrice" style="display:none;"></span>' +
+                            '<span class="uxd-minicart__ticket" id="uxdMcBadge" style="display:none;"></span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="uxd-minicart__foot">' +
+                    '<div class="uxd-minicart__ship" id="uxdMcShip">' +
+                        '<div class="uxd-minicart__ship-text" id="uxdMcShipText"></div>' +
+                        '<div class="uxd-minicart__ship-track" aria-hidden="true"><div class="uxd-minicart__ship-fill" id="uxdMcShipFill"></div></div>' +
+                    '</div>' +
+                    '<div class="uxd-minicart__count" id="uxdMcCount"></div>' +
+                    '<a href="/checkout" class="uxd-minicart__btn uxd-minicart__btn--primary">Оформить заказ</a>' +
+                    '<a href="/cart" class="uxd-minicart__btn uxd-minicart__btn--secondary">Перейти в корзину</a>' +
+                    '<button type="button" class="uxd-minicart__continue">Продолжить покупки</button>' +
+                '</div>';
+            drawer.querySelector('.uxd-minicart__close').addEventListener('click', closeMiniCart);
+            drawer.querySelector('.uxd-minicart__continue').addEventListener('click', closeMiniCart);
+            document.body.appendChild(drawer);
+        }
+
+        const imgEl = drawer.querySelector('#uxdMcImg');
+        if (imgEl) {
+            imgEl.src = itemInfo.img || '/images/product-placeholder.svg';
+            imgEl.alt = itemInfo.name || '';
+        }
+        const catEl = drawer.querySelector('#uxdMcCat');
+        if (catEl) catEl.textContent = itemInfo.cat || 'UXD';
+        const nameEl = drawer.querySelector('#uxdMcName');
+        if (nameEl) nameEl.textContent = itemInfo.name || '';
+        const sizeEl = drawer.querySelector('#uxdMcSize');
+        if (sizeEl) sizeEl.textContent = itemInfo.size ? ('Размер: ' + itemInfo.size) : '';
+        const priceEl = drawer.querySelector('#uxdMcPrice');
+        if (priceEl) {
+            priceEl.textContent = itemInfo.price || '';
+            priceEl.classList.toggle('is-sale', Number(itemInfo.disc || 0) > 0);
+        }
+        const oldPriceEl = drawer.querySelector('#uxdMcOldPrice');
+        if (oldPriceEl) {
+            if (itemInfo.oldPrice && Number(itemInfo.disc || 0) > 0) {
+                oldPriceEl.textContent = itemInfo.oldPrice;
+                oldPriceEl.style.display = 'inline';
+            } else {
+                oldPriceEl.textContent = '';
+                oldPriceEl.style.display = 'none';
+            }
+        }
+        const badgeEl = drawer.querySelector('#uxdMcBadge');
+        if (badgeEl) {
+            const discNum = Number(itemInfo.disc || 0);
+            if (discNum > 0) {
+                badgeEl.textContent = '−' + discNum + '%';
+                badgeEl.style.display = 'inline-flex';
+            } else {
+                badgeEl.textContent = '';
+                badgeEl.style.display = 'none';
+            }
+        }
+        const countEl = drawer.querySelector('#uxdMcCount');
+        if (countEl) {
+            const c = Number(itemInfo.cartCount || 1);
+            countEl.textContent = 'В корзине сейчас: ' + c + ' шт.';
+        }
+
+        const FREE_SHIP_THRESHOLD = 50000;
+        const shipBox = drawer.querySelector('#uxdMcShip');
+        const shipText = drawer.querySelector('#uxdMcShipText');
+        const shipFill = drawer.querySelector('#uxdMcShipFill');
+        if (shipBox && shipText && shipFill) {
+            const totalAmount = Math.max(0, Number(itemInfo.cartTotal || 0));
+            const pct = Math.min(100, Math.round((totalAmount / FREE_SHIP_THRESHOLD) * 100));
+            shipFill.style.width = pct + '%';
+            if (totalAmount >= FREE_SHIP_THRESHOLD) {
+                shipBox.classList.add('is-unlocked');
+                shipText.textContent = 'Бесплатная доставка по Казахстану активирована';
+            } else {
+                shipBox.classList.remove('is-unlocked');
+                const left = Math.ceil(FREE_SHIP_THRESHOLD - totalAmount);
+                shipText.innerHTML = 'До бесплатной доставки осталось <strong>' + left.toLocaleString('ru-RU') + '\u00a0₸</strong>';
+            }
+        }
+
+        requestAnimationFrame(function () {
+            backdrop.classList.add('is-open');
+            drawer.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
     function updateNavCartCount(count) {
         const badge = document.getElementById('navCartCount') || document.querySelector('.cart-count:not(#navWishlistCount)');
         if (!badge) return;
@@ -223,12 +348,36 @@
                     if (data && typeof data.cartItemsCount !== 'undefined') {
                         updateNavCartCount(data.cartItemsCount);
                     }
-                    notify('Добавлено в корзину (размер ' + chosenSize + ')');
+                    const card = panel && panel.closest('.uxd-card');
+                    const imgEl = card && card.querySelector('.uxd-card__slide');
+                    const nameEl = card && card.querySelector('.uxd-card__title');
+                    const catEl = card && card.querySelector('.uxd-card__category');
+                    const priceEl = card && card.querySelector('.uxd-card__price-current');
+                    const oldPriceEl = card && card.querySelector('.uxd-card__price-old');
+                    const discVal = card ? Number(card.dataset.disc || 0) : 0;
+
                     setTimeout(function () {
                         closePanel(panel);
                         sizeBtn.classList.remove('is-selected');
                         form.querySelectorAll('button').forEach(function (b) { b.disabled = false; });
-                    }, 220);
+                        if (typeof window.openUxdCartDrawer === 'function') {
+                            window.openUxdCartDrawer();
+                        } else {
+                            openMiniCart({
+                                img: imgEl ? imgEl.getAttribute('src') : '/images/product-placeholder.svg',
+                                name: nameEl ? nameEl.textContent.trim() : '',
+                                cat: catEl ? catEl.textContent.trim() : '',
+                                price: priceEl ? priceEl.textContent.trim() : '',
+                                oldPrice: oldPriceEl ? oldPriceEl.textContent.trim() : '',
+                                disc: discVal,
+                                size: chosenSize,
+                                cartCount: data && typeof data.cartItemsCount !== 'undefined' ? data.cartItemsCount : 1,
+                                cartTotal: (data && typeof data.cartTotal !== 'undefined')
+                                    ? Number(data.cartTotal)
+                                    : (card ? Number(card.dataset.finalPrice || card.dataset.price || 0) : 0)
+                            });
+                        }
+                    }, 180);
                 })
                 .catch(function () {
                     form.submit();
@@ -248,7 +397,10 @@
     });
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeAll(null);
+        if (e.key === 'Escape') {
+            closeAll(null);
+            closeMiniCart();
+        }
     });
 
     document.addEventListener('DOMContentLoaded', function () {

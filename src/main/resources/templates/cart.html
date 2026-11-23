@@ -80,7 +80,7 @@
                                    th:text="${cartItem.product.name}"
                                    target="_blank" rel="noopener"></a>
                                 <span class="cart-product-meta"
-                                      th:text="${cartItem.product.category != null ? cartItem.product.category.name : 'LUXDRM'}"></span>
+                                      th:text="${cartItem.product.category != null ? cartItem.product.category.name : 'UXD'}"></span>
                             </div>
 
                             <!-- Size -->
@@ -171,7 +171,7 @@
                             <!-- Meta: size · category -->
                             <div class="card-meta">
                                 <span class="card-size-tag"
-                                      th:text="${(cartItem.size != null ? 'Размер ' + cartItem.size : 'Размер —') + ' · ' + (cartItem.product.category != null ? cartItem.product.category.name : 'LUXDRM')}"></span>
+                                      th:text="${(cartItem.size != null ? 'Размер ' + cartItem.size : 'Размер —') + ' · ' + (cartItem.product.category != null ? cartItem.product.category.name : 'UXD')}"></span>
                             </div>
 
                             <!-- Total price -->
@@ -255,6 +255,14 @@
                 <div class="summary-inner">
                     <h2 class="summary-title">Оформление заказа</h2>
                     <div class="summary-divider" aria-hidden="true"></div>
+
+                    <!-- Живая шкала бесплатной доставки от 50 000 ₸ -->
+                    <div class="free-ship-box" id="free-ship-box">
+                        <div class="free-ship-text" id="free-ship-text">Бесплатная доставка от 50 000 ₸</div>
+                        <div class="free-ship-track" aria-hidden="true">
+                            <div class="free-ship-fill" id="free-ship-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
 
                     <div class="summary-lines">
                         <div class="summary-line">
@@ -358,7 +366,7 @@
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            Бесплатная доставка от 200 000 ₸
+                            Бесплатная доставка от 50 000 ₸
                         </div>
                         <div class="trust-micro">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -411,6 +419,28 @@
         document.querySelectorAll('.js-money').forEach(function (el) {
             el.textContent = money(el.dataset.raw || el.textContent);
         });
+
+        /* ── Free shipping progress bar (50 000 ₸) ───────── */
+        var FREE_SHIP_THRESHOLD = 50000;
+        function updateFreeShipBar(rawFinal) {
+            var box = document.getElementById('free-ship-box');
+            var txt = document.getElementById('free-ship-text');
+            var fill = document.getElementById('free-ship-fill');
+            if (!box || !txt || !fill) return;
+            var amount = Math.max(0, Number(String(rawFinal || '').replace(/[^\d.-]/g, '') || 0));
+            var pct = Math.min(100, Math.round((amount / FREE_SHIP_THRESHOLD) * 100));
+            fill.style.width = pct + '%';
+            if (amount >= FREE_SHIP_THRESHOLD) {
+                box.classList.add('is-unlocked');
+                txt.textContent = 'Бесплатная доставка по Казахстану активирована';
+            } else {
+                box.classList.remove('is-unlocked');
+                var left = Math.ceil(FREE_SHIP_THRESHOLD - amount);
+                txt.innerHTML = 'До бесплатной доставки осталось <strong>' + left.toLocaleString('ru-RU') + '\u00a0₸</strong>';
+            }
+        }
+        var initialFinalEl = document.getElementById('sum-final');
+        if (initialFinalEl) updateFreeShipBar(initialFinalEl.dataset.raw || 0);
 
         /* ── Toast ───────────────────────────────────────── */
         var _toastTimer;
@@ -511,6 +541,7 @@
 
             var sumFinal = document.getElementById('sum-final');
             if (sumFinal) sumFinal.textContent = money(data.finalPrice);
+            updateFreeShipBar(data.finalPrice);
 
             if (data.itemId != null) {
                 document.querySelectorAll('[data-id="' + data.itemId + '"]').forEach(function (node) {

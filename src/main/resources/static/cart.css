@@ -751,6 +751,45 @@
 }
 
 /* Бесплатная доставка */
+.free-ship-box {
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.free-ship-text {
+    font-family: var(--f-ui);
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.72);
+    letter-spacing: 0.03em;
+    margin-bottom: 9px;
+}
+
+.free-ship-text strong {
+    color: var(--c-gold);
+    font-weight: 600;
+}
+
+.free-ship-box.is-unlocked .free-ship-text {
+    color: var(--c-gold);
+    font-weight: 600;
+}
+
+.free-ship-track {
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.14);
+    overflow: hidden;
+}
+
+.free-ship-fill {
+    height: 100%;
+    background: var(--c-gold);
+    transition: width 0.35s ease;
+}
+
 .summary-shipping {
     color: var(--c-free);
     font-weight: 700;
